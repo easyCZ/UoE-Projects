@@ -1,0 +1,67 @@
+\documentclass[a4paper,11pt]{report}
+\usepackage{tikz}
+
+\begin{document}
+
+\section*{Question 3}
+\begin{block}{}
+Schedule 1 is not conflict serializable due to conflicting operations.
+In order to determine conflict serializability, we can draw a graph
+with edges from $\emph{T_x}$ to $\emph{T_y}$ for operations $\emph{O_i}$, $\emph{O_j}$
+where at least one of $\emph{O_i}$, $\emph{O_j}$ is a $\emph{write}$
+operation.
+\end{block}
+
+% \begin{tikzpicture}
+%   [scale=.8,auto=left,every node/.style={circle,fill=white!20, thick}]
+%   \node (n6) at (1,10) {6};
+%   \node (n4) at (4,8)  {4};
+%   \node (n5) at (8,9)  {5};
+%   \node (n1) at (11,8) {1};
+%   \node (n2) at (9,6)  {2};
+%   \node (n3) at (5,5)  {3};
+
+%   \foreach \from/\to in {n6/n4,n4/n5,n5/n1,n1/n2,n2/n5,n2/n3,n3/n4}
+%     \draw (\from) -- (\to);
+
+% \end{tikzpicture}
+
+% $
+% \begin{tabular}{ c | c | c | c }
+%   T_1 & T_2 & T_3 & T_4 \\
+%   \hline
+%   4 & 5 & 6 & 9 \\
+%   % 7 & 8 & 9 \\
+% \end{tabular}
+% \quad
+% \begin{tabular}{ c | c | c | c }
+%   T_1 & T_2 & T_3 & T_4 \\
+%   \hline
+%   4 & 5 & 6 & 9 \\
+%   % 7 & 8 & 9 \\
+% \end{tabular}
+% $
+
+
+% The foundations of the rigorous study of \emph{analysis}
+% were laid in the nineteenth century, notably by the
+% mathematicians Cauchy and Weierstrass. Central to the
+% study of this subject are the formal definitions of
+% \emph{limits} and \emph{continuity}.
+
+% Let $D$ be a subset of $\bf R$ and let
+% $f \colon D \to \mathbf{R}$ be a real-valued function on
+% $D$. The function $f$ is said to be \emph{continuous} on
+% $D$ if, for all $\epsilon > 0$ and for all $x \in D$,
+% there exists some $\delta > 0$ (which may depend on $x$)
+% such that if $y \in D$ satisfies
+% \[ |y - x| < \delta \]
+% then
+% \[ |f(y) - f(x)| < \epsilon. \]
+
+% One may readily verify that if $f$ and $g$ are continuous
+% functions on $D$ then the functions $f+g$, $f-g$ and
+% $f.g$ are continuous. If in addition $g$ is everywhere
+% non-zero then $f/g$ is continuous.
+
+\end{document}
