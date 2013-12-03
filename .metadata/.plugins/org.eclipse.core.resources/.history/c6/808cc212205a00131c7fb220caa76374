@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">UoE Informatics Timetable</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="service_name">XML Downloader</string>
+    <string name="title_activity_class_detail_fragment">ClassDetailFragment</string>
+    <string name="optionsBtnDesc">Options</string>
+    <string name="settingsBtnDesc">Settings</string>
+    <string name="searchBtnDesc">Settings</string>
+
+</resources>

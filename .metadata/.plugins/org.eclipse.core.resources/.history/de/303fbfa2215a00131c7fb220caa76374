@@ -1,0 +1,48 @@
+package com.ug3.selp.timetableapp;
+
+import android.os.Bundle;
+import android.app.Activity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageView;
+
+public class MainActivity extends Activity {
+	
+	private final String TAG = "MainActivity";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+        ImageView optionsMenu = (ImageView) findViewById(R.id.optionsBtn);
+        optionsMenu.setOnTouchListener(new View.OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				v.setBackgroundResource(R.color.titleBarOnClick);
+				Log.i(TAG, "OptionsMenu clicked");
+				return false;
+			}
+		}; {
+			
+			@Override
+			public void onClick(View v) {
+				
+			}
+		});
+        
+        optionsMenu.setOn
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+    
+}

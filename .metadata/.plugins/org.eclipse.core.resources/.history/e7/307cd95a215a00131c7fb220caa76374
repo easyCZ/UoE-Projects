@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <color name="titleBar">#6ea552</color>
+    <color name="titleBarBorder">#56903b</color>
+    
+</resources>

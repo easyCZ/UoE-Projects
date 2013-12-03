@@ -1,0 +1,12 @@
+package com.ug3.selp.timetableapp.parser;
+
+import java.io.File;
+import org.w3c.dom.Document;
+
+public abstract class XMLParser {
+	
+	abstract extract(Document document);
+	
+}
+
+
