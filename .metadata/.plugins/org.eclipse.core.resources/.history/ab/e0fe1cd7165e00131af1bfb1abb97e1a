@@ -1,0 +1,102 @@
+package com.ug3.selp.timetableapp.downloader;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import android.os.AsyncTask;
+import android.util.Log;
+
+public class AsyncDownloader extends AsyncTask<String, Integer, Document> {
+	
+	private int TOTAL = 1;
+	private Document[] documents = new Document[TOTAL]; 
+	private String TAG = "AsyncDownloader";
+
+	@Override
+	protected Document doInBackground(String... params) {
+		Log.d(TAG, "doInBackground called with " + params.length + " params.");
+		
+//		if (params.length < 3) return null;
+		for (int i = 0; i < TOTAL; i++) {
+			documents[i] = this.getDocument(params[i]);
+			// Test for success
+//			if (!documents[i].equals(null)) {
+//				Log.d(TAG, "Getting document at " + params[i] + " failed");
+//				cancel(true);
+//			}
+			publishProgress((int) (i * 100 / (float) TOTAL));
+		}
+		
+		return null;
+	}
+	
+	protected Document getDocument(String address) {
+		try {
+			URL url = new URL(address);
+			Log.i("URL", url.toString());
+			InputStream stream = url.openStream();
+			DocumentBuilderFactory factoryBuilder = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = factoryBuilder.newDocumentBuilder();
+			Document document = docBuilder.parse(stream);
+			Log.d(TAG, "Document parsed");
+			
+			Log.i(TAG, document.toString());
+			stream.close();
+			
+			// http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
+//			document.getDocumentElement().normalize();
+			return document;
+			
+		} catch (MalformedURLException e) {
+			Log.e("MalformedURLException", e.toString());
+		} catch (IOException e) {
+			Log.e("IOException", e.toString());
+		} catch (ParserConfigurationException e) {
+			Log.e("ParserConfigurationException", e.toString());
+		} catch (SAXException e) {
+			Log.e("SAXException", e.toString());
+		}
+		return null;
+	}
+	
+	@Override
+	protected void onProgressUpdate(Integer... progress) {
+		Log.d(TAG, "Progress: " + progress[0]);
+    }
+	
+	@Override
+	protected void onPostExecute(Document result) {
+//        showDialog("Downloaded " + result + " bytes");
+    }
+	
+	public void printDocument(Document doc, OutputStream out) throws IOException, TransformerException {
+	    TransformerFactory tf = TransformerFactory.newInstance();
+	    Transformer transformer = tf.newTransformer();
+	    transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+	    transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+	    transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	    transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+	    transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+
+	    transformer.transform(new DOMSource(doc), 
+	         new StreamResult(new OutputStreamWriter(out, "UTF-8")));
+	}
+
+}

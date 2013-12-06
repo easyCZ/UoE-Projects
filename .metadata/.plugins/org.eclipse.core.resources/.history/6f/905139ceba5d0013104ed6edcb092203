@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/actionBarDrawer"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:background="@color/actionBarDrawerBG" >
+  
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextView1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/search_field"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:ems="4"
+        android:hint="@string/searchHint"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:layout_margin="5dp" >
+
+        <requestFocus />
+    </AutoCompleteTextView>
+    <TextView 
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:layout_margin="5dp"
+        android:text="Undergrad Years:"
+        android:textColor="@color/white"
+        android:textSize="20sp"/>
+
+</RelativeLayout>

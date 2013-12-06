@@ -1,0 +1,20 @@
+package com.ug3.selp.timetableapp.downloader;
+
+import org.w3c.dom.Document;
+
+import android.os.AsyncTask;
+
+public class AsyncDownloader extends AsyncTask<String, Integer, Document>{
+
+	@Override
+	protected Document doInBackground(String... params) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	protected void onProgressUpdate(Integer... progress) {
+        setProgressPercent(progress[0]);
+    }
+
+}

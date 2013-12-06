@@ -1,0 +1,7 @@
+package com.ug3.selp.timetableapp.downloader;
+
+import android.os.AsyncTask;
+
+public class AsyncDownloader extends AsyncTask<String, Integer, Document>{
+
+}

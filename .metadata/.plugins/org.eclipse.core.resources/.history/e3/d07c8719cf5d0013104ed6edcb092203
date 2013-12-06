@@ -1,0 +1,125 @@
+package com.ug3.selp.timetableapp;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import com.ug3.selp.timetableapp.models.Course;
+
+import android.os.Bundle;
+import android.app.Activity;
+import android.content.Context;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.DrawerLayout.DrawerListener;
+import android.util.Log;
+import android.view.Menu;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.ListView;
+import android.widget.Toast;
+
+public class MainActivity extends Activity implements DrawerListener {
+	
+	private final String TAG = "MainActivity";
+	private DrawerLayout drawer;
+	private AutoCompleteTextView autoComplete;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+        Log.i(TAG, "Main Activity created.");
+        
+        autoComplete = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView1);
+        // Attach Drawer Listener		
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.setDrawerListener(this);
+        
+        
+        
+        final ListView listview = (ListView) findViewById(R.id.listview);
+        String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
+                "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
+                "Linux", "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux",
+                "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux", "OS/2",
+                "Android", "iPhone", "WindowsMobile" };
+        
+        final ArrayList<String> list = new ArrayList<String>();
+        for (int i = 0; i < values.length; i++)
+        	list.add(values[i]);
+        
+        final DrawerArrayAdapter adapter = new DrawerArrayAdapter(this, R.layout.sidebar_drawer, objects)
+        
+        final StableArrayAdapter adapter = new StableArrayAdapter(
+        		this, R.layout.sidebar_drawer, list);
+        listview.setAdapter(adapter);
+        
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, final View view,
+                int position, long id) {
+              final String item = (String) parent.getItemAtPosition(position);
+              Toast.makeText(view.getContext(), "Showing toast" + item, Toast.LENGTH_SHORT).show();
+            }
+
+          });
+        
+    }
+    
+    private List<Course> generateCourses() {
+    	List<Course> list = new ArrayList<Course>();
+    	list.add(new Course().setName("CourseName"));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+    
+    private class StableArrayAdapter extends ArrayAdapter<String> {
+    	HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
+    	
+    	public StableArrayAdapter(Context context, int textViewResrouceId, List<String> objects) {
+    		super(context, textViewResrouceId, objects);
+    		for (int i = 0; i < objects.size(); i++) {
+    			mIdMap.put(objects.get(i), i);
+    		}
+    	}
+    	
+    	@Override
+    	public long getItemId(int position) {
+    		String item = getItem(position);
+    		return mIdMap.get(item);
+    	}
+    	
+    	@Override
+    	public boolean hasStableIds() {
+    		return true;
+    	}
+    }
+
+	@Override
+	public void onDrawerClosed(View arg0) {}
+	
+	@Override
+	public void onDrawerOpened(View arg0) {}
+	
+	@Override
+	public void onDrawerStateChanged(int arg0) {}
+	
+	@Override
+	public void onDrawerSlide(View arg0, float arg1) {
+		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(autoComplete.getWindowToken(), 0);
+	}
+	
+    
+}

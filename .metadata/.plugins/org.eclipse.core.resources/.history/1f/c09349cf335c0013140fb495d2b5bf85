@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<solid android:color="#FFFFFF"/>
+
+<stroke
+    android:width="2dp"
+    android:color="#E7E7E7"
+    android:height="10dp"/>
+
+<corners
+    android:radius="5dp"/>

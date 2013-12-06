@@ -1,0 +1,9 @@
+package com.ug3.selp.timetableapp;
+
+import com.ug3.selp.timetableapp.models.Course;
+
+import android.widget.ArrayAdapter;
+
+public class DrawerArrayAdapter extends ArrayAdapter<Course> {
+
+}

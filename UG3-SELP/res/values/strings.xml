@@ -8,5 +8,8 @@
     <string name="optionsBtnDesc">Options</string>
     <string name="settingsBtnDesc">Settings</string>
     <string name="searchBtnDesc">Settings</string>
+    <string name="searchHint">Search..</string>
+    <string name="availableCourses">Available courses:</string>
+    <string name="sidebarContentDesc">Course Image</string>
 
 </resources>

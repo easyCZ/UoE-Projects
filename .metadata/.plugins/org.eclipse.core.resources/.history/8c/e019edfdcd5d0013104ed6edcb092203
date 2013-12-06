@@ -1,0 +1,19 @@
+package com.ug3.selp.timetableapp;
+
+import java.util.List;
+
+import com.ug3.selp.timetableapp.models.Course;
+
+import android.content.Context;
+import android.widget.ArrayAdapter;
+
+public class DrawerArrayAdapter extends ArrayAdapter<Course> {
+
+	public DrawerArrayAdapter(Context context, int resource,
+			List<Course> objects) {
+		super(context, resource, objects);
+		// TODO Auto-generated constructor stub
+	}
+	
+
+}
