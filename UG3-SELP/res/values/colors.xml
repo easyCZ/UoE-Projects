@@ -9,4 +9,7 @@
     <color name="sidebarBG">#454e55</color>
     <color name="sidebarSubHeadingTextColor">#8e9397</color>
     
+    <!-- Download and Parse -->
+    <color name="downloadAndParseTitleColor">#777777</color>
+    
 </resources>

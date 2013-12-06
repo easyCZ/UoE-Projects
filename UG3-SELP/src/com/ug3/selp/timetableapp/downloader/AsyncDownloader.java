@@ -30,18 +30,26 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class AsyncDownloader {
 	
 	private TextView activityContext;
+	private ProgressBar progressBar;
+	private boolean finished = false;
 	
-	public AsyncDownloader(TextView context) {
+	public AsyncDownloader(TextView context, ProgressBar progressBar) {
 		this.activityContext = context;
+		this.progressBar = progressBar;
 	}
 	
 	public void execute(String...strings) {
-		new AsyncDownloaderTask().execute(strings);
+		if (!finished)
+			new AsyncDownloaderTask().execute(strings);
 	}
 	
 	private class AsyncDownloaderTask extends AsyncTask<String, Integer, Document> {
@@ -58,7 +66,7 @@ public class AsyncDownloader {
 				Document doc = this.getDocument(params[i]);
 				documents.add(doc);
 				// Test for success
-				if (doc != null) {
+				if (doc == null) {
 					Log.d(TAG, "Getting document at " + params[i] + " failed");
 					cancel(true);
 				}
@@ -92,8 +100,6 @@ public class AsyncDownloader {
 
 				stream.close();
 				
-				// http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
-//				document.getDocumentElement().normalize();
 				return document;
 				
 			} catch (MalformedURLException e) {
@@ -110,13 +116,13 @@ public class AsyncDownloader {
 		
 		@Override
 		protected void onPreExecute() {
-			
+			progressBar.setVisibility(ProgressBar.VISIBLE);
 		}
 		
 		@Override
 		protected void onProgressUpdate(Integer... progress) {
 			Log.d(TAG, "onProgress args: " + progress.length);
-			CharSequence text = "Length is 0";
+			CharSequence text = "0";
 			if (progress.length > 0) text = Integer.toString(progress[0]);
 				
 //			Log.d(TAG, "Progress: " + progress[0]);
@@ -124,8 +130,17 @@ public class AsyncDownloader {
 			activityContext.setText(text);
 	    }
 		
+		private void addSuccessIcon() {
+			ImageView img = new ImageView(activityContext.getContext());
+		}
+		
 		@Override
 		protected void onPostExecute(Document result) {
+			finished = true;
+			
+			// Remove spinner
+			((RelativeLayout)progressBar.getParent()).removeView(progressBar);
+			
 //	        showDialog("Downloaded " + result + " bytes");
 	    }
 		

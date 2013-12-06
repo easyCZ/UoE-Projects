@@ -11,5 +11,14 @@
     <string name="searchHint">Search..</string>
     <string name="availableCourses">Available courses:</string>
     <string name="sidebarContentDesc">Course Image</string>
+    
+    <!-- Download and Parse -->
+    <string name="downloadAndParseImgDesc">Download</string>
+    <string name="downloadAndParseTitle">Download and Parse XML</string>
+    <string name="downloadAndParseProgress">Progress:</string>
+    <string name="downloadAndParseDefaultProgress">0</string>
+    <string name="downloadAndParseXofY">of</string>
+    <string name="downloadAndParseTotalDefault">3</string>
+    
 
 </resources>

@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
+import android.text.Layout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -20,6 +21,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,15 +31,14 @@ public class MainActivity extends Activity implements DrawerListener {
 	private final String TAG = "MainActivity";
 	private DrawerLayout drawer;
 	private AutoCompleteTextView autoComplete;
-	private Activity currentActivity;
+	private int progressField = R.id.downloadAndParseProgressValue;
+	private int progressBar = R.id.downloadAndParseSpinner;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
-        currentActivity = this;
         
         Log.i(TAG, "Main Activity created.");
         
@@ -67,19 +69,22 @@ public class MainActivity extends Activity implements DrawerListener {
 
           });
         
-        Button btn = (Button) findViewById(R.id.button1);
-        btn.setOnClickListener(new Button.OnClickListener() {
+        RelativeLayout dlAndParse = (RelativeLayout) findViewById(R.id.downloadAndParse);
+        dlAndParse.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				Log.d(TAG, "Starting AsyncDownloader");
-				AsyncDownloader aDownloader = new AsyncDownloader((TextView) findViewById(R.id.textView1));
+				AsyncDownloader aDownloader = new AsyncDownloader(
+					(TextView) findViewById(progressField),
+					(ProgressBar) findViewById(progressBar));
 				aDownloader.execute(
 					"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/timetable.xml",
 					"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/venues.xml",
 					"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/courses.xml");
 			}
 		});
+        
         
     }
     

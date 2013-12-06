@@ -1,0 +1,76 @@
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android" 
+   	android:layout_width="match_parent"
+    android:layout_height="60dp"
+	android:background="@drawable/download_and_parse_style"
+	android:id="@+id/downloadAndParse"
+	android:layout_margin="10dp"
+	android:layout_below="@id/titleBar"
+	android:duplicateParentState="true" >
+
+    <ImageView
+        android:id="@+id/downloadAndParseIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:padding="12dp"
+        android:src="@drawable/download2"
+        android:contentDescription="@string/downloadAndParseImgDesc" />
+
+    <TextView
+        android:id="@+id/downloadAndParseTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/downloadAndParseIcon"
+        android:text="@string/downloadAndParseTitle"
+        android:textColor="@color/downloadAndParseTitleColor" />
+    
+    <LinearLayout 
+        android:id="@+id/downloadAndParseDescSection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/downloadAndParseTitle"
+        android:layout_toRightOf="@id/downloadAndParseIcon">
+        
+        <TextView
+	        android:id="@+id/downloadAndParseProgress"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+			android:text="@string/downloadAndParseProgress" />
+        
+        <TextView
+	        android:paddingLeft="8dp"
+	        android:paddingRight="8dp"
+	        android:id="@+id/downloadAndParseProgressValue"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/downloadAndParseDefaultProgress" />
+        
+        <TextView
+	        android:paddingRight="8dp"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/downloadAndParseXofY" />
+	
+	    <TextView
+	        android:id="@+id/downloadAndParseTotal"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/downloadAndParseTotalDefault" />
+        
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/downloadAndParseSpinner"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp" />
+
+</RelativeLayout>
