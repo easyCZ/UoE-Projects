@@ -12,7 +12,7 @@ import com.ug3.selp.timetableapp.models.Venue;
 
 import android.util.Log;
 
-public class VenueParser {
+public class VenueParser implements Parser<Venue>{
 
 	private List<Venue> venues;
 	private String TAG = "VenueParser";
@@ -21,12 +21,8 @@ public class VenueParser {
 		venues = new ArrayList<Venue>();
 	}
 
-	/*
-	 * Extracts venues out of Venues XML Document
-	 * @Document document	Converted XML Document
-	 */
-	public void extractVenues(Document document) {
-		
+	@Override
+	public void extract(Document document) {
 		NodeList buildings = document.getElementsByTagName("building");
 		
 		if (buildings != null && buildings.getLength() > 0) {
@@ -59,8 +55,15 @@ public class VenueParser {
 		Log.i(TAG, "Parsing venues has suceeded.");
 	}
 
-	public List<Venue> getVenues() {
+	@Override
+	public List<Venue> get() {
 		return venues;
+	}
+
+	@Override
+	public Class<Venue> getMyType() {
+		// TODO Auto-generated method stub
+		return Venue.class;
 	}
 	
 	

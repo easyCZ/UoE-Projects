@@ -23,12 +23,16 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.ug3.selp.timetableapp.models.Course;
+import com.ug3.selp.timetableapp.models.Timetable;
 import com.ug3.selp.timetableapp.models.Venue;
+import com.ug3.selp.timetableapp.parser.CourseParser;
+import com.ug3.selp.timetableapp.parser.Parser;
+import com.ug3.selp.timetableapp.parser.TimetableParser;
 import com.ug3.selp.timetableapp.parser.VenueParser;
 
 import db.DatabaseHelper;
 
-import android.R;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -42,6 +46,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class AsyncDownloader {
+	
+	private final String TAG = "AsyncDownloader";
 	
 	private Context context;
 	private TextView textView;
@@ -57,47 +63,49 @@ public class AsyncDownloader {
 		this.downloadAndParseDesc = downloadAndParseDesc;
 		this.context = applicationContext;
 		
-		db = new DatabaseHelper(applicationContext);
+		db = new DatabaseHelper(this.context);
 	}
 	
-	public void execute(String...strings) {
+	public void execute(String...strings) throws Exception {
+		if (strings.length != 3)
+			throw new Exception(TAG + ": AsyncDownloader requires 3 URLs to be passed in.");
 		if (!finished)
 			new AsyncDownloaderTask().execute(strings);
 	}
 	
 	private class AsyncDownloaderTask extends AsyncTask<String, Integer, Document> {
 		
-		private int MAX_TOTAL = 3;
-		private List<Document> documents = new ArrayList<Document>();
 		private String TAG = "AsyncDownloader";
+		private Parser<Venue> venueParser = new VenueParser();
+		private Parser<Course> courseParser = new CourseParser();
+		private Parser<Timetable> timetableParser = new TimetableParser();
+
 
 		@Override
 		protected Document doInBackground(String... params) {
 			Log.d(TAG, "doInBackground called with " + params.length + " params.");
+//			long id;
 			
-			for (int i = 0; i < params.length; i++) {
-				Document doc = this.getDocument(params[i]);
-				VenueParser venueParser = new VenueParser();
-				venueParser.extractVenues(doc);
-				List<Venue> venues = venueParser.getVenues();
-				
-				for (Venue v: venues) {
-					long id = db.insertVenue(v);
-					Log.d(TAG, v.toString() + " inserted with id: " +id);
-				}
-				
-				documents.add(doc);
-				// Test for success
-				if (doc == null) {
-					Log.d(TAG, "Getting document at " + params[i] + " failed");
-					cancel(false);
-				}
-				publishProgress(i + 1);
+			venueParser.extract(this.getDocument(params[0]));
+			for (Venue v: venueParser.get()) {
+				db.insert(v);
 			}
+			publishProgress(1);
+			
+			courseParser.extract(this.getDocument(params[1]));
+			for (Course c: courseParser.get()) {
+				db.insert(c);
+			}
+			publishProgress(2);
+//			
+//			timetableParser.extract(this.getDocument(params[2]));
+//			for (Timetable t: timetableParser.get()) {
+//				id = db.insert(t);
+//			}
+//			publishProgress(3);
 			
 			return null;
-		}
-		
+		}	
 		
 		protected Document getDocument(String address) {
 			try {
@@ -148,9 +156,6 @@ public class AsyncDownloader {
 			Log.d(TAG, "onProgress args: " + progress.length);
 			CharSequence text = "0";
 			if (progress.length > 0) text = Integer.toString(progress[0]);
-				
-//			Log.d(TAG, "Progress: " + progress[0]);
-			
 			textView.setText(text);
 	    }
 		
@@ -162,11 +167,8 @@ public class AsyncDownloader {
 		@Override
 		protected void onPostExecute(Document result) {
 			finished = true;
-			
 			// Remove spinner
 			((RelativeLayout)progressBar.getParent()).removeView(progressBar);
-			
-//	        showDialog("Downloaded " + result + " bytes");
 	    }
 		
 		// http://stackoverflow.com/questions/2325388/java-shortest-way-to-pretty-print-to-stdout-a-org-w3c-dom-document

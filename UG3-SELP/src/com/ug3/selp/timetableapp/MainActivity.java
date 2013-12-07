@@ -96,10 +96,17 @@ public class MainActivity extends Activity implements DrawerListener {
 					(TextView) findViewById(progressField),
 					(ProgressBar) findViewById(progressBar),
 					(LinearLayout) findViewById(downloadAndParseDesc));
-				aDownloader.execute(
-//					"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/timetable.xml",
-//					"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/courses.xml",
-					"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/venues.xml");
+				try {
+					aDownloader.execute(
+							"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/venues.xml",
+							"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/courses.xml",
+							"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/timetable.xml");
+				} catch (Exception e) {
+					// TODO: Show error message
+					Log.w(TAG, "3 URLs are required for AsyncDownloader.");
+					Toast.makeText(getApplicationContext(), "Three urls are required", Toast.LENGTH_SHORT).show();
+				}
+				
 			}
 		});
         

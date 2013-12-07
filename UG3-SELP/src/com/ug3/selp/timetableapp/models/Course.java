@@ -1,28 +1,28 @@
 package com.ug3.selp.timetableapp.models;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class Course {
 	
-	private URI url, drps;
-	private String name, euclid, acronym, lecturer;
+	private String url, drps;
+	private String name, euclid, acronym, lecturer, semester;
 	private List<String> degree;
-	private int level, credit, year, semester;
+	private int level, credit, year;
 	
 	public Course() {
 		this.url = this.drps = null;
 		this.degree = new ArrayList<String>();
-		this.name = this.euclid = this.acronym = this.lecturer = "";
-		this.level = this.credit = this.year = this.semester = -1;
+		this.name = this.euclid = this.acronym = this.semester = this.lecturer = "";
+		this.level = this.credit = this.year = -1;
 	}
 
 	// Setters and getters
-	public URI getUrl() {return url;}
-	public void setUrl(URI url) {this.url = url;}
-	public URI getDrps() {return drps;}
-	public void setDrps(URI drps) {this.drps = drps;}
+	public String getUrl() {return url;}
+	public void setUrl(String url) {this.url = url;}
+	public String getDrps() {return drps;}
+	public void setDrps(String drps) {this.drps = drps;}
 	public String getName() {return name;}
 	public void setName(String name) {this.name = name;}
 	public String getEuclid() {return euclid;}
@@ -39,7 +39,38 @@ public class Course {
 	public void setCredit(int credit) {this.credit = credit;}
 	public int getYear() {return year;}
 	public void setYear(int year) {this.year = year;}
-	public int getSemester() {return semester;}
-	public void setSemester(int semester) {this.semester = semester;}
+	public String getSemester() {return semester;}
+	public void setSemester(String semester) {this.semester = semester;}
+	
+	public void addDegree(String degree) {
+		this.degree.add(degree);
+	}
+	
+	public String toString() {
+		return String.format(Locale.ENGLISH,
+				"{\n" +
+				" name: %s\n" + 		// name
+				" acronym: %s\n" + 		// acronym 
+				" lecturer: %s\n" +		// lecturer
+				" drps: %s\n" +		// drps
+				" url: %s\n" +		// url
+				" euclid: %s\n" +		// euclid
+				" level: %d\n" +	// level
+				" year: %d\n" +	// year
+				" credit: %d\n" +	// credit
+				" semester: %s\n" +		// semester
+				" degree: %s\n" +
+				"}",			// degree - CSV
+				name, acronym, lecturer, drps, url, euclid, level, year, credit, semester, listToString(degree));	
+	}
+	
+	public static String listToString(List<String> list) {
+		StringBuilder result = new StringBuilder();
+		for(String string : list) {
+		    result.append(string);
+		    result.append(",");
+		}
+		return result.length() > 0 ? result.substring(0, result.length() - 1): "";
+	}
 
 }
