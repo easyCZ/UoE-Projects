@@ -1,11 +1,9 @@
 package com.ug3.selp.timetableapp.models;
 
-import java.net.URI;
-
 public class Venue {
 	
 	private String name, description;
-	private URI map;
+	private String map;
 	
 	public Venue() {
 		this.setName(null);
@@ -18,7 +16,12 @@ public class Venue {
 	public void setName(String name) {this.name = name;}
 	public String getDescription() {return description;}
 	public void setDescription(String description) {this.description = description;}
-	public URI getMap() {return map;}
-	public void setMap(URI map) {this.map = map;}
+	public String getMap() {return map;}
+	public void setMap(String map) {this.map = map;}
+	
+	@Override
+	public String toString() {
+		return String.format("%s - %s - %s", name, description, map);
+	}
 
 }

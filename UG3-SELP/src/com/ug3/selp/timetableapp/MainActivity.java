@@ -9,6 +9,7 @@ import com.ug3.selp.timetableapp.models.Course;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.text.Layout;
@@ -20,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -28,11 +30,16 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity implements DrawerListener {
 	
+	public static final String PREFS_NAME = "UoEInfTimetable";	
+	private SharedPreferences preferences;
+	
 	private final String TAG = "MainActivity";
+	
 	private DrawerLayout drawer;
 	private AutoCompleteTextView autoComplete;
 	private int progressField = R.id.downloadAndParseProgressValue;
 	private int progressBar = R.id.downloadAndParseSpinner;
+	private int downloadAndParseDesc = R.id.downloadAndParseDescSection;
 
 
     @Override
@@ -40,7 +47,16 @@ public class MainActivity extends Activity implements DrawerListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        Log.i(TAG, "Main Activity created.");
+        preferences = this.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        
+        boolean dataAvailable = preferences.getBoolean("dataAvailable", false);
+        
+        if (dataAvailable) {
+        	RelativeLayout layout = (RelativeLayout) findViewById(R.id.downloadAndParse);
+        	layout.setVisibility(View.GONE);
+        }
+        	
+        
         
         autoComplete = (AutoCompleteTextView) findViewById(R.id.autoCompleteTextView1);
         // Attach Drawer Listener		
@@ -76,19 +92,22 @@ public class MainActivity extends Activity implements DrawerListener {
 			public void onClick(View v) {
 				Log.d(TAG, "Starting AsyncDownloader");
 				AsyncDownloader aDownloader = new AsyncDownloader(
+					getApplicationContext(),
 					(TextView) findViewById(progressField),
-					(ProgressBar) findViewById(progressBar));
+					(ProgressBar) findViewById(progressBar),
+					(LinearLayout) findViewById(downloadAndParseDesc));
 				aDownloader.execute(
-					"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/timetable.xml",
-					"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/venues.xml",
-					"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/courses.xml");
+//					"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/timetable.xml",
+//					"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/courses.xml",
+					"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/venues.xml");
 			}
 		});
         
         
     }
     
-    private List<Course> generateCourses() {
+
+	private List<Course> generateCourses() {
     	List<Course> list = new ArrayList<Course>();
     	Course course = new Course();
     		   course.setName("CourseName");

@@ -23,6 +23,11 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.ug3.selp.timetableapp.models.Venue;
+import com.ug3.selp.timetableapp.parser.VenueParser;
+
+import db.DatabaseHelper;
+
 import android.R;
 import android.app.Activity;
 import android.content.Context;
@@ -38,13 +43,21 @@ import android.widget.TextView;
 
 public class AsyncDownloader {
 	
-	private TextView activityContext;
+	private Context context;
+	private TextView textView;
 	private ProgressBar progressBar;
+	private LinearLayout downloadAndParseDesc;
 	private boolean finished = false;
 	
-	public AsyncDownloader(TextView context, ProgressBar progressBar) {
-		this.activityContext = context;
+	private DatabaseHelper db;
+	
+	public AsyncDownloader(Context applicationContext, TextView context, ProgressBar progressBar, LinearLayout downloadAndParseDesc) {
+		this.textView = context;
 		this.progressBar = progressBar;
+		this.downloadAndParseDesc = downloadAndParseDesc;
+		this.context = applicationContext;
+		
+		db = new DatabaseHelper(applicationContext);
 	}
 	
 	public void execute(String...strings) {
@@ -62,13 +75,22 @@ public class AsyncDownloader {
 		protected Document doInBackground(String... params) {
 			Log.d(TAG, "doInBackground called with " + params.length + " params.");
 			
-			for (int i = 0; i < MAX_TOTAL; i++) {
+			for (int i = 0; i < params.length; i++) {
 				Document doc = this.getDocument(params[i]);
+				VenueParser venueParser = new VenueParser();
+				venueParser.extractVenues(doc);
+				List<Venue> venues = venueParser.getVenues();
+				
+				for (Venue v: venues) {
+					long id = db.insertVenue(v);
+					Log.d(TAG, v.toString() + " inserted with id: " +id);
+				}
+				
 				documents.add(doc);
 				// Test for success
 				if (doc == null) {
 					Log.d(TAG, "Getting document at " + params[i] + " failed");
-					cancel(true);
+					cancel(false);
 				}
 				publishProgress(i + 1);
 			}
@@ -116,6 +138,8 @@ public class AsyncDownloader {
 		
 		@Override
 		protected void onPreExecute() {
+			
+			downloadAndParseDesc.setVisibility(LinearLayout.VISIBLE);
 			progressBar.setVisibility(ProgressBar.VISIBLE);
 		}
 		
@@ -127,11 +151,12 @@ public class AsyncDownloader {
 				
 //			Log.d(TAG, "Progress: " + progress[0]);
 			
-			activityContext.setText(text);
+			textView.setText(text);
 	    }
 		
 		private void addSuccessIcon() {
-			ImageView img = new ImageView(activityContext.getContext());
+			ImageView img = new ImageView(textView.getContext());
+//			img.setBackground(R.id.)
 		}
 		
 		@Override

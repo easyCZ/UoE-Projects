@@ -1,7 +1,5 @@
 package com.ug3.selp.timetableapp.parser;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,20 +38,16 @@ public class VenueParser {
 				
 				for (int j = 0; j < buildingElems.getLength(); j++) {
 					Node tag = buildingElems.item(j);
-					if (tag.getNodeType() != Node.TEXT_NODE) {
-						String nodeName = tag.getNodeName();
-						
 					
-						if (nodeName == "name")
+					
+					if (tag.getNodeType() != Node.TEXT_NODE) {
+						String nodeName = tag.getNodeName();					
+						if (nodeName.equals("name"))
 							venue.setName(tag.getTextContent());
-						else if (nodeName == "description")
+						else if (nodeName.equals("description"))
 							venue.setDescription(tag.getTextContent());
-						else if (nodeName == "map")
-							try {
-								venue.setMap(new URI(tag.getTextContent()));
-							} catch (URISyntaxException e) {
-								Log.e(TAG, "URISyntaxException - bad url");
-							}
+						else if (nodeName.equals("map"))
+							venue.setMap(tag.getTextContent());
 					}
 				}
 				

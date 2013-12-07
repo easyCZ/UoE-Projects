@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="android.support.v4.app.Fragment"/>
-<fullyQualifiedTypeName name="android.os.Bundle"/>
-<fullyQualifiedTypeName name="android.view.TextureView"/>
-<fullyQualifiedTypeName name="android.util.Log"/>
-<fullyQualifiedTypeName name="android.view.View.OnTouchListener"/>
-<fullyQualifiedTypeName name="android.view.MotionEvent"/>
-<fullyQualifiedTypeName name="com.ug3.selp.timetableapp.R.color"/>
 <fullyQualifiedTypeName name="android.widget.ListView"/>
 <fullyQualifiedTypeName name="java.util.HashMap"/>
 <fullyQualifiedTypeName name="java.lang.Object"/>
@@ -26,12 +19,9 @@
 <fullyQualifiedTypeName name="com.ug3.selp.timetableapp.DrawerArrayAdapter"/>
 <fullyQualifiedTypeName name="com.ug3.selp.timetableapp.R.layout"/>
 <fullyQualifiedTypeName name="com.ug3.selp.timetableapp.models.Course"/>
-<fullyQualifiedTypeName name="android.widget.ImageView"/>
 <fullyQualifiedTypeName name="com.ug3.selp.timetableapp.R.drawable"/>
 <fullyQualifiedTypeName name="java.lang.Thread"/>
 <fullyQualifiedTypeName name="org.w3c.dom.Document"/>
-<fullyQualifiedTypeName name="com.ug3.selp.timetableapp.R.id"/>
-<fullyQualifiedTypeName name="android.view.View.OnClickListener"/>
 <fullyQualifiedTypeName name="javax.xml.transform.TransformerFactory"/>
 <fullyQualifiedTypeName name="java.io.OutputStream"/>
 <fullyQualifiedTypeName name="javax.xml.transform.TransformerException"/>
@@ -50,10 +40,24 @@
 <fullyQualifiedTypeName name="android.app.Activity"/>
 <fullyQualifiedTypeName name="com.ug3.selp.timetableapp.MainActivity"/>
 <fullyQualifiedTypeName name="android.R"/>
-<fullyQualifiedTypeName name="android.R.id"/>
 <fullyQualifiedTypeName name="android.widget.Button"/>
 <fullyQualifiedTypeName name="java.lang.CharSequence"/>
-<fullyQualifiedTypeName name="android.content.Context"/>
 <fullyQualifiedTypeName name="android.view.View"/>
 <fullyQualifiedTypeName name="android.widget.TextView"/>
+<fullyQualifiedTypeName name="android.text.Layout"/>
+<fullyQualifiedTypeName name="android.view.View.OnClickListener"/>
+<fullyQualifiedTypeName name="android.widget.ProgressBar"/>
+<fullyQualifiedTypeName name="android.widget.ImageView"/>
+<fullyQualifiedTypeName name="android.R.id"/>
+<fullyQualifiedTypeName name="android.content.SharedPreferences"/>
+<fullyQualifiedTypeName name="com.ug3.selp.timetableapp.R.id"/>
+<fullyQualifiedTypeName name="android.widget.RelativeLayout"/>
+<fullyQualifiedTypeName name="android.widget.LinearLayout"/>
+<fullyQualifiedTypeName name="com.ug3.selp.timetableapp.parser.VenueParser"/>
+<fullyQualifiedTypeName name="android.database.sqlite.SQLiteOpenHelper"/>
+<fullyQualifiedTypeName name="android.content.Context"/>
+<fullyQualifiedTypeName name="com.ug3.selp.timetableapp.models.Venue"/>
+<fullyQualifiedTypeName name="android.database.sqlite.SQLiteDatabase"/>
+<fullyQualifiedTypeName name="android.content.ContentValues"/>
+<fullyQualifiedTypeName name="db.DatabaseHelper"/>
 </qualifiedTypeNameHistroy>
