@@ -1,5 +1,0 @@
-INDEX VERSION 1.126+/home/easy/_programming/UoE-Projects/.metadata/.plugins/org.eclipse.jdt.core
-2915293973.index
-1543119994.index
-2427344132.index
-81448869.index

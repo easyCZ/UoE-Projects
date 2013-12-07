@@ -1,7 +1,0 @@
-package com.example.uoeinformaticstimetable.models;
-
-public enum Semester {
-	
-	S1, S2;
-
-}

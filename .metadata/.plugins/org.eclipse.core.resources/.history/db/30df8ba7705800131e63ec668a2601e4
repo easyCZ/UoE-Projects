@@ -1,7 +1,0 @@
-package com.ug3.selp.timetableapp.parser;
-
-import java.io.File;
-
-public abstract class XMLParser {}
-
-

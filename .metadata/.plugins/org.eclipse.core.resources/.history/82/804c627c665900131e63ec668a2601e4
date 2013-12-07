@@ -1,7 +1,0 @@
-package com.ug3.selp.timetableapp.service;
-
-import android.app.Service;
-
-public class XMLDownloader extends Service {
-
-}

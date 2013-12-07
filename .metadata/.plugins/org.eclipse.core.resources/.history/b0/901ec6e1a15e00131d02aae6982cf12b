@@ -1,7 +1,0 @@
-package com.ug3.selp.timetableapp.service;
-
-public class Preferences {
-	
-	public static final String PREFS_NAME = "UoE_Inf_Timetable";
-
-}
