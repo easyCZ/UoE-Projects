@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <color name="titleBar">#6ea552</color>
+    <color name="titleBarBorder">#56903b</color>
+    <color name="titleBarOnClick">#56903b</color>
+    <color name="actionBarDrawerBG">#333c43</color>
+    <color name="white">#ffffff</color>
+    <color name="sidebarBG">#454e55</color>
+    <color name="sidebarSubHeadingTextColor">#8e9397</color>
+    
+    <!-- Download and Parse -->
+    <color name="downloadAndParseTitleColor">#777777</color>
+    
+</resources>
