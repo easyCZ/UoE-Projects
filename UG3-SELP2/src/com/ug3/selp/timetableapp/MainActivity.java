@@ -10,8 +10,12 @@ import com.ug3.selp.timetableapp.service.AsyncDownloader;
 import com.ug3.selp.timetableapp.service.Preferences;
 
 import android.os.Bundle;
-import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.util.Log;
@@ -28,7 +32,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity implements DrawerListener, OnClickListener{
+public class MainActivity extends FragmentActivity implements DrawerListener, OnClickListener{
 	
 	public static final String PREFS_NAME = "UoEInfTimetable";		
 	private final String TAG = "MainActivity";
@@ -41,10 +45,10 @@ public class MainActivity extends Activity implements DrawerListener, OnClickLis
 	
 	private Preferences preferences;
 	
+	private FragmentReceiver fragmentReceiver;
+	
 	private DatabaseHelper db;
 	private DrawerArrayAdapter adapter;
-	
-//	private List<String> drawerFilters = new ArrayList<String>();
 	
 	private final int[] drawerFilterIDs = new int[] {
     	R.id.filtersY1, R.id.filtersY2, R.id.filtersY3, R.id.filtersY4, R.id.filtersY5};
@@ -61,7 +65,24 @@ public class MainActivity extends Activity implements DrawerListener, OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        fragmentReceiver = new FragmentReceiver();
+        this.registerReceiver(
+        	fragmentReceiver, new IntentFilter(Resources.FRAGMENT_BUNDLE_KEY));
         
+        if (findViewById(R.id.timetableFragment) != null) {
+        	
+        	if (savedInstanceState != null)
+        		return;
+        	
+        	TimetableListFragment fragment = new TimetableListFragment();
+        	
+        	fragment.setArguments(getIntent().getExtras());
+        	getSupportFragmentManager().beginTransaction()
+        		.add(R.id.timetableFragment, fragment).commit();
+        	
+        }
+        
+
         // Init preferences
         preferences = new Preferences(this.getApplicationContext(), PREFS_NAME, Context.MODE_PRIVATE);
         handlePreferences();
@@ -69,18 +90,14 @@ public class MainActivity extends Activity implements DrawerListener, OnClickLis
         // Init database
         db = new DatabaseHelper(getApplicationContext());
 
-        
         setUpDrawer(R.id.drawer_layout);
         setupCourseFilters();
         
         final ListView listview = (ListView) findViewById(R.id.listview);
-        
         final List<Course> courses = db.getCoursesFiltered(activeYears.getFilters());
         
         adapter = new DrawerArrayAdapter(this, R.layout.sidebar_drawer, courses);
-        
         listview.setAdapter(adapter);
-        
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -130,12 +147,13 @@ public class MainActivity extends Activity implements DrawerListener, OnClickLis
 			}
 		});
     }
-    
-    @Override
+
+	@Override
     protected void onStop() {
         super.onStop();
         Log.d(TAG, DatabaseHelper.listToString(activeYears.getFilters()));
-        preferences.set("drawerFilters", activeYears.getFilters());
+        if (preferences != null)
+        	preferences.set("drawerFilters", activeYears.getFilters());
     }
     
     private void setUpDrawer(int drawerLayout) {
@@ -157,12 +175,11 @@ public class MainActivity extends Activity implements DrawerListener, OnClickLis
 	}
 
 	private void handlePreferences() {        
-        if (preferences.getBoolean("dataAvailable", false)) {
+        if (!preferences.getBoolean("dataAvailable", false)) {
         	RelativeLayout layout = (RelativeLayout) findViewById(R.id.downloadAndParse);
-        	layout.setVisibility(View.GONE);
+        	layout.setVisibility(View.VISIBLE);
         }
         activeYears.setFilters(preferences.getFilters("drawerFilters"));
-        Log.d(TAG, "handle: " + DatabaseHelper.listToString(activeYears.getFilters()));
         
         for (int i = 0; i < drawerFilterIDs.length; i++) {
         	ImageView img = (ImageView) findViewById(drawerFilterIDs[i]);
@@ -228,6 +245,13 @@ public class MainActivity extends Activity implements DrawerListener, OnClickLis
 			activeYears.add((String) img.getTag());
 	}
 	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (db != null)
+			db.close();
+		this.unregisterReceiver(fragmentReceiver);
+	}		
 	
 	@Override
 	public void onDrawerClosed(View arg0) {}
@@ -239,5 +263,24 @@ public class MainActivity extends Activity implements DrawerListener, OnClickLis
 	public void onDrawerStateChanged(int arg0) {}
 	
 	@Override
-	public void onDrawerSlide(View arg0, float arg1) {}    
+	public void onDrawerSlide(View arg0, float arg1) {}   
+	
+	public class FragmentReceiver extends BroadcastReceiver {
+
+		public void onReceive(Context context, Intent intent) {
+			int id = intent.getIntExtra(Resources.FRAGMENT_ACTION_KEY, -1);
+			if (id != -1) {
+				String acr = intent.getStringExtra(Resources.FRAGMENT_ACRONYM_KEY);
+				LectureDetailFragment fragment = new LectureDetailFragment();
+				Bundle bundle = new Bundle();
+				bundle.putString(Resources.FRAGMENT_ACRONYM_KEY, acr);
+				fragment.setArguments(bundle);
+				FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+				transaction.replace(R.id.timetableFragment, fragment);
+				transaction.addToBackStack(null);
+				transaction.commit();
+			}
+		}
+		
+	}
 }

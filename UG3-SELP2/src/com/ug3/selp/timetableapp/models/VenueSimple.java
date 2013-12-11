@@ -2,6 +2,16 @@ package com.ug3.selp.timetableapp.models;
 
 public class VenueSimple {
 	
+	public VenueSimple(String room, String building) {
+		this.room = room;
+		this.building = building;
+	}
+	
+	public VenueSimple() {
+		this.room = "";
+		this.building = "";
+	}
+	
 	private String room;
 	private String building;
 	public String getRoom() {

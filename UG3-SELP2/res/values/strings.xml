@@ -11,7 +11,7 @@
     <string name="searchHint">Search..</string>
     <string name="availableCourses">Available courses:</string>
     <string name="sidebarContentDesc">Course Image</string>
-    
+
     <!-- Download and Parse -->
     <string name="downloadAndParseImgDesc">Download</string>
     <string name="downloadAndParseTitle">Download and Parse XML</string>
@@ -19,10 +19,34 @@
     <string name="downloadAndParseDefaultProgress">0</string>
     <string name="downloadAndParseXofY">of</string>
     <string name="downloadAndParseTotalDefault">3</string>
-    
     <string name="actionBarDrawerFilters">FILTERS:</string>
-    
     <string name="divider"> | </string>
+    <string name="MON">MON</string>
+    <string name="TUE">TUE</string>
+    <string name="WED">WED</string>
+    <string name="THU">THU</string>
+    <string name="FRI">FRI</string>
     
+    <string name="monTag">Monday</string>
+    <string name="tueTag">Tuesday</string>
+    <string name="wedTag">Wednesday</string>
+    <string name="thuTag">Thursday</string>
+    <string name="friTag">Friday</string>
+    
+    <string name="lectureDetailActivity">LectureDetailActivity</string>
+    <string name="title_activity_lecture_detail">LectureDetailActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="years_">"Year: "</string>
+    <string name="term_">"Term: "</string>
+    <string name="level_">"Level: "</string>
+    <string name="credit_">"Credit: "</string>
+    <string name="lecturer_">Lecturer:</string>
+    <string name="course_web_">Course web:</string>
+    <string name="acronym_">Acronym:</string>
+    <string name="euclid_">Euclid:</string>
+    <string name="view_page">View Page</string>
+    <string name="drps_">DRPS:</string>
+    <string name="lectures_">Lectures:</string>
+    <string name="_">-</string>
 
 </resources>

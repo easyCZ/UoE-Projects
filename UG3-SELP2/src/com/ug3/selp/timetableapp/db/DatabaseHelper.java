@@ -6,7 +6,9 @@ import java.util.Locale;
 
 import com.ug3.selp.timetableapp.models.Course;
 import com.ug3.selp.timetableapp.models.Lecture;
+import com.ug3.selp.timetableapp.models.TimeSlot;
 import com.ug3.selp.timetableapp.models.Venue;
+import com.ug3.selp.timetableapp.models.VenueSimple;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -17,7 +19,6 @@ import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 	
-	@SuppressWarnings("unused")
 	private final String TAG = "DatabaseHelper";
 	
 	private static final int DATABASE_VERSION = 5;
@@ -178,7 +179,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			else values.put(COURSE_TRACKED, 0);
 			
 			db.update(TABLE_COURSES, values, COURSE_ACRONYM + "=?", new String[] {course.getAcronym()});;
-			Log.d(TAG, listToString(getTrackedCourses()));
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -255,6 +255,162 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		return courses;
 	}
 	
+	public List<Lecture> getLecturesByAcronym(String acr) {
+		List<Lecture> lectures = new ArrayList<Lecture>();
+		Cursor cursor = null;
+		try {
+			SQLiteDatabase db = getWritableDatabase();
+			String query = "select * from lectures where name=\"" + acr + "\"";
+			
+			cursor = db.rawQuery(query, null);
+			if (cursor.moveToFirst()) {
+				do {
+					lectures.add(castToLecture(cursor));
+				} while (cursor.moveToNext());
+			}
+		} catch (Exception e) {
+			Log.d(TAG, e.toString());
+		} finally {
+			if (cursor != null)
+				cursor.close();
+		}
+		return lectures;
+	}
+	
+	public List<Lecture> getLecturesByDay(String day) {
+		List<Lecture> lectures = new ArrayList<Lecture>();
+		Cursor cursor = null;
+		try {
+			SQLiteDatabase db = getWritableDatabase();
+			
+//			String query = String.format(Locale.ENGLISH,
+//				"SELECT DISTINCT * FROM %s L, %s C WHERE L.%s=\"%s\" AND C.%s=%d", 
+//				TABLE_LECTURES, TABLE_COURSES, LECTURE_DAY, day, COURSE_TRACKED, 1);
+//			String query = "select distinct * from lectures L, courses C " +
+//							"WHERE L.day=\"Tuesday\" AND C.tracked = 1 AND L.name = C.acronym";
+			String query = "select * from lectures where day=\"" + day + "\"";
+			
+			cursor = db.rawQuery(query, null);
+			if (cursor.moveToFirst()) {
+				do {
+					lectures.add(castToLecture(cursor));
+				} while (cursor.moveToNext());
+			}
+		} catch (Exception e) {
+			Log.d(TAG, e.toString());
+		} finally {
+			if (cursor != null)
+				cursor.close();
+		}
+		return lectures;
+	}
+	
+	public List<Lecture> getLectures() {
+		List<Lecture> lectures = new ArrayList<Lecture>();
+		Cursor cursor = null;
+		try {
+			SQLiteDatabase db = getWritableDatabase();
+			
+			String query = String.format(Locale.ENGLISH,
+				"SELECT * FROM %s", TABLE_LECTURES);
+			
+			cursor = db.rawQuery(query, null);
+			if (cursor.moveToFirst()) {
+				do {
+					lectures.add(castToLecture(cursor));
+				} while (cursor.moveToNext());
+			}
+		} catch (Exception e) {
+			Log.d(TAG, e.toString());
+		} finally {
+			if (cursor != null)
+				cursor.close();
+		}
+		return lectures;
+	}
+	
+	public Venue getVenueByName(String name) {
+		Cursor cursor = null;
+		try {
+			SQLiteDatabase db = getWritableDatabase();
+			
+			String query = String.format(Locale.ENGLISH,
+				"SELECT * FROM %s WHERE %s=\"%s\"", TABLE_VENUES, VENUE_NAME, name);
+			cursor = db.rawQuery(query, null);
+			if (cursor.moveToFirst()) {
+				return castToVenue(cursor);
+			}
+		} catch (Exception e) {
+			Log.d(TAG, e.toString());
+		} finally {
+			if (cursor != null)
+				cursor.close();
+		}
+		return null;
+	}
+	
+	public Course getCourseByName(String name) {
+		Cursor cursor = null;
+		try {
+			SQLiteDatabase db = getWritableDatabase();
+			
+			String query = String.format(Locale.ENGLISH,
+				"SELECT * FROM %s WHERE %s=\"%s\"", TABLE_COURSES, COURSE_NAME, name);
+			cursor = db.rawQuery(query, null);
+			if (cursor.moveToFirst()) {
+				return castToCourse(cursor);
+			}
+		} catch (Exception e) {
+			Log.d(TAG, e.toString());
+		} finally {
+			if (cursor != null)
+				cursor.close();
+		}
+		return null;
+	}
+	
+	public Course getCourseByAcronym(String acr) {
+		Cursor cursor = null;
+		try {
+			SQLiteDatabase db = getWritableDatabase();
+			
+			String query = String.format(Locale.ENGLISH,
+				"SELECT * FROM %s WHERE %s=\"%s\"", TABLE_COURSES, COURSE_ACRONYM, acr);
+			cursor = db.rawQuery(query, null);
+			if (cursor.moveToFirst()) {
+				return castToCourse(cursor);
+			}
+		} catch (Exception e) {
+			Log.d(TAG, e.toString());
+		} finally {
+			if (cursor != null)
+				cursor.close();
+		}
+		return null;
+	}
+	
+	public Lecture getLectureByName(String name) {
+		Cursor cursor = null;
+		try {
+			SQLiteDatabase db = getWritableDatabase();
+			
+			String query = String.format(Locale.ENGLISH,
+				"SELECT * FROM %s WHERE %s=\"%s\"", TABLE_LECTURES, LECTURE_COURSE_NAME, name);
+			
+			Log.d(TAG, query);
+			cursor = db.rawQuery(query, null);
+			if (cursor.moveToFirst()) {
+				return castToLecture(cursor);
+			}
+		} catch (Exception e) {
+			Log.d(TAG, e.toString());
+		} finally {
+			if (cursor != null)
+				cursor.close();
+		}
+		return null;
+	}
+	
 	public Course castToCourse(Cursor cursor) {
 		Course c = new Course();
 		c.setName(cursor.getString(cursor.getColumnIndex(COURSE_NAME)));
@@ -272,6 +428,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		return c;
 	}
 	
+	public Lecture castToLecture(Cursor c) {
+		Lecture l = new Lecture();
+		l.setCourse(c.getString(c.getColumnIndex(LECTURE_COURSE_NAME)));
+		l.setYears(stringToIntList(c.getString(c.getColumnIndex(LECTURE_YEARS))));
+		l.setVenue(new VenueSimple(
+			c.getString(c.getColumnIndex(LECTURE_VENUE_ROOM)),
+			c.getString(c.getColumnIndex(LECTURE_VENUE_BUILDING))
+		));
+		l.setComment(c.getString(c.getColumnIndex(LECTURE_COMMENT)));
+		l.setDay(c.getString(c.getColumnIndex(LECTURE_DAY)));
+		l.setTime(new TimeSlot(
+			c.getString(c.getColumnIndex(LECTURE_TIME_START)), 
+			c.getString(c.getColumnIndex(LECTURE_TIME_FINISH))
+		));
+		l.setSemester(c.getString(c.getColumnIndex(LECTURE_SEMESTER)));
+		return l;
+	}
+	
+	public Venue castToVenue(Cursor c) {
+		Venue v = new Venue();
+		v.setName(c.getString(c.getColumnIndex(VENUE_NAME)));
+		v.setDescription(c.getString(c.getColumnIndex(VENUE_DESC)));
+		v.setMap(c.getString(c.getColumnIndex(VENUE_MAP)));
+		return v;
+	}
+	
 	public static <E> String listToString(List<E> list) {
 		StringBuilder result = new StringBuilder();
 		for(E string : list) {
@@ -286,6 +468,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		String[] split = s.split(",");
 		for (int i = 0; i < split.length; i++)
 			list.add(split[i]);
+		return list;
+	}
+	
+	public static List<Integer> stringToIntList(String s) {
+		List<Integer> list = new ArrayList<Integer>();
+		String[] split = s.split(",");
+		for (int i = 0; i < split.length; i++)
+			list.add(Integer.parseInt(split[i]));
 		return list;
 	}
 	

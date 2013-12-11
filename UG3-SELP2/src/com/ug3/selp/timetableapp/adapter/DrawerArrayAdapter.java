@@ -51,7 +51,6 @@ public class DrawerArrayAdapter extends ArrayAdapter<Course> {
 		year.setText("Y" + courses.get(position).getYear());
 		
 		TextView degree = (TextView) rowView.findViewById(R.id.sidebarDrawerDegreeText);
-		Log.d(TAG, "degree: " + DatabaseHelper.listToString(courses.get(position).getDegree()));
 		degree.setText(DatabaseHelper.listToString(courses.get(position).getDegree()));
 		
 		ImageView img = (ImageView) rowView.findViewById(R.id.sidebarIcon);
@@ -65,6 +64,8 @@ public class DrawerArrayAdapter extends ArrayAdapter<Course> {
 		
 		return rowView;
 	}
+	
+	
 	
 
 }

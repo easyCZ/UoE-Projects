@@ -10,14 +10,23 @@
  
  	<!-- The main content view -->
 
- 	<RelativeLayout
+ 	<RelativeLayout 
+ 	    android:layout_width="match_parent"
  	    android:id="@+id/content_frame"
- 	    android:layout_width="wrap_content"
  	    android:layout_height="match_parent" >
      
      	<include
      	    android:layout_width="wrap_content"
      	    layout="@layout/action_bar_main" />
+     	
+
+     	    
+     	<FrameLayout 
+     	    android:layout_marginTop="-1dp"
+     	    android:id="@+id/timetableFragment"
+     	    android:layout_below="@id/titleBar"
+     	    android:layout_width="wrap_content"
+     	    android:layout_height="match_parent"></FrameLayout>
      	
      	<include
      	    layout="@layout/download_and_parse" />
