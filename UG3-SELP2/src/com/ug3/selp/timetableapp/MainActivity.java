@@ -9,6 +9,8 @@ import com.ug3.selp.timetableapp.models.Course;
 import com.ug3.selp.timetableapp.service.AsyncDownloader;
 import com.ug3.selp.timetableapp.service.Preferences;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -158,6 +160,10 @@ public class MainActivity extends FragmentActivity implements DrawerListener, On
 			
 			@Override
 			public void onClick(View v) {
+				if (!isNetworkAvailable()) {
+					Toast.makeText(getApplicationContext(), "No internet connection. Try again later.", Toast.LENGTH_LONG).show();
+					return;
+				}
 				Log.d(TAG, "Starting AsyncDownloader");
 				AsyncDownloader aDownloader = new AsyncDownloader(
 					getApplicationContext(),
@@ -190,6 +196,14 @@ public class MainActivity extends FragmentActivity implements DrawerListener, On
 				startActivity(intent);
 			}
 		});
+    }
+    
+    // Test for connectivity
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager 
+              = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     // Attach listeners to Search field
