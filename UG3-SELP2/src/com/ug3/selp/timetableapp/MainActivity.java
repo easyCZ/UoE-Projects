@@ -146,6 +146,7 @@ public class MainActivity extends FragmentActivity implements DrawerListener, On
         		intent.putExtra(
         			Resources.FRAGMENT_ACTION_KEY, Resources.FRAGMENT_ACTION_LIST_UPDATE);
         		getApplication().sendBroadcast(intent);
+        		db.close();
             }
 
           });
@@ -327,7 +328,7 @@ public class MainActivity extends FragmentActivity implements DrawerListener, On
 	// Get current semester based on either settings or set preferences
 	private void _getSemester() {
 		String sem = preferences.get(Resources.PREFERENCES_SEMESTER_KEY);
-		if (!sem.equals("")) {
+		if (sem.equals("")) {
 			Calendar calendar = Calendar.getInstance();
 			int month = calendar.get(Calendar.MONTH) + 1;
 			if (month >= 7 && month <= 12)	// semester 1
@@ -398,7 +399,7 @@ public class MainActivity extends FragmentActivity implements DrawerListener, On
 					// refresh a fragment
 					transaction.detach(frag);
 					transaction.attach(frag);
-					transaction.addToBackStack(null);
+//					transaction.addToBackStack(null);
 					transaction.commit();
 					hideView(R.id.searchField);
 				}

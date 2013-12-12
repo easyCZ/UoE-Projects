@@ -34,6 +34,7 @@ public class Preferences {
 	}
 	
 	public boolean set(String key, String value) {
+		Log.d(TAG, key + " - " + value);
 		try {
 			Editor editor = preferences.edit();
 			editor.putString(key, value);
@@ -45,6 +46,7 @@ public class Preferences {
 	}
 	
 	public String get(String key) {
+		Log.d(TAG, key + " - " + preferences.getString(key, ""));
 		return preferences.getString(key, "");
 	}
 	

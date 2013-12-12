@@ -89,6 +89,7 @@ public class TimetableListFragment extends Fragment {
         timetableAdapter.clear();
         for (Lecture l: lectures)
         	timetableAdapter.add(l);
+        db.close();
 	}
 	
 	// Attach a listener to the tabs

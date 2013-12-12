@@ -52,7 +52,8 @@
                 <TextView 
                     android:id="@+id/lectureDetailYears"
                     android:layout_height="match_parent"
-                    android:layout_width="fill_parent"
+                    android:layout_width="fill_parent"	
+                    android:textColor="@color/black"
                     android:gravity="center"/>
             </LinearLayout>
             <!-- Line 2 -->
@@ -71,6 +72,7 @@
                     android:textStyle="bold"
                     android:text="@string/term_"/>
                 <TextView 
+                    android:textColor="@color/black"
                     android:id="@+id/lectureDetailSemester"
                     android:layout_height="match_parent"
                     android:layout_width="fill_parent"
@@ -104,6 +106,7 @@
                     android:textStyle="bold"
                     android:text="@string/level_"/>
                 <TextView 
+                    android:textColor="@color/black"
                     android:id="@+id/lectureDetailLevel"
                     android:layout_height="match_parent"
                     android:layout_width="fill_parent"
@@ -125,6 +128,7 @@
                     android:textStyle="bold"
                     android:text="@string/credit_"/>
                 <TextView 
+                    android:textColor="@color/black"
                     android:id="@+id/lectureDetailCredit"
                     android:layout_height="match_parent"
                     android:layout_width="fill_parent"
