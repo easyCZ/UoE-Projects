@@ -17,11 +17,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+/**
+ * @author easy
+ * 
+ * Database interactions with database table/name specifics
+ */
 public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	private final String TAG = "DatabaseHelper";
 	
-	private static final int DATABASE_VERSION = 5;
+	private static final int DATABASE_VERSION = 10;
 	private static final String DATABASE_NAME = "informaticsTimetable";
 	
 	private static final String TABLE_VENUES = "venues";
@@ -185,13 +190,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		}
 	}
 	
-	public List<Course> getCoursesFiltered(List<String> filters) {
+	public List<Course> getCoursesFiltered(String year) {
+		int yearInt = Integer.parseInt(year.substring(1));
+		Log.d(TAG, "YearInput: " + year);
 		SQLiteDatabase db = getWritableDatabase();
-		filters = wrapInSingleQuotes(filters);
-		String inQuery = listToString(filters);
 		List<Course> courses = new ArrayList<Course>();
 		String query = String.format(Locale.ENGLISH,
-				"SELECT * FROM %s WHERE year IN (%s)", TABLE_COURSES, inQuery);
+				"SELECT * FROM %s WHERE %s=%d", TABLE_COURSES, COURSE_YEAR, yearInt);
 		Cursor cursor = null;
 		
 		try {
@@ -277,18 +282,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		return lectures;
 	}
 	
-	public List<Lecture> getLecturesByDay(String day) {
+	public List<Lecture> getLecturesByDay(String day, String semester) {
+		Log.d(TAG, "Semester: " + semester + "   Day:" + day);
+		
 		List<Lecture> lectures = new ArrayList<Lecture>();
 		Cursor cursor = null;
 		try {
 			SQLiteDatabase db = getWritableDatabase();
 			
-//			String query = String.format(Locale.ENGLISH,
-//				"SELECT DISTINCT * FROM %s L, %s C WHERE L.%s=\"%s\" AND C.%s=%d", 
-//				TABLE_LECTURES, TABLE_COURSES, LECTURE_DAY, day, COURSE_TRACKED, 1);
-//			String query = "select distinct * from lectures L, courses C " +
-//							"WHERE L.day=\"Tuesday\" AND C.tracked = 1 AND L.name = C.acronym";
-			String query = "select * from lectures where day=\"" + day + "\"";
+			String query = String.format(Locale.ENGLISH,
+				"SELECT DISTINCT " +
+				"L.%s, L.%s, L.%s, " +
+				"L.%s, L.%s, L.%s, " +
+				"L.%s, L.%s, L.%s " +
+				"FROM %s %s, %s %s " +
+				"WHERE %s.%s=\"%s\" AND " +
+				"%s.%s=%d AND " +
+				"%s.%s = %s.%s AND " +
+				"(%s.%s = '%s' OR C.semester = 'YR' OR C.semester = 'FLEX')", 
+				LECTURE_COURSE_NAME, LECTURE_YEARS, LECTURE_VENUE_ROOM,
+				LECTURE_VENUE_BUILDING, LECTURE_COMMENT, LECTURE_DAY,
+				LECTURE_TIME_START, LECTURE_TIME_FINISH, LECTURE_SEMESTER,
+				TABLE_LECTURES, "L", TABLE_COURSES, "C",
+				"L", LECTURE_DAY, day,
+				"C", COURSE_TRACKED, 1,
+				"L", LECTURE_COURSE_NAME, "C", COURSE_ACRONYM,
+				"C", COURSE_SEMESTER, semester);
+				
 			
 			cursor = db.rawQuery(query, null);
 			if (cursor.moveToFirst()) {
@@ -302,6 +322,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			if (cursor != null)
 				cursor.close();
 		}
+		
+		Log.d(TAG, "Size:" + lectures.size());
 		return lectures;
 	}
 	
@@ -397,7 +419,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			String query = String.format(Locale.ENGLISH,
 				"SELECT * FROM %s WHERE %s=\"%s\"", TABLE_LECTURES, LECTURE_COURSE_NAME, name);
 			
-			Log.d(TAG, query);
 			cursor = db.rawQuery(query, null);
 			if (cursor.moveToFirst()) {
 				return castToLecture(cursor);
@@ -485,6 +506,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			wrapped.add("'" + Integer.parseInt(list.get(i).substring(1)) + "'");
 		}
 		return wrapped;
+	}
+
+	public List<Course> getCoursesByFilter(String q) {
+		String wrappedQ = "%" + q + "%";
+		List<Course> courses = new ArrayList<Course>();
+		Cursor cursor = null;
+		try {
+			SQLiteDatabase db = getWritableDatabase();
+			
+			String query = String.format(Locale.ENGLISH,
+				"SELECT * FROM %s WHERE " +
+				"lower(name) LIKE lower('%s') OR lower(acronym) LIKE lower('%s')", 
+				TABLE_COURSES, wrappedQ, wrappedQ);
+			Log.d(TAG, "Input: " + q);
+			Log.d(TAG, query);
+			
+			cursor = db.rawQuery(query, null);
+			if (cursor.moveToFirst()) {
+				do {
+					courses.add(castToCourse(cursor));
+				} while (cursor.moveToNext());
+			}
+		} catch (Exception e) {
+			Log.d(TAG, e.toString());
+		} finally {
+			if (cursor != null)
+				cursor.close();
+		}
+		return courses;
 	}
 	
 

@@ -3,9 +3,6 @@ package com.ug3.selp.timetableapp.adapter;
 import java.util.List;
 
 import com.ug3.selp.timetableapp.R;
-import com.ug3.selp.timetableapp.R.drawable;
-import com.ug3.selp.timetableapp.R.id;
-import com.ug3.selp.timetableapp.R.layout;
 import com.ug3.selp.timetableapp.db.DatabaseHelper;
 import com.ug3.selp.timetableapp.models.Course;
 
@@ -38,7 +35,12 @@ public class DrawerArrayAdapter extends ArrayAdapter<Course> {
 				context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View rowView = inflater.inflate(R.layout.sidebar_drawer, parent, false);
 		
-		// Modify data
+		// In case of missing data, back away
+		if (courses.get(position) == null) {
+			Log.d(TAG, "Could not find course at location " + position + ", returning null");
+			return null;
+		}
+		// Set TextViews
 		TextView headline = (TextView) rowView.findViewById(R.id.sidebarDrawerTitle);
 		headline.setText(courses.get(position).getAcronym() + " - " + courses.get(position).getName());
 		TextView lecturer = (TextView) rowView.findViewById(R.id.sidebarDrawerLecturer);
@@ -64,8 +66,5 @@ public class DrawerArrayAdapter extends ArrayAdapter<Course> {
 		
 		return rowView;
 	}
-	
-	
-	
 
 }

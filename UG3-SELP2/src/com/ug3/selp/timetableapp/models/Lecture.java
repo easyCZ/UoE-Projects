@@ -116,6 +116,7 @@ public class Lecture implements Parcelable {
 		this.venue = venue;
 	}
 	
+	@Override
 	public String toString() {
 		return String.format(Locale.ENGLISH,
 			"%s - %s - %s - %s - %s - %s - %s - %s - %s",
@@ -162,11 +163,13 @@ public class Lecture implements Parcelable {
 	}
 
 	public static final Parcelable.Creator<Lecture> CREATOR = new Parcelable.Creator<Lecture>() {
-        public Lecture createFromParcel(Parcel in) {
+        @Override
+		public Lecture createFromParcel(Parcel in) {
             return new Lecture(in); 
         }
 
-        public Lecture[] newArray(int size) {
+        @Override
+		public Lecture[] newArray(int size) {
             return new Lecture[size];
         }
     };

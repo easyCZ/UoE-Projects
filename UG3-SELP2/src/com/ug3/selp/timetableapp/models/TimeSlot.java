@@ -29,6 +29,7 @@ public class TimeSlot {
 		this.finish = finish;
 	}
 	
+	@Override
 	public String toString() {
 		return "Start: " + start + ", Finish: " + finish;
 	}

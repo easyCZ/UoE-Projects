@@ -26,13 +26,11 @@
     <string name="WED">WED</string>
     <string name="THU">THU</string>
     <string name="FRI">FRI</string>
-    
     <string name="monTag">Monday</string>
     <string name="tueTag">Tuesday</string>
     <string name="wedTag">Wednesday</string>
     <string name="thuTag">Thursday</string>
     <string name="friTag">Friday</string>
-    
     <string name="lectureDetailActivity">LectureDetailActivity</string>
     <string name="title_activity_lecture_detail">LectureDetailActivity</string>
     <string name="hello_world">Hello world!</string>
@@ -48,5 +46,11 @@
     <string name="drps_">DRPS:</string>
     <string name="lectures_">Lectures:</string>
     <string name="_">-</string>
+    <string name="course_name_or_acronym">Course name or Acronym</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="set_semester">Set semester</string>
+    <string name="sem_1">Sem 1</string>
+    <string name="sem_2">Sem 2</string>
+    <string name="yr">YR</string>
 
 </resources>

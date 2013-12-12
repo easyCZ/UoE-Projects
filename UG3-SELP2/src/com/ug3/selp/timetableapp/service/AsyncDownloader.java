@@ -32,6 +32,11 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+/**
+ * @author s1115104
+ *
+ * Download and parse XML files asynchronously.
+ */
 public class AsyncDownloader {
 	
 	private final String TAG = "AsyncDownloader";
@@ -139,7 +144,7 @@ public class AsyncDownloader {
 		
 		@Override
 		protected void onPreExecute() {
-			
+			// Update visibility for elements
 			downloadAndParseDesc.setVisibility(View.VISIBLE);
 			progressBar.setVisibility(View.VISIBLE);
 		}
@@ -153,8 +158,9 @@ public class AsyncDownloader {
 		
 		@Override
 		protected void onPostExecute(Document result) {
+			// Udpate preferences
 			preferences.set("dataAvailable", true);
-			
+			// Hide Download and Parse XML button
 			layout.setVisibility(View.GONE);
 			
 			Log.i(TAG, "AsyncDownloader finished.");
@@ -167,9 +173,9 @@ public class AsyncDownloader {
 				adapter.add(c);
 			adapter.notifyDataSetChanged();
 			
+			db.close();
+			
 	    }
-		
-		// http://stackoverflow.com/questions/2325388/java-shortest-way-to-pretty-print-to-stdout-a-org-w3c-dom-document
 		
 	}
 

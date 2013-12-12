@@ -12,6 +12,12 @@ import com.ug3.selp.timetableapp.models.Venue;
 
 import android.util.Log;
 
+/**
+ * @author s1115104
+ *
+ * Venue parser. Traverses the courses.xml document and extracts data.
+ * Return a a list of Venues.
+ */
 public class VenueParser implements Parser<Venue>{
 
 	private List<Venue> venues;

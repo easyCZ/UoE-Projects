@@ -1,11 +1,11 @@
 package com.ug3.selp.timetableapp;
 
+import java.util.Calendar;
 import java.util.List;
 
 import com.ug3.selp.timetableapp.adapter.DrawerArrayAdapter;
 import com.ug3.selp.timetableapp.db.DatabaseHelper;
 import com.ug3.selp.timetableapp.models.Course;
-import com.ug3.selp.timetableapp.models.DrawerFilter;
 import com.ug3.selp.timetableapp.service.AsyncDownloader;
 import com.ug3.selp.timetableapp.service.Preferences;
 
@@ -14,16 +14,20 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -32,13 +36,24 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+/**
+ * @author s1115104
+ *
+ * Main starting point of the application. Widgets are set up and listeners 
+ * attached. The main view has a drawer with a list view attached to it.
+ * It also contains the fragment manager which handles swapping fragments in and out.
+ * 
+ * Sword required. Here be dragons.
+ */
 public class MainActivity extends FragmentActivity implements DrawerListener, OnClickListener{
-	
-	public static final String PREFS_NAME = "UoEInfTimetable";		
+			
+	private static final String THREE_URLS_ARE_REQUIRED = "Three urls are required";
+
 	private final String TAG = "MainActivity";
 	
 	private DrawerLayout drawer;
-	private DrawerFilter activeYears = new DrawerFilter();
+	private ImageView activeDrawerTag;
 	private int progressField = R.id.downloadAndParseProgressValue;
 	private int progressBar = R.id.downloadAndParseSpinner;
 	private int downloadAndParseDesc = R.id.downloadAndParseDescSection;
@@ -65,37 +80,48 @@ public class MainActivity extends FragmentActivity implements DrawerListener, On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        // Init preferences
+        preferences = new Preferences(
+        		this.getApplicationContext(), 
+        		Resources.PREFERENCES_KEY, Context.MODE_PRIVATE);
+        handlePreferences();
+        _getSemester();
+        
+        // Register Fragments
         fragmentReceiver = new FragmentReceiver();
         this.registerReceiver(
         	fragmentReceiver, new IntentFilter(Resources.FRAGMENT_BUNDLE_KEY));
-        
         if (findViewById(R.id.timetableFragment) != null) {
-        	
         	if (savedInstanceState != null)
         		return;
-        	
+        	// Attach default fragment
         	TimetableListFragment fragment = new TimetableListFragment();
-        	
         	fragment.setArguments(getIntent().getExtras());
         	getSupportFragmentManager().beginTransaction()
-        		.add(R.id.timetableFragment, fragment).commit();
-        	
+        		.add(R.id.timetableFragment, fragment, "FRAGMENT_LIST").commit();
         }
         
-
-        // Init preferences
-        preferences = new Preferences(this.getApplicationContext(), PREFS_NAME, Context.MODE_PRIVATE);
-        handlePreferences();
+        // Set Y1 as default filter
+        activeDrawerTag = (ImageView) findViewById(R.id.filtersY1);
+        activeDrawerTag.setImageResource(android.R.color.transparent);
+        activeDrawerTag.setBackgroundResource(drawerFilterActiveRes[0]);
         
         // Init database
         db = new DatabaseHelper(getApplicationContext());
 
+        // Init sidebar drawer
         setUpDrawer(R.id.drawer_layout);
         setupCourseFilters();
         
-        final ListView listview = (ListView) findViewById(R.id.listview);
-        final List<Course> courses = db.getCoursesFiltered(activeYears.getFilters());
+        // Setup searching
+        _handleSearchField();
         
+        // Populate sidebar
+        final ListView listview = (ListView) findViewById(R.id.listview);
+        final List<Course> courses = db.getCoursesFiltered("Y1");
+        
+        // Set sidebar & listener
         adapter = new DrawerArrayAdapter(this, R.layout.sidebar_drawer, courses);
         listview.setAdapter(adapter);
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -115,10 +141,17 @@ public class MainActivity extends FragmentActivity implements DrawerListener, On
             		img.setImageResource(android.R.color.transparent);
             		img.setBackgroundResource(R.drawable.checkbox_unchecked);
             	}
+            	// Notify about the change
+            	Intent intent = new Intent(Resources.FRAGMENT_BUNDLE_KEY);
+        		intent.putExtra(
+        			Resources.FRAGMENT_ACTION_KEY, Resources.FRAGMENT_ACTION_LIST_UPDATE);
+        		getApplication().sendBroadcast(intent);
             }
 
           });
         
+        // Attach Download & Parse if data not available
+        // Attach Listener
         RelativeLayout dlAndParse = (RelativeLayout) findViewById(R.id.downloadAndParse);
         dlAndParse.setOnClickListener(new View.OnClickListener() {
 			
@@ -139,23 +172,82 @@ public class MainActivity extends FragmentActivity implements DrawerListener, On
 							"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/courses.xml",
 							"http://www.inf.ed.ac.uk/teaching/courses/selp/xml/timetable.xml");
 				} catch (Exception e) {
-					// TODO: Show error message
 					Log.w(TAG, "3 URLs are required for AsyncDownloader.");
-					Toast.makeText(getApplicationContext(), "Three urls are required", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(), THREE_URLS_ARE_REQUIRED, Toast.LENGTH_SHORT).show();
 				}
 				
 			}
 		});
+        
+        // Attach Options onclick
+        ImageView settingsIcon = (ImageView) findViewById(R.id.settingsBtn);
+        settingsIcon.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+				startActivity(intent);
+			}
+		});
     }
 
-	@Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, DatabaseHelper.listToString(activeYears.getFilters()));
-        if (preferences != null)
-        	preferences.set("drawerFilters", activeYears.getFilters());
-    }
-    
+    // Attach listeners to Search field
+	private void _handleSearchField() {
+		final ImageView searchButton = (ImageView) findViewById(R.id.searchBtn);
+		final EditText search = (EditText) findViewById(R.id.searchField);
+		
+		search.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				if (s.length() > 0)
+					doSearchIntent(s.toString());
+			}
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+			@Override
+			public void afterTextChanged(Editable s) {}
+		});
+		searchButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// Hide || Show search field
+				if (search.getVisibility() == View.GONE) {
+					search.setVisibility(View.VISIBLE);
+					switchToSearchFragment();
+				} else 
+					hideView(search);
+			}
+		});
+	}
+	
+	// Auxiliary helper to hide a View 
+	private void hideView(View v) {
+		v.setVisibility(View.GONE);
+	}
+	
+	// Auxiliary - Hide View by resource ID
+	private void hideView(int id) {
+		findViewById(id).setVisibility(View.GONE);
+	}
+	
+	// Handler for when search fragment is requested
+	private void switchToSearchFragment() {
+		SearchFragment fragment = new SearchFragment();
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		transaction.replace(R.id.timetableFragment, fragment, "FRAGMENT_SEARCH");
+		transaction.addToBackStack(null);
+		transaction.commit();
+	}
+	
+	// Pass data onto the Fragment's listener to update state
+	private void doSearchIntent(String query) {
+		Intent intent = new Intent(Resources.FRAGMENT_BUNDLE_KEY);
+		intent.putExtra(Resources.FRAGMENT_SEARCH_QUERY, query);
+		intent.putExtra(Resources.FRAGMENT_SEARCH_KEY, Resources.FRAGMENT_SEARCH_ACTION);
+		getApplication().sendBroadcast(intent);
+	}
+
+	// Set up sidebar drawer, including listeners
     private void setUpDrawer(int drawerLayout) {
     	drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.setDrawerListener(this);
@@ -163,7 +255,6 @@ public class MainActivity extends FragmentActivity implements DrawerListener, On
         // Attach drawer listener to menu button
         ImageView optionsBtn = (ImageView) findViewById(R.id.optionsBtn);
         optionsBtn.setOnClickListener(new View.OnClickListener() {
-			
 			@Override
 			public void onClick(View v) {
 				if (drawer.isDrawerOpen(Gravity.LEFT))
@@ -174,39 +265,20 @@ public class MainActivity extends FragmentActivity implements DrawerListener, On
 		});
 	}
 
+    // Check if XML data is available, else show button to Downlload
 	private void handlePreferences() {        
         if (!preferences.getBoolean("dataAvailable", false)) {
         	RelativeLayout layout = (RelativeLayout) findViewById(R.id.downloadAndParse);
         	layout.setVisibility(View.VISIBLE);
-        }
-        activeYears.setFilters(preferences.getFilters("drawerFilters"));
-        
-        for (int i = 0; i < drawerFilterIDs.length; i++) {
-        	ImageView img = (ImageView) findViewById(drawerFilterIDs[i]);
-        	String tag = (String) img.getTag();
-        	if (activeYears.contains(tag)) {
-        		img.setImageResource(android.R.color.transparent);
-        		img.setBackgroundResource(drawerFilterActiveRes[i]);
-    		} else {
-    			img.setImageResource(android.R.color.transparent);
-    			img.setBackgroundResource(drawerFilterInactiveRes[i]);
-    		}
-        }
-        
+        }        
 	}
 
+	// Attach listeners to all 5 course filter "buttons"
 	private void setupCourseFilters() {
     	for (int i = 0; i < drawerFilterIDs.length; i++) {
     		ImageView iv = (ImageView) findViewById(drawerFilterIDs[i]);
     		iv.setOnClickListener(this);
     	}
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
     }
 
 	// drawerFilter listener
@@ -218,33 +290,32 @@ public class MainActivity extends FragmentActivity implements DrawerListener, On
 		} catch (Exception e) {
 			return;
 		}	
-		String tag = (String) img.getTag();
-		int tagInt = Integer.parseInt(tag.substring(1)) - 1;
-		if (activeYears.contains(tag)) {
-			setDrawerFilterResource(img, drawerFilterInactiveRes[tagInt], true);
-		} else {
-			setDrawerFilterResource(img, drawerFilterActiveRes[tagInt], false);
-		}
-		List<Course> newCourses = db.getCoursesFiltered(activeYears.getFilters());
+		
+		String oldTag = (String) activeDrawerTag.getTag();
+		int oldPos = Integer.parseInt(oldTag.substring(1)) -1;
+		applyImageResource(activeDrawerTag, drawerFilterInactiveRes[oldPos]);
+		
+		String newTag = (String) img.getTag();
+		// TAG in the format of "Sx", get x out
+		int newPos = Integer.parseInt(newTag.substring(1)) - 1;
+		// Change background & update reference
+		applyImageResource(img, drawerFilterActiveRes[newPos]);
+		activeDrawerTag = img;
+		// Re-populate the list view
+		List<Course> newCourses = db.getCoursesFiltered(newTag);
 		adapter.clear();
 		for (Course c : newCourses)
 			adapter.add(c);
 	
 	}
 	
+	// Auxiliary - set background image
 	private void applyImageResource(ImageView img, int resource) {
 		img.setImageResource(android.R.color.transparent);
 		img.setBackgroundResource(resource);
 	}
 	
-	private void setDrawerFilterResource(ImageView img, int res, boolean remove) {
-		applyImageResource(img, res);
-		if (remove)
-			activeYears.remove((String) img.getTag());
-		else
-			activeYears.add((String) img.getTag());
-	}
-	
+	// Release resources
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -252,6 +323,31 @@ public class MainActivity extends FragmentActivity implements DrawerListener, On
 			db.close();
 		this.unregisterReceiver(fragmentReceiver);
 	}		
+	
+	// Get current semester based on either settings or set preferences
+	private void _getSemester() {
+		String sem = preferences.get(Resources.PREFERENCES_SEMESTER_KEY);
+		if (!sem.equals("")) {
+			Calendar calendar = Calendar.getInstance();
+			int month = calendar.get(Calendar.MONTH) + 1;
+			if (month >= 7 && month <= 12)	// semester 1
+				preferences.set(
+					Resources.PREFERENCES_SEMESTER_KEY,
+					Resources.PREFERENCES_SEMESTER_1);
+			else if (month >= 1 && month <= 6)	// semester 2
+				preferences.set(
+						Resources.PREFERENCES_SEMESTER_KEY,
+						Resources.PREFERENCES_SEMESTER_2);
+			Log.d(TAG, "Semester set.");
+		}
+	}
+	
+	// Update and re-draw semester on resume
+	@Override
+	public void onResume() {
+	    super.onResume();  // Always call the superclass method first
+	    _getSemester();
+	}
 	
 	@Override
 	public void onDrawerClosed(View arg0) {}
@@ -263,22 +359,50 @@ public class MainActivity extends FragmentActivity implements DrawerListener, On
 	public void onDrawerStateChanged(int arg0) {}
 	
 	@Override
-	public void onDrawerSlide(View arg0, float arg1) {}   
+	public void onDrawerSlide(View arg0, float arg1) {}  
 	
+	// Hide search bar if visible
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (findViewById(R.id.searchField).getVisibility() == View.GONE)
+			return super.onKeyDown(keyCode, event);
+		else 
+			findViewById(R.id.searchField).setVisibility(View.GONE);
+		return false;	    
+	}
+	
+	// Custom Broadcast receiver to catch broadcasts from fragments
 	public class FragmentReceiver extends BroadcastReceiver {
 
+		@Override
 		public void onReceive(Context context, Intent intent) {
 			int id = intent.getIntExtra(Resources.FRAGMENT_ACTION_KEY, -1);
 			if (id != -1) {
-				String acr = intent.getStringExtra(Resources.FRAGMENT_ACRONYM_KEY);
-				LectureDetailFragment fragment = new LectureDetailFragment();
-				Bundle bundle = new Bundle();
-				bundle.putString(Resources.FRAGMENT_ACRONYM_KEY, acr);
-				fragment.setArguments(bundle);
-				FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-				transaction.replace(R.id.timetableFragment, fragment);
-				transaction.addToBackStack(null);
-				transaction.commit();
+				if (id == Resources.FRAGMENT_ACTION_DETAIL) {	// Request detail view
+					String acr = intent.getStringExtra(Resources.FRAGMENT_ACRONYM_KEY);
+					LectureDetailFragment fragment = new LectureDetailFragment();
+					Bundle bundle = new Bundle();
+					bundle.putString(Resources.FRAGMENT_ACRONYM_KEY, acr);
+					fragment.setArguments(bundle);
+					FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+					transaction.replace(R.id.timetableFragment, fragment, "FRAGMENT_DETAIL");
+					transaction.addToBackStack(null);
+					transaction.commit();
+					hideView(R.id.searchField);
+				} else if (id == Resources.FRAGMENT_ACTION_LIST_UPDATE) {
+					Fragment frag = getSupportFragmentManager()
+							.findFragmentByTag("FRAGMENT_LIST");
+					FragmentTransaction transaction = getSupportFragmentManager().
+							beginTransaction();
+					// Remove and Re-attach seems to be one of the ways to 
+					// refresh a fragment
+					transaction.detach(frag);
+					transaction.attach(frag);
+					transaction.addToBackStack(null);
+					transaction.commit();
+					hideView(R.id.searchField);
+				}
+				
 			}
 		}
 		

@@ -18,6 +18,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+/**
+ * @author s1115104
+ *
+ * Adapter for Lectures by day
+ */
 public class TimetableArrayAdapter extends ArrayAdapter<Lecture> {
 	
 	private final String TAG = "TimetableArrayAdapter";
@@ -40,18 +45,18 @@ public class TimetableArrayAdapter extends ArrayAdapter<Lecture> {
 		LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View rowView = inflater.inflate(resource, parent, false);
 		
-		// db lookup
-		Log.d(TAG, "Lecture - Course: " + lectures.get(position).getCourse());
-		
+		// db lookup & error handling
 		final Course course = db.getCourseByAcronym(lectures.get(position).getCourse());
-		String courseName = (course != null) ? course.getName() : "";
-		Log.d(TAG, "courseName: " + courseName);
-		if (course == null)
-			Log.d(TAG, "course is null");
-		else
-			Log.d(TAG, "Course is not null!!!!!!!!!");
-		
+		if (course == null) {
+			Log.d(TAG, "Course could not be retrieved from the DB. Lookup param were Acronym = " +
+					lectures.get(position).getCourse());
+		}
+			String courseName = (course != null) ? course.getName() : "";
+	
 		Venue venue = db.getVenueByName(lectures.get(position).getVenue().getBuilding());
+		if (venue == null) {
+			Log.d(TAG, "Venue could not be found. Lookup were Building = " + lectures.get(position).getVenue().getBuilding());
+		}
 		String venueName = (venue != null) ? venue.getDescription() : lectures.get(position).getVenue().getBuilding();
 		
 		// Set view values
@@ -72,13 +77,12 @@ public class TimetableArrayAdapter extends ArrayAdapter<Lecture> {
 			@Override
 			public void onClick(View v) {	
 				Log.d(TAG, lectures.get(finalPos).toString());
-
+				// Broadcast click event
 				Intent intent = new Intent(Resources.FRAGMENT_BUNDLE_KEY);
 				intent.putExtra(
 					Resources.FRAGMENT_ACTION_KEY, Resources.FRAGMENT_ACTION_DETAIL);
 				intent.putExtra(Resources.FRAGMENT_ACRONYM_KEY, lectures.get(finalPos).getCourse());
 				context.sendBroadcast(intent);
-				Log.d(TAG, "Clicked");
 			}
 		});
 		db.close();
@@ -87,8 +91,12 @@ public class TimetableArrayAdapter extends ArrayAdapter<Lecture> {
 	
 	// Convenience setter
 	private void setText(View view, int resource, String value) {
-		TextView tv = (TextView) view.findViewById(resource);
-		tv.setText(value);
+		try {
+			TextView tv = (TextView) view.findViewById(resource);
+			tv.setText(value);
+		} catch(ClassCastException e) {
+			Log.d(TAG, "TextView cast unable.");
+		}
 	}
 	
 	

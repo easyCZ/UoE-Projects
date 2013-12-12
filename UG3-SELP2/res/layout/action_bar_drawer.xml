@@ -31,7 +31,7 @@
 	<ImageView 
 	    android:layout_marginRight="5dp"
     	android:contentDescription="@string/app_name"
- 		android:src="@drawable/ic_year_two_active"
+ 		android:src="@drawable/ic_year_two"
  		android:id="@+id/filtersY2"
  		android:layout_height="match_parent"
  		android:tag="Y2"
@@ -39,7 +39,7 @@
 	<ImageView 
 	    android:layout_marginRight="5dp"
     	android:contentDescription="@string/app_name"
- 		android:src="@drawable/ic_year_three_active"
+ 		android:src="@drawable/ic_year_three"
  		android:id="@+id/filtersY3"
  		android:layout_height="match_parent"
  		android:tag="Y3"
@@ -47,7 +47,7 @@
 	<ImageView 
 	    android:layout_marginRight="5dp"
     	android:contentDescription="@string/app_name"
- 		android:src="@drawable/ic_year_four_active"
+ 		android:src="@drawable/ic_year_four"
  		android:id="@+id/filtersY4"
  		android:layout_height="match_parent"
  		android:tag="Y4"
@@ -55,7 +55,7 @@
 	<ImageView 
 	    android:layout_marginRight="5dp"
     	android:contentDescription="@string/app_name"
- 		android:src="@drawable/ic_year_five_active"
+ 		android:src="@drawable/ic_year_five"
  		android:id="@+id/filtersY5"
  		android:layout_height="match_parent"
  		android:tag="Y5"

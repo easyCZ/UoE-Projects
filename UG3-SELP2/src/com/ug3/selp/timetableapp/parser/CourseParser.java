@@ -14,6 +14,12 @@ import android.util.Log;
 
 import com.ug3.selp.timetableapp.models.Course;
 
+/**
+ * @author s1115104
+ *
+ * Course parser. Traverses the courses.xml document and extracts data.
+ * Return a a list of Courses.
+ */
 public class CourseParser implements Parser<Course> {
 	
 	private List<Course> courses;
@@ -70,9 +76,7 @@ public class CourseParser implements Parser<Course> {
 							course.setLecturer(tag.getTextContent());	
 					}
 				}
-				courses.add(course);
-//				Log.d(TAG, course.toString());
-				
+				courses.add(course);				
 			}
 			
 		}
@@ -87,7 +91,6 @@ public class CourseParser implements Parser<Course> {
 
 	@Override
 	public Class<Course> getMyType() {
-		// TODO Auto-generated method stub
 		return Course.class;
 	}
 

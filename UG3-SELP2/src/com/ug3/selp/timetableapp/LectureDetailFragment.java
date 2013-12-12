@@ -16,9 +16,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+/**
+ * @author s1115104
+ *
+ * Fragment handling detail view for each course. Used for both Agenda view and
+ * for searching as a detail view for both.
+ */
 public class LectureDetailFragment extends Fragment {
 	
 	private final String TAG = "LectureDetailFragment";
@@ -33,17 +38,16 @@ public class LectureDetailFragment extends Fragment {
 			super.onDestroy();
 			return null;
 		}
+		// Get info about the requested detail view
 		String courseAcr = bundle.getString(Resources.FRAGMENT_ACRONYM_KEY);
 		db = new DatabaseHelper(getActivity());
 		
 		final Course course = db.getCourseByAcronym(courseAcr);
 		final List<Lecture> lectures = db.getLecturesByAcronym(courseAcr);
 		
-//		for (Lecture c : lectures)
-			Log.d(TAG, lectures.size() + "");
-		
 		view = inflater.inflate(R.layout.lecture_detail, container, false);
 		
+		// Set layout fields
 		setText(view, R.id.lectureDetailTitle, course.getName());
 		setText(view, R.id.lectureDetailYears, course.getYear()+"");
 		setText(view, R.id.lectureDetailSemester, course.getSemester());
@@ -52,11 +56,12 @@ public class LectureDetailFragment extends Fragment {
 		setText(view, R.id.lectureDetailLecturer, course.getLecturer());
 		setText(view,  R.id.lectureDetailAcronym, course.getAcronym());
 		
+		// Attach browser redirect listeners onClick
 		setListenerURL(view, R.id.lectureDetailCourseWeb, course.getUrl());
 		setListenerURL(view, R.id.lectureDetailEuclid, course.getEuclid());
 		setListenerURL(view, R.id.lectureDetailDrps, course.getDrps());
 		
-		// Dynamically add lecture rows
+		// Dynamically add lecture rows - could be done with a list view too
 		LinearLayout lecturesContainer = 
 				(LinearLayout) view.findViewById(R.id.lecturesDetailLecturesContainer);
 		for (final Lecture l: lectures) {
@@ -74,19 +79,22 @@ public class LectureDetailFragment extends Fragment {
 			lecturesContainer.addView(newLayout);
 		}
 		
-		
-
+		Log.d(TAG, "Fragment loaded.");
 		return view;
 	}
 	
+	// Set values into the layout, if exist
 	private void setLayoutValues(LinearLayout newLayout, Lecture l) {
-		setText(newLayout, R.id.timetableRowTimeStart, l.getTime().getStart());
-		setText(newLayout, R.id.timetableRowTimeFinish, l.getTime().getFinish());
+		if (l != null) {
+			setText(newLayout, R.id.timetableRowTimeStart, l.getTime().getStart());
+			setText(newLayout, R.id.timetableRowTimeFinish, l.getTime().getFinish());
+		}
 		Venue v = db.getVenueByName(l.getVenue().getBuilding());
-		
-		setText(newLayout, R.id.timetableRowDetailsLocation,
-			l.getVenue().getRoom() + " " + v.getDescription());
-		setText(newLayout, R.id.timetableRowDay, l.getDay());
+		if (v != null) {
+			setText(newLayout, R.id.timetableRowDetailsLocation,
+					l.getVenue().getRoom() + " " + v.getDescription());
+			setText(newLayout, R.id.timetableRowDay, l.getDay());
+		}
 	}
 
 	@Override
@@ -95,6 +103,7 @@ public class LectureDetailFragment extends Fragment {
 		db.close();
 	}
 	
+	// Auxiliary to make an Intent on URL click
 	private void setListenerURL(View view, int resource, String url) {
 		TextView tv = (TextView) view.findViewById(resource);
 		final String finalUrl = new String(url);
@@ -107,12 +116,14 @@ public class LectureDetailFragment extends Fragment {
 		});
 	}
 	
+	// Craft an intent and call 
 	private void openURL(String url) {
 		Uri uri = Uri.parse(url);
 		Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 		startActivity(intent);
 	}
 	
+	// Auxiliary to set TextView text
 	private void setText(View view, int resource, String value) {
 		TextView tv = (TextView) view.findViewById(resource);
 		tv.setText(value);

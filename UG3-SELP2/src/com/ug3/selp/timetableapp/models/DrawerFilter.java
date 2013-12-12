@@ -26,6 +26,7 @@ public class DrawerFilter {
 		return tags.contains(tag);
 	}
 	
+	@Override
 	public String toString() {
 		return DatabaseHelper.listToString(tags);
 	}

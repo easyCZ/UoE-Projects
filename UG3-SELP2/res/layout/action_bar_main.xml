@@ -40,4 +40,23 @@
         android:layout_alignParentRight="true"
         android:contentDescription="@string/settingsBtnDesc" />
 
+    <EditText
+        android:visibility="gone"
+        android:id="@+id/searchField"
+        android:padding="5dp"
+        android:layout_margin="5dp"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/searchBtn"
+        android:background="@drawable/search_field"
+        android:textSize="13sp"
+        android:textColor="@color/white"
+        android:ems="10"
+        android:inputType="text"
+        android:hint="@string/course_name_or_acronym" >
+
+        <requestFocus />
+    </EditText>
+
 </RelativeLayout>

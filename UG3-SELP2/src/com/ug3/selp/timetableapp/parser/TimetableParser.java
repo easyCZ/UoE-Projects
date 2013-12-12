@@ -14,6 +14,12 @@ import com.ug3.selp.timetableapp.models.Lecture;
 import com.ug3.selp.timetableapp.models.TimeSlot;
 import com.ug3.selp.timetableapp.models.VenueSimple;
 
+/**
+ * @author s1115104
+ *
+ * Timetable parser. Traverses the timetable.xml document and extracts data.
+ * Return a a list of Lectures.
+ */
 public class TimetableParser implements Parser<Lecture> {
 	
 	private final String TAG = "TimetableParser";
@@ -25,9 +31,7 @@ public class TimetableParser implements Parser<Lecture> {
 	}
 
 	@Override
-	public void extract(Document document) {
-		Log.i(TAG, "Timetable Parser started.");
-		
+	public void extract(Document document) {		
 		NodeList _semesters = document.getElementsByTagName("semester");
 		
 		if (_semesters != null && _semesters.getLength() > 0) {
@@ -113,7 +117,6 @@ public class TimetableParser implements Parser<Lecture> {
 		}
 		
 		timetable.add(l);
-//		Log.d(TAG, "Course:" +l.getCourse());
 	}
 
 
