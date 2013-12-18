@@ -1,0 +1,67 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/downloadContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DownloadActivity"
+    android:orientation="horizontal"
+    android:background="@color/lectureRowEvenBG" >
+
+    <ImageView 
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:padding="10dp"
+        android:src="@drawable/ic_action_download_dark"/>
+    
+    <LinearLayout 
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:orientation="vertical">
+        
+        <TextView 
+            android:textColor="@color/black"
+	        android:layout_width="wrap_content"
+	        android:layout_height="30dp"
+	        android:textStyle="bold"
+	        android:gravity="bottom"
+	        android:text="Download and Parse XML"/>
+        
+        <LinearLayout 
+            android:gravity="top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/downloadProgressDesc"
+            	android:text="In progress..."
+	        	android:layout_width="wrap_content"
+	        	android:layout_height="match_parent"
+	        	android:textSize="13sp"/>
+            
+            
+            <TextView 
+                android:visibility="gone"
+                android:id="@+id/downloadProgressCount"
+            	android:text="1 of 3"
+            	android:layout_marginRight="5dp"
+	        	android:layout_width="wrap_content"
+	        	android:layout_height="match_parent"
+	        	android:textSize="13sp"/>
+        
+	        <ProgressBar
+	            android:visibility="gone"
+	            android:id="@+id/downloadProgressBar"
+		        style="?android:attr/progressBarStyleSmall"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content" />
+            
+        </LinearLayout>
+
+        
+        
+    </LinearLayout>
+
+    
+
+</LinearLayout>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lectureRowContainer"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:background="@color/white">
+    
+    <LinearLayout
+        android:layout_marginLeft="5dp"
+        android:id="@+id/lectureRowTimeContainer"
+        android:layout_width="fill_parent"
+        android:layout_marginRight="50dp"
+        android:layout_height="20dp"
+        android:orientation="horizontal">
+        
+        <TextView 
+            android:layout_marginRight="5dp"
+            android:id="@+id/lectureRowStartTime"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+        
+        <TextView 
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:text="@string/_"
+            android:gravity="center"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:layout_marginLeft="5dp"
+            android:id="@+id/lectureRowFinishTime"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/lectureRowDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="15dp"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textSize="13sp" />
+        
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/detailRowDirections"
+        android:layout_width="40dp"
+        android:padding="2dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:src="@drawable/ic_action_directions" android:contentDescription="@string/directions"/>
+
+
+    <TextView
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="40dp"
+        android:id="@+id/lectureRowLocation"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:textColor="#3D4651"
+        android:textSize="13sp" />
+
+</RelativeLayout>
