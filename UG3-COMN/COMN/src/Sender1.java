@@ -4,6 +4,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.util.BitSet;
 
 
 /*
@@ -15,7 +18,9 @@ public class Sender1 {
 	
 	private int PORT;
 	private String FILENAME;
-	private static int PACKET_SIZE = 1024;
+	private static int PAYLOAD_SIZE = 1024;
+	private static int PACKET_SIZE = 1028;	// 1 KB
+	private static int HEADER_SIZE = 4;	// 4 bytes
 	
 	public Sender1(int port, File file) {
 		
@@ -46,8 +51,8 @@ public class Sender1 {
 		// Submit each chunk
 		for (int i = 0; i < chunkCount; i++) {
 			try {
-				fstream.read(buffer, 0, PACKET_SIZE);
-				byte[] packet = make_pkt(buffer);
+				fstream.read(buffer, 4, PAYLOAD_SIZE);
+				byte[] packet = make_pkt(buffer, i);
 				
 				udt_send(packet);
 				
@@ -61,12 +66,17 @@ public class Sender1 {
 		return true;
 	}
 	
-	private byte[] make_pkt(byte[] chunk) {
+	private byte[] make_pkt(byte[] chunk, int sequenceNumber) {
+		// prepend header
+		byte[] header = ByteBuffer.allocate(4).putInt(sequenceNumber).array();
+		for (int i = 0; i < HEADER_SIZE; i++)
+			chunk[i] = header[i];
+		
 		return chunk;
 	}
 	
 	private boolean udt_send(byte[] data) {
-		System.out.println("Chunk size: " + data[0]);
+//		System.out.println("Chunk size: " + data[0]);
 		return false;
 	}
 
