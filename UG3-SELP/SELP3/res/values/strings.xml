@@ -3,55 +3,13 @@
 
     <string name="app_name">UoE Informatics Timetable</string>
     <string name="action_settings">Settings</string>
-    <string name="service_name">XML Downloader</string>
-    <string name="title_activity_class_detail_fragment">ClassDetailFragment</string>
-    <string name="optionsBtnDesc">Options</string>
-    <string name="settingsBtnDesc">Settings</string>
-    <string name="searchBtnDesc">Settings</string>
-    <string name="searchHint">Search..</string>
-    <string name="availableCourses">Available courses:</string>
-    <string name="sidebarContentDesc">Course Image</string>
 
-    <!-- Download and Parse -->
-    <string name="downloadAndParseImgDesc">Download</string>
-    <string name="downloadAndParseTitle">Download and Parse XML</string>
-    <string name="downloadAndParseProgress">Progress:</string>
-    <string name="downloadAndParseDefaultProgress">0</string>
-    <string name="downloadAndParseXofY">of</string>
-    <string name="downloadAndParseTotalDefault">3</string>
-    <string name="actionBarDrawerFilters">FILTERS:</string>
-    <string name="divider"> | </string>
-    <string name="MON">MON</string>
-    <string name="TUE">TUE</string>
-    <string name="WED">WED</string>
-    <string name="THU">THU</string>
-    <string name="FRI">FRI</string>
-    <string name="monTag">Monday</string>
-    <string name="tueTag">Tuesday</string>
-    <string name="wedTag">Wednesday</string>
-    <string name="thuTag">Thursday</string>
-    <string name="friTag">Friday</string>
-    <string name="lectureDetailActivity">LectureDetailActivity</string>
-    <string name="title_activity_lecture_detail">LectureDetailActivity</string>
-    <string name="hello_world">Hello world!</string>
     <string name="years_">Years:</string>
-    <string name="term_">"Term: "</string>
-    <string name="level_">"Level: "</string>
     <string name="credit_">Credit:</string>
     <string name="lecturer_">Lecturer:</string>
-    <string name="course_web_">Course web:</string>
-    <string name="acronym_">Acronym:</string>
-    <string name="euclid_">Euclid:</string>
-    <string name="view_page">View Page</string>
-    <string name="drps_">DRPS:</string>
     <string name="lectures_">Lectures:</string>
     <string name="_">-</string>
-    <string name="course_name_or_acronym">Course name or Acronym</string>
     <string name="title_activity_settings">SettingsActivity</string>
-    <string name="set_semester">Set semester</string>
-    <string name="sem_1">Sem 1</string>
-    <string name="sem_2">Sem 2</string>
-    <string name="yr">YR</string>
     <string name="title_activity_download">DownloadActivity</string>
     <string name="title_activity_select">Select courses</string>
     <string name="title_activity_search">Search courses</string>
@@ -66,5 +24,18 @@
     <string name="overrides_automatic_detection">Overrides automatic detection</string>
     <string name="directions">directions</string>
     <string name="there_are_no_lectures_for_this_day_">There are no lectures for this day.</string>
+    <string name="s2">S2</string>
+    <string name="web">WEB</string>
+    <string name="drps">DRPS</string>
+    <string name="download_and_parse_xml">Download and Parse XML</string>
+    <string name="in_progress_">In progress...</string>
+    <string name="icon">icon</string>
+    <string name="_1_of_3">1 of 3</string>
+    <string name="search_courses_">Search Courses...</string>
+    <string name="download">Download</string>
+    <string name="select_courses">Select courses</string>
+    <string name="search">Search</string>
+    <string name="settings">Settings</string>
+    <string name="clear">Clear</string>
 
 </resources>

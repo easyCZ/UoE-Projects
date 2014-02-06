@@ -1,5 +1,6 @@
 package ug3.selp.timetable.models;
 
+
 public class VenueSimple {
 	
 	public VenueSimple(String room, String building) {

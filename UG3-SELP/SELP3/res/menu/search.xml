@@ -4,6 +4,6 @@
         android:icon="@drawable/ic_action_remove"
         android:id="@+id/action_clear"
         android:showAsAction="always|withText"
-        android:title="Clear" />
+        android:title="@string/clear" />
 
 </menu>

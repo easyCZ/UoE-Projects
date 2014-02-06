@@ -11,7 +11,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:padding="10dp"
-        android:src="@drawable/ic_action_download_dark"/>
+        android:src="@drawable/ic_action_download_dark" android:contentDescription="@string/icon"/>
     
     <LinearLayout 
         android:layout_height="match_parent"
@@ -24,7 +24,7 @@
 	        android:layout_height="30dp"
 	        android:textStyle="bold"
 	        android:gravity="bottom"
-	        android:text="Download and Parse XML"/>
+	        android:text="@string/download_and_parse_xml"/>
         
         <LinearLayout 
             android:gravity="top"
@@ -34,7 +34,7 @@
             <TextView
                 android:visibility="gone"
                 android:id="@+id/downloadProgressDesc"
-            	android:text="In progress..."
+            	android:text="@string/in_progress_"
 	        	android:layout_width="wrap_content"
 	        	android:layout_height="match_parent"
 	        	android:textSize="13sp"/>
@@ -43,7 +43,7 @@
             <TextView 
                 android:visibility="gone"
                 android:id="@+id/downloadProgressCount"
-            	android:text="1 of 3"
+            	android:text="@string/_1_of_3"
             	android:layout_marginRight="5dp"
 	        	android:layout_width="wrap_content"
 	        	android:layout_height="match_parent"

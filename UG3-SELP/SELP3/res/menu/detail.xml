@@ -3,12 +3,12 @@
     <item
         android:id="@+id/action_web"
         android:showAsAction="always"
-        android:title="WEB" />
+        android:title="@string/web" />
     
     <item
         android:id="@+id/action_drps"
         android:showAsAction="always"
-        android:title="DRPS" />
+        android:title="@string/drps" />
     <!-- 
     <item
         android:id="@+id/action_map"

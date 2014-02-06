@@ -12,7 +12,7 @@
         android:layout_alignParentLeft="true"
         android:layout_margin="5dp"
         android:gravity="center"
-        android:text="S2"
+        android:text="@string/s2"
         android:textColor="#f47564"
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -33,7 +33,6 @@
             android:layout_marginTop="5dp"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:text="DBS - Database Systems"
             android:textColor="@color/black"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -46,7 +45,6 @@
             android:layout_width="fill_parent"
             android:layout_height="25dp"
             android:layout_gravity="top"
-            android:text="Johnie Walker"
             android:textSize="12sp" />
     </LinearLayout>
 

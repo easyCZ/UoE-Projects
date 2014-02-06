@@ -1,5 +1,6 @@
 package ug3.selp.timetable.models;
 
+
 public class TimeSlot {
 	
 	private String start, finish;
