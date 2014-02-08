@@ -5,6 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.BitSet;
 
@@ -22,7 +26,21 @@ public class Sender1 {
 	private static int PACKET_SIZE = 1028;	// 1 KB
 	private static int HEADER_SIZE = 4;	// 4 bytes
 	
+	private DatagramSocket socket;
+	private InetSocketAddress address;
+	
 	public Sender1(int port, File file) {
+		
+		try {
+			socket = new DatagramSocket();
+		} catch (IOException e) {
+			System.err.println("Failed to create datagram socket. Exiting.");
+			return;
+		}
+		
+		address = new InetSocketAddress("localhost", port);
+		
+		System.out.println(address == null);
 		
 		
 		try {
@@ -31,13 +49,6 @@ public class Sender1 {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
-	}
-	
-	private BufferedReader readFile(String filename) throws FileNotFoundException {
-		return new BufferedReader(new FileReader(filename));
 	}
 	
 	public boolean rdt_send(File file) throws FileNotFoundException {
@@ -49,20 +60,22 @@ public class Sender1 {
 		byte[] buffer = new byte[PACKET_SIZE];
 		
 		// Submit each chunk
-		for (int i = 0; i < chunkCount; i++) {
-			try {
+		try {
+			for (int i = 0; i < chunkCount; i++) {
+			
 				fstream.read(buffer, 4, PAYLOAD_SIZE);
 				byte[] packet = make_pkt(buffer, i);
 				
 				udt_send(packet);
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-				System.err.println(String.format("Reading file failed at chunk %d", i));
-				return false;
 			}
+			
+			fstream.close();
+				
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.err.println(String.format("Sending file failed."));
+			return false;
 		}
-
 		return true;
 	}
 	
@@ -75,8 +88,9 @@ public class Sender1 {
 		return chunk;
 	}
 	
-	private boolean udt_send(byte[] data) {
-//		System.out.println("Chunk size: " + data[0]);
+	private boolean udt_send(byte[] data) throws IOException {
+		DatagramPacket packet = new DatagramPacket(data, data.length);
+		socket.send(packet);
 		return false;
 	}
 
@@ -84,8 +98,9 @@ public class Sender1 {
 		
 		// Parse args
 		try {
-			int port = Integer.parseInt(args[0]);
-			String filename = args[1];
+			String host = args[0];
+			int port = Integer.parseInt(args[1]);
+			String filename = args[2];
 			
 			// Initialize file 
 			File file = new File(filename);
