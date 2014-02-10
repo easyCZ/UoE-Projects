@@ -61,7 +61,7 @@ class ProfileGuided(Predictor):
         address = str(instruction['address'])
         # print address
         if address in profile.keys():
-            if profile[address] > 0:
+            if profile[address] >= 0:
                 return 1
             else:
                 return 0
@@ -105,12 +105,9 @@ class ProfileGuided(Predictor):
             else:
                 stats['miss'] += 1
 
-            # print stats
-
         _file.close()
 
-        # print stats
-        print 'Hit rate: %.3f%s' % (100 * stats['hit'] / float(stats['hit'] + stats['miss']), '%')
+        print 'Miss rate: %.3f%s' % (100 * stats['miss'] / float(stats['hit'] + stats['miss']), '%')
 
 
 
@@ -123,4 +120,4 @@ class ProfileGuided(Predictor):
 # b.analyze('gcc_branch.out', b.predictor)
 
 p = ProfileGuided()
-p.analyze('mcf_branch.out')
+p.analyze('countTest2.out')
