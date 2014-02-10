@@ -34,7 +34,7 @@ class Predictor(object):
 
         _file.close()
 
-        print 'Hit rate: %.3f%s' % (100 * stats['hit'] / float(stats['hit'] + stats['miss']), '%')
+        print 'Miss rate: %.3f%s' % (100 * stats['miss'] / float(stats['hit'] + stats['miss']), '%')
 
 
 class AlwaysTaken(Predictor):
