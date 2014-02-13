@@ -23,6 +23,9 @@ class AdaptativePredictor(object):
         return [0] * length
 
     def init_predictor(self):
+        """
+        Initialize to weakly not taken.
+        """
         return 1
 
     def to_bit_string(self, bits):
@@ -30,6 +33,14 @@ class AdaptativePredictor(object):
         Return bit string of the given bits represented as a list.
         """
         return ''.join(map(str, bits))
+
+    def get_history(self, address, table):
+        """
+        Get branch history for a given address.
+
+        Returns a list of outcomes
+        """
+        return table[address]['history']
 
     def predictor(self, instruction, history_table, length):
         """
@@ -51,10 +62,16 @@ class AdaptativePredictor(object):
                 history = history_table[address]['history']
                 history_bitstring = self.to_bit_string(history)
 
-                if history_table[address][history_bitstring] >= 2:
-                    return 1
+                if history_bitstring in history_table[address]:
+                    if history_table[address][history_bitstring] >= 2:
+                        return 1
+                    else:
+                        return 0
+
                 else:
+                    history_table[address][history_bitstring] = self.init_predictor()
                     return 0
+
             else:
                 print "Could not find 'history' key in the history table."
         else:
@@ -74,24 +91,29 @@ class AdaptativePredictor(object):
     def udpate_history(self, instruction, history_table, outcome, length):
         address = instruction['address']
 
+        old_history = history_table[address]['history']
+
         # Push new elements onto the history and remove the tail - Should really use a Queue here.
         history_table[address]['history'].insert(0, outcome)
         history_table[address]['history'] = history_table[address]['history'][:length]
         new_history = history_table[address]['history']
         history_table[address]['history'] = new_history
 
-        # Key for history_table
-        history_bitstring = self.to_bit_string(new_history)
+    def update_state(self, instruction, history_table, outcome, length):
+        address = instruction['address']
+        history = history_table[address]['history']
+        history_bitstring = self.to_bit_string(history)
 
-        if history_bitstring not in history_table[address].keys():
-            # Initialize new predictor for new_history
-            new_history_bitstring = self.to_bit_string(new_history)
-            history_table[address][new_history_bitstring] = self.init_predictor()
+
+        # print 'history_table', history_table
+        # print 'address:', address
+        # print 'history_bitstring:', history_bitstring
 
         if outcome == 1:    # increment
             history_table[address][history_bitstring] = min(
                 history_table[address][history_bitstring] + 1, length -1)   # Make sure we stay within the length
         else:   # decrement
+            # print 'history_table[address][history_bitstring]', history_table[address][history_bitstring]
             history_table[address][history_bitstring] = max(
                 history_table[address][history_bitstring] - 1, 0)   # Make sure we don't go below 0
 
@@ -110,6 +132,7 @@ class AdaptativePredictor(object):
                 else:
                     stats['miss'] += 1
 
+                self.update_state(instruction, table, instruction['taken'], length)
                 self.udpate_history(instruction, table, instruction['taken'], length)
 
 
@@ -119,5 +142,5 @@ class AdaptativePredictor(object):
 
 
 a = AdaptativePredictor()
-a.analyze('gcc_branch.out', 3)
+a.analyze('gcc_branch.out', 1)
 
