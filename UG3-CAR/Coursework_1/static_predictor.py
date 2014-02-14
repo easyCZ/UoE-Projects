@@ -176,12 +176,12 @@ if __name__ == "__main__":
     if args.method.lower() in ['alwaystaken', 'nevertaken', 'profile']:
         if args.method.lower() == 'alwaystaken':
             a = AlwaysTaken()
-            a.analyze('gcc_branch.out', a.predictor)
+            a.analyze(args.filename, a.predictor)
         elif args.method.lower() == 'nevertaken':
             b = NeverTaken()
-            b.analyze('gcc_branch.out', b.predictor)
+            b.analyze(args.filename, b.predictor)
         else:
             p = ProfileGuided()
-            p.analyze('gcc_branch.out')
+            p.analyze(args.filename)
     else:
         print 'Incorrect predictor method. Please use one of ["alwaystaken", "nevertaken", "profile"]'
