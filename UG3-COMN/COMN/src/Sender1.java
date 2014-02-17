@@ -23,7 +23,7 @@ public class Sender1 {
 	private int PORT;
 	private String FILENAME;
 	private static int PAYLOAD_SIZE = 1024;
-	private static int PACKET_SIZE = 1028;	// 1 KB
+	private static int PACKET_SIZE = 1028;	
 	private static int HEADER_SIZE = 4;	// 4 bytes
 	
 	private DatagramSocket socket;
