@@ -38,10 +38,7 @@ public class Sender1 {
 			return;
 		}
 		
-		address = new InetSocketAddress("localhost", port);
-		
-		System.out.println(address == null);
-		
+		address = new InetSocketAddress("localhost", port);		
 		
 		try {
 			rdt_send(file);
@@ -89,7 +86,8 @@ public class Sender1 {
 	}
 	
 	private boolean udt_send(byte[] data) throws IOException {
-		DatagramPacket packet = new DatagramPacket(data, data.length);
+		DatagramPacket packet = new DatagramPacket(data, data.length, address);
+		System.out.println("Sending packet.");
 		socket.send(packet);
 		return false;
 	}
