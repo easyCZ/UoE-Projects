@@ -10,6 +10,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.BitSet;
 
 
@@ -33,18 +34,18 @@ public class Sender1 {
 		
 		try {
 			socket = new DatagramSocket();
-		} catch (IOException e) {
-			System.err.println("Failed to create datagram socket. Exiting.");
-			return;
-		}
-		
-		address = new InetSocketAddress("localhost", port);		
-		
-		try {
+			
+			address = new InetSocketAddress("localhost", port);
+			
 			rdt_send(file);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println("Failed to create datagram socket. Exiting.");
+			return;
+		} finally {
+			if (socket != null) socket.close();
 		}
 	}
 	
@@ -61,7 +62,7 @@ public class Sender1 {
 			for (int i = 0; i < chunkCount; i++) {
 			
 				fstream.read(buffer, 4, PAYLOAD_SIZE);
-				byte[] packet = make_pkt(buffer, i);
+				byte[] packet = make_pkt(buffer, i, i == chunkCount-1);
 				
 				udt_send(packet);
 			}
@@ -76,11 +77,30 @@ public class Sender1 {
 		return true;
 	}
 	
-	private byte[] make_pkt(byte[] chunk, int sequenceNumber) {
+	private byte[] make_pkt(byte[] chunk, int sequenceNumber, boolean isLast) {
+		
+		
+//		BigInteger bi = BigInteger.valueOf(sequenceNumber);
+//		byte[] bytes = bi.toByteArray();
+		
 		// prepend header
-		byte[] header = ByteBuffer.allocate(4).putInt(sequenceNumber).array();
-		for (int i = 0; i < HEADER_SIZE; i++)
+		byte[] header = BigInteger.valueOf(sequenceNumber).toByteArray();
+		
+		int len = Math.min(header.length, 3);
+		
+		for (int i = 0; i < len; i++)
 			chunk[i] = header[i];
+		
+		byte[] byteHeader = Arrays.copyOfRange(chunk, 0, 3);
+		// Get the sequence number as an integer
+		int sequenceNum = new BigInteger(byteHeader).intValue();
+		System.out.printf("%d vs %d\n",sequenceNumber, sequenceNum);
+		
+		
+		chunk[3] = isLast ? (byte) 1 : (byte) 0;
+		
+		if (isLast)
+			System.out.printf("Chunk %d is the LAST one!\n", sequenceNumber);
 		
 		return chunk;
 	}
@@ -110,6 +130,7 @@ public class Sender1 {
 			
 			
 		} catch(IndexOutOfBoundsException e) {
+			e.printStackTrace();
 			System.err.println("Incorect arguments. Valid arguments are <Port> <FileName> [RetryTimeout] [WindowSize]");
 			return;
 		} 
