@@ -59,9 +59,9 @@ public class Receiver1 {
 	
 	public boolean extract(byte[] packet) {
 		// Slice packet into a header
-		byte[] byteHeader = Arrays.copyOfRange(packet, 0, 3);
+		byte[] byteHeader = Arrays.copyOfRange(packet, 0, 2);
 		// Get the sequence number as an integer
-		int sequenceNum = new BigInteger(byteHeader).intValue();	
+		short sequenceNum = new BigInteger(byteHeader).shortValue();	
 
 		System.out.printf("Received packet %d\n", sequenceNum);
 		byte[] byteEof = Arrays.copyOfRange(packet, 3, 4);
@@ -69,9 +69,9 @@ public class Receiver1 {
 		
 		byte[] payload = Arrays.copyOfRange(packet, 4, packet.length);
 		
-		System.out.printf("Packet %d has %d bytes.\n", sequenceNum, packet.length);
+//		System.out.printf("Packet %d has %d bytes.\n", sequenceNum, packet.length);
 		
-		// Write the payload, payload located at packet[4] - end of packet
+		// Write the payload, payload located at packet[3] - end of packet
 		try {
 			output.write(payload);
 		} catch (IOException e) {
@@ -89,6 +89,8 @@ public class Receiver1 {
 			FileOutputStream fileStream = new FileOutputStream(file);
 			BufferedOutputStream bufferedOutput = new BufferedOutputStream(fileStream);
 			
+			System.out.println("Buffer has length " + output.size());
+			
 			// Write to a file
 			bufferedOutput.write(output.toByteArray());
 						
@@ -97,6 +99,7 @@ public class Receiver1 {
 			bufferedOutput.close();
 			success = true;
 			output.close();
+			
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 			System.err.println("Could not find file to write to.");
@@ -116,7 +119,7 @@ public class Receiver1 {
 			String filename = args[2];
 			
 			// Initialize file 
-			File file = new File("received_file.jpg");
+			File file = new File("receive.jpg");
 			
 			System.out.println("Starting Receiver1.");
 			

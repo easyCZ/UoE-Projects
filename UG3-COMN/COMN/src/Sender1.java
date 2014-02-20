@@ -53,17 +53,20 @@ public class Sender1 {
 		FileInputStream fstream = new FileInputStream(file);
 		
 		long fsize = file.length();
-		int chunkCount = (int) Math.floor(fsize / (double) PACKET_SIZE);
+		int chunkCount = (int) Math.floor(fsize / (double) PAYLOAD_SIZE);
 		
-		byte[] buffer = new byte[PACKET_SIZE];
+		
 		
 		// Submit each chunk
 		try {
-			for (int i = 0; i < chunkCount; i++) {
+			for (short i = 0; i < chunkCount; i++) {
+				
+				byte[] buffer = new byte[PACKET_SIZE];
 			
 				fstream.read(buffer, 4, PAYLOAD_SIZE);
 				byte[] packet = make_pkt(buffer, i, i == chunkCount-1);
 				
+				System.out.printf("Sending packet # %d\n", i);
 				udt_send(packet);
 			}
 			
@@ -77,25 +80,16 @@ public class Sender1 {
 		return true;
 	}
 	
-	private byte[] make_pkt(byte[] chunk, int sequenceNumber, boolean isLast) {
+	private byte[] make_pkt(byte[] chunk, short sequenceNumber, boolean isLast) {
 		
+		// Set sequence header
+		ByteBuffer buffer = ByteBuffer.allocate(2);
+		buffer.putShort(sequenceNumber);
 		
-//		BigInteger bi = BigInteger.valueOf(sequenceNumber);
-//		byte[] bytes = bi.toByteArray();
-		
-		// prepend header
-		byte[] header = BigInteger.valueOf(sequenceNumber).toByteArray();
-		
-		int len = Math.min(header.length, 3);
-		
-		for (int i = 0; i < len; i++)
-			chunk[i] = header[i];
-		
-		byte[] byteHeader = Arrays.copyOfRange(chunk, 0, 3);
-		// Get the sequence number as an integer
-		int sequenceNum = new BigInteger(byteHeader).intValue();
-		System.out.printf("%d vs %d\n",sequenceNumber, sequenceNum);
-		
+		byte[] byteSequence = buffer.array();
+		for (int i = 0; i < byteSequence.length; i++)
+			chunk[i] = byteSequence[i];
+			
 		
 		chunk[3] = isLast ? (byte) 1 : (byte) 0;
 		
