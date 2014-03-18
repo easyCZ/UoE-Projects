@@ -132,11 +132,11 @@ if __name__ == '__main__':
     parser.add_argument('model', help='Which cache model to use.', type=str, choices=valid_models)
     parser.add_argument('filename', help="The file to be used for simulation.", type=str)
     parser.add_argument('cache_size', help="Size of the cache in KB", type=int)
-    parser.add_argument('-sets', help="The size of the set", type=int)
+    parser.add_argument('-set_size', help="The size of the set", type=int)
 
     args = parser.parse_args()
 
-    if args.sets is None:
+    if args.set_size is None:
         args.sets = 1
 
     try:
@@ -145,7 +145,7 @@ if __name__ == '__main__':
             if model == 'direct_mapped':
                 c = SetAssociative(args.filename, int(args.cache_size), 1)
             if model == 'set_associative':
-                c = SetAssociative(args.filename, int(args.cache_size), int(args.sets))
+                c = SetAssociative(args.filename, int(args.cache_size), int(args.set_size))
             c.simulate()
         else:
             print 'Valid options for cache model are', valid_models
