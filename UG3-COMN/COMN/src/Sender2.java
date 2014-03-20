@@ -175,7 +175,7 @@ public class Sender2 {
 			// Initialize file 
 			File file = new File(filename);
 			
-//			System.out.println("Starting Sender1.");
+			System.out.println("Starting Sender1.");
 			
 			// Start Sender
 			new Sender2(port, file, timeout);

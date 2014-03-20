@@ -190,7 +190,7 @@ public class Receiver3 {
 			int timeout = Integer.parseInt(args[3]);
 			
 			// Initialize file 
-			File file = new File("receive.jpg");
+			File file = new File(filename);
 			
 			System.out.println("Starting Receiver1.");
 			
