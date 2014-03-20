@@ -28,6 +28,9 @@ public class Sender32 {
 	private DatagramSocket socket;
 	private InetSocketAddress address;
 	
+	private long execStartTime;
+	private long execEndTime;
+	
 	private ConcurrentHashMap<Integer, DatagramPacket> packetBuffer;
 
 	public Sender32(int port, File file, int timeout, int windowSize) {
@@ -44,7 +47,6 @@ public class Sender32 {
 			System.exit(0);
 		}
 		
-		
 		PacketSender packetSender = new PacketSender(file);
 		ACKListener ackListener = new ACKListener();
 		
@@ -60,11 +62,14 @@ public class Sender32 {
 			this.file = file;
 		}
 		
-		public void run() {
-			System.out.println("Running PacketSender.");
-			
+		public void run() {	
 			try {
+				execStartTime = System.currentTimeMillis();
 				rdt_send(file);
+				execEndTime = System.currentTimeMillis();
+				double timeElapsed = (execEndTime - execStartTime) / 1000.0;				
+				double throughput = file.length() / timeElapsed;
+				System.out.println("Throughput: " + throughput / 1024 + " KB/s");;
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -93,7 +98,7 @@ public class Sender32 {
 						
 						packetBuffer.put(i, packet);
 						
-						System.out.printf("Sending packet # %d\n", i);
+//						System.out.printf("Sending packet # %d\n", i);
 						udt_send(packet);
 						i += 1;
 						
@@ -101,9 +106,7 @@ public class Sender32 {
 //						System.out.println("*** Frame is full, waiting for ACKs");
 					}
 				}
-				
-				
-				
+				isListening = false;
 				fstream.close();
 					
 			} catch (IOException e) {
@@ -123,8 +126,8 @@ public class Sender32 {
 				
 			chunk[2] = isLast ? (byte) 1 : (byte) 0;
 			
-			if (isLast)
-				System.out.printf("Chunk %d is the LAST one!\n", sequenceNumber);
+//			if (isLast)
+//				System.out.printf("Chunk %d is the LAST one!\n", sequenceNumber);
 			
 			DatagramPacket packet;
 			try {
@@ -146,7 +149,7 @@ public class Sender32 {
 	private class ACKListener extends Thread {
 		
 		public void run() {
-			System.out.println("Started ACKListener");
+//			System.out.println("Started ACKListener");
 			
 			while (isListening && maxACKreceived <= totalPackets) {
 				// Set up buffer
@@ -155,29 +158,36 @@ public class Sender32 {
 				
 				// Receive the ACK
 				try {
-					System.out.println(">>> Waiting for an ACK...");
+//					System.out.println(">>> Waiting for an ACK...");
 					
 					// Set socket timeout
 					socket.setSoTimeout(socketTimeout);
 					socket.receive(packet);
 					
-					System.out.println("Packet received. Processing...");
+//					System.out.println("Packet received. Processing...");
 					
 					int ackNumber = Tools.byteArrayToInt(buffer);
 					
 					// verify we got the next packet needed
-					if (ackNumber == maxACKreceived + 1) {
-						// Remove entry from buffer
-						packetBuffer.remove(maxACKreceived);
-						System.out.println("Removed " + maxACKreceived + "from buffer. New size is " + packetBuffer.size());
+					if (ackNumber > maxACKreceived) {
+						
+						
+						// Remove all entries upt to maxACK + 1
+						for (Integer key: packetBuffer.keySet()) {
+							if (key <= ackNumber) {
+								packetBuffer.remove(key);
+							}
+						}
+//						System.out.println("Removed from buffer. New size is " + packetBuffer.size());
 						// Update maximum ACK received
 						maxACKreceived = ackNumber;
 					} else {
 						resendPackets();
 					}					
-					System.out.println("ACK Packet #" + ackNumber);
+//					System.out.println("ACK Packet #" + ackNumber);
 				} catch (SocketTimeoutException e) {
 					System.out.println("ACK Listener Socket timeout occured.");
+					System.out.println("Buffer size: " + packetBuffer.size());
 					resendPackets();
 				} catch (IOException e) {
 					System.err.println("IO Exception on ACK ReceiverThread occured. Exiting.");

@@ -12,6 +12,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
+import java.security.acl.LastOwnerException;
 import java.util.Arrays;
 
 
@@ -27,13 +28,13 @@ public class Receiver3 {
 	private ByteArrayOutputStream output;	
 	private DatagramSocket socket;
 	private File file;
-	private int timeout;
+	
+	private int timeout = 40;
 	
 	private int highestPacketReceived = -1;
 
 	public Receiver3(int port, File file) {
 		this.file = file;
-		this.timeout = 1000 * timeout;
 		try {
 			// Bind a socket to port
 			socket = new DatagramSocket(port);
@@ -77,12 +78,14 @@ public class Receiver3 {
 					} 
 
 				} catch (SocketTimeoutException e) {
-					byte[] lastValidPacketNum = shortToByteArray((short)highestPacketReceived);
-					send_response(packet.getAddress(), packet.getPort(), lastValidPacketNum);
-					System.out.println("Sending highest packet obtained. " + highestPacketReceived);
+					if (highestPacketReceived != -1) {
+						byte[] lastValidPacketNum = shortToByteArray((short)highestPacketReceived);
+						send_response(packet.getAddress(), packet.getPort(), lastValidPacketNum);
+						System.out.println("Sending highest packet obtained. " + highestPacketReceived);
+					}
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					System.err.println("Receiving an ACK failed. Exiting.");
+					System.exit(0);
 				}
 			} while (!packetReceived);	
 			
@@ -184,10 +187,8 @@ public class Receiver3 {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		try {
-			String host = args[0];
-			int port = Integer.parseInt(args[1]);
-			String filename = args[2];
-			int timeout = Integer.parseInt(args[3]);
+			int port = Integer.parseInt(args[0]);
+			String filename = args[1];
 			
 			// Initialize file 
 			File file = new File(filename);

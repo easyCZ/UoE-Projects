@@ -48,9 +48,9 @@ public class Sender3 {
 			ackSocket = new DatagramSocket(socket.getLocalPort() - 10);
 			
 			PacketSenderThread packetSender = new PacketSenderThread(file);
-			packetSender.run();
+			packetSender.start();
 			ACKReceiver = new ACKReceiverThread();
-			ACKReceiver.run();
+			ACKReceiver.start();
 //			rdt_send(file);
 		} catch (IOException e) {
 			System.err.println("Error creating socket. Exiting.");
@@ -179,7 +179,12 @@ public class Sender3 {
 					
 					if (ackNumber == highestACKReceived + 1) {
 						highestACKReceived = ackNumber;
-						packetBuffer.remove(highestACKReceived + 1);
+						for (Integer key: packetBuffer.keySet()) {
+							if (key <= highestACKReceived + 1) {
+								packetBuffer.remove(key);
+								System.out.println("Removing key: " + key);
+							}
+						}
 						System.out.println("Removing from buffer.");
 					}
 					
