@@ -75,7 +75,7 @@ public class Sender2 {
 				
 				byte[] buffer = new byte[PACKET_SIZE];
 			
-				fstream.read(buffer, 2, PAYLOAD_SIZE);
+				fstream.read(buffer, HEADER_SIZE, PAYLOAD_SIZE);
 				byte[] packet = make_pkt(buffer, nextAckNum, i == chunkCount-1, i);
 				
 				System.out.printf("Sending packet # %d\n", i);
@@ -147,7 +147,7 @@ public class Sender2 {
 //			System.out.println("ACK received.");
 			return isack;
 		} catch (SocketTimeoutException e) {
-//			System.out.println("Receiving an ACK timed out. Resending the packet.");
+			System.out.println("Receiving an ACK timed out. Resending the packet.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
