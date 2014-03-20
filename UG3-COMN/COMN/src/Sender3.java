@@ -182,7 +182,7 @@ public class Sender3 {
 						}
 //						System.out.println("Removed from buffer. New size is " + packetBuffer.size());
 						// Update maximum ACK received
-						maxACKreceived = ackNumber + 1;
+						maxACKreceived = ackNumber;
 					} 
 //					else {
 //						if (timeoutTimer - System.currentTimeMillis() < 0) {
