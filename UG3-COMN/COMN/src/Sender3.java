@@ -156,6 +156,8 @@ public class Sender3 {
 				byte[] buffer = new byte[ACK_SIZE];
 				DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 				
+				long timeoutTimer = System.currentTimeMillis() + socketTimeout;
+				
 				// Receive the ACK
 				try {
 //					System.out.println(">>> Waiting for an ACK...");
@@ -182,13 +184,19 @@ public class Sender3 {
 						// Update maximum ACK received
 						maxACKreceived = ackNumber;
 					} else {
-						resendPackets();
+						if (timeoutTimer - System.currentTimeMillis() < 0) {
+							resendPackets();
+							timeoutTimer = System.currentTimeMillis() + socketTimeout;
+						}
 					}					
 //					System.out.println("ACK Packet #" + ackNumber);
 				} catch (SocketTimeoutException e) {
 					System.out.println("ACK Listener Socket timeout occured.");
 					System.out.println("Buffer size: " + packetBuffer.size());
-					resendPackets();
+					if (timeoutTimer - System.currentTimeMillis() < 0) {
+						resendPackets();
+						timeoutTimer = System.currentTimeMillis() + socketTimeout;
+					}
 				} catch (IOException e) {
 					System.err.println("IO Exception on ACK ReceiverThread occured. Exiting.");
 					System.exit(0);
