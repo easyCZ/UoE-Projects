@@ -167,7 +167,7 @@ public class Receiver2 {
 			String filename = args[1];
 			
 			// Initialize file 
-			File file = new File("receive.jpg");
+			File file = new File(filename);
 			
 			System.out.println("Starting Receiver1.");
 			

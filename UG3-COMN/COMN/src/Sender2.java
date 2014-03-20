@@ -125,7 +125,7 @@ public class Sender2 {
 		socket.send(packet);
 //		System.out.println(socket.getLocalPort());
 		
-		long timeoutTime = System.nanoTime() + 1000000  * timeout;
+		double timeoutTime = System.nanoTime() + timeout / 1000000.0;
 		
 		// Keep sending the packet until we get an ACK
 		while (!rdt_rcv()) {
