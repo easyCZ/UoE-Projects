@@ -130,7 +130,7 @@ public class Sender2 {
 		// Keep sending the packet until we get an ACK
 		while (!rdt_rcv()) {
 			// If our timer has timed out, resend the packet. Otherwise wait
-			System.out.println("Timeout left: " + (timeoutTime - System.currentTimeMillis()));
+//			System.out.println("Timeout left: " + (timeoutTime - System.currentTimeMillis()));
 			
 			if (timeoutTime - System.currentTimeMillis() < 0) {
 				socket.send(packet);
@@ -155,7 +155,7 @@ public class Sender2 {
 //			System.out.println("ACK received.");
 			return isack;
 		} catch (SocketTimeoutException e) {
-			System.out.println("Receiving an ACK timed out. Resending the packet.");
+//			System.out.println("Receiving an ACK timed out. Resending the packet.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
