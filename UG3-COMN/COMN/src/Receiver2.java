@@ -62,7 +62,7 @@ public class Receiver2 {
 				try {
 					socket.receive(packet);
 					
-					System.out.println("Packet size: " + packet.getLength());
+//					System.out.println("Packet size: " + packet.getLength());
 					
 					if (buffer[0] == nextAckNum) {
 						packetReceived = true;
@@ -119,7 +119,7 @@ public class Receiver2 {
 		
 		byte[] payload = Arrays.copyOfRange(packet, 2, packet.length);
 		
-		System.out.printf("Packet %d has %d bytes.\n", sequenceNum, packet.length);
+//		System.out.printf("Packet %d has %d bytes.\n", sequenceNum, packet.length);
 		
 		// Write the payload, payload located at packet[3] - end of packet
 		try {
