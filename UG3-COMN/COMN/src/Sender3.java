@@ -199,8 +199,10 @@ public class Sender3 {
 		public void resendPackets() {
 			for (int i = maxACKreceived; i < packetBuffer.size() + maxACKreceived; i++) {
 				try {
-					if (socket != null)
+					System.out.println("Socket is null: " + (socket == null));
+					if (socket != null) {
 						socket.send(packetBuffer.get(i));
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
