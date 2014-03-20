@@ -78,7 +78,7 @@ public class Sender2 {
 				fstream.read(buffer, 2, PAYLOAD_SIZE);
 				byte[] packet = make_pkt(buffer, nextAckNum, i == chunkCount-1, i);
 				
-//				System.out.printf("Sending packet # %d\n", i);
+				System.out.printf("Sending packet # %d\n", i);
 				udt_send(packet);
 			}
 			
@@ -108,8 +108,8 @@ public class Sender2 {
 		// Set the last packet header
 		chunk[1] = isLast ? (byte) 1 : (byte) 0;
 		
-//		if (isLast)
-//			System.out.printf("Chunk %d is the LAST one!\n", sequenceNumber);
+		if (isLast)
+			System.out.printf("Chunk %d is the LAST one!\n", sequenceNumber);
 		
 		return chunk;
 	}
