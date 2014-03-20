@@ -67,21 +67,21 @@ public class Receiver3 {
 					byte[] byteHeader = Arrays.copyOfRange(packet.getData(), 0, 2);
 					int packetSequenceNum = Tools.byteArrayToInt(byteHeader);
 					
-					System.out.println("Sequence nubmer is: " + packetSequenceNum);
-					System.out.println("Highest packet: " + (highestPacketReceived + 1));
+//					System.out.println("Sequence nubmer is: " + packetSequenceNum);
+//					System.out.println("Highest packet: " + (highestPacketReceived + 1));
 					
 					if (packetSequenceNum == highestPacketReceived + 1) {
 						highestPacketReceived = packetSequenceNum;
 						packetReceived = true;
 						send_response(packet.getAddress(), packet.getPort(), byteHeader);
-						System.out.println("ACK for packet " + packetSequenceNum + " sent");
+//						System.out.println("ACK for packet " + packetSequenceNum + " sent");
 					} 
 
 				} catch (SocketTimeoutException e) {
 					if (highestPacketReceived != -1) {
 						byte[] lastValidPacketNum = shortToByteArray((short)highestPacketReceived);
 						send_response(packet.getAddress(), packet.getPort(), lastValidPacketNum);
-						System.out.println("Sending highest packet obtained. " + highestPacketReceived);
+//						System.out.println("Sending highest packet obtained. " + highestPacketReceived);
 					}
 				} catch (IOException e) {
 					System.err.println("Receiving an ACK failed. Exiting.");
@@ -91,7 +91,7 @@ public class Receiver3 {
 			
 			// Extract data and determine if we need to receive more
 			listening = extract(packet.getData());
-			System.out.println("Are we listening for more: " + listening);
+//			System.out.println("Are we listening for more: " + listening);
 		}
 		
 		// Deliver data to the top level application
@@ -134,7 +134,7 @@ public class Receiver3 {
 		// Get the sequence number as an integer
 		short sequenceNum = new BigInteger(byteHeader).shortValue();	
 
-		System.out.printf("Received packet %d\n", sequenceNum);
+//		System.out.printf("Received packet %d\n", sequenceNum);
 		byte[] byteEof = Arrays.copyOfRange(packet, 2, 3);
 		int eof = new BigInteger(byteEof).intValue();
 		
@@ -162,7 +162,7 @@ public class Receiver3 {
 			FileOutputStream fileStream = new FileOutputStream(file);
 			BufferedOutputStream bufferedOutput = new BufferedOutputStream(fileStream);
 			
-			System.out.println("Buffer has length " + output.size());
+//			System.out.println("Buffer has length " + output.size());
 			
 			// Write to a file
 			bufferedOutput.write(output.toByteArray());

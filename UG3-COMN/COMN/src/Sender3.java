@@ -191,8 +191,8 @@ public class Sender3 {
 					}					
 //					System.out.println("ACK Packet #" + ackNumber);
 				} catch (SocketTimeoutException e) {
-					System.out.println("ACK Listener Socket timeout occured.");
-					System.out.println("Buffer size: " + packetBuffer.size());
+//					System.out.println("ACK Listener Socket timeout occured.");
+//					System.out.println("Buffer size: " + packetBuffer.size());
 					if (timeoutTimer - System.currentTimeMillis() < 0) {
 						resendPackets();
 						timeoutTimer = System.currentTimeMillis() + socketTimeout;
@@ -207,7 +207,7 @@ public class Sender3 {
 		public void resendPackets() {
 			for (int i = maxACKreceived; i < packetBuffer.size() + maxACKreceived; i++) {
 				try {
-					System.out.println("Socket is null: " + (socket == null));
+//					System.out.println("Socket is null: " + (socket == null));
 					if (socket != null) {
 						socket.send(packetBuffer.get(i));
 					}
