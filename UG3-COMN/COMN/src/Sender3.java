@@ -98,7 +98,7 @@ public class Sender3 {
 						
 						packetBuffer.put(i, packet);
 						
-//						System.out.printf("Sending packet # %d\n", i);
+						System.out.printf("Sending packet # %d\n", i);
 						udt_send(packet);
 						i += 1;
 						
