@@ -164,10 +164,9 @@ public class Receiver2 {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		try {
-			String host = args[0];
-			int port = Integer.parseInt(args[1]);
-			String filename = args[2];
-			int timeout = Integer.parseInt(args[3]);
+			int port = Integer.parseInt(args[0]);
+			String filename = args[1];
+			int timeout = Integer.parseInt(args[2]);
 			
 			// Initialize file 
 			File file = new File("receive.jpg");
