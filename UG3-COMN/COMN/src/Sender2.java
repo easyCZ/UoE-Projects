@@ -7,6 +7,7 @@ import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
+import java.util.TimerTask;
 
 
 /*
@@ -15,8 +16,6 @@ import java.nio.ByteBuffer;
 
 
 public class Sender2 {
-	
-	private int PORT_OFFSET = 5;
 	
 	private static int PAYLOAD_SIZE = 1024;
 	private static int PACKET_SIZE = 1026;	
@@ -30,8 +29,12 @@ public class Sender2 {
 	
 	private int timeout;	// Timeout in ms
 	
+	private int retransmissionCount = 0;
+	private long execStartTime;
+	private long execEndTime;
+	
 	public Sender2(int port, File file, int timeout) {
-		this.timeout = 1000 * timeout;
+		this.timeout = timeout;
 		try {
 			// Create socket bound to random port
 			socket = new DatagramSocket();
@@ -39,7 +42,17 @@ public class Sender2 {
 			// Receiver location
 			address = new InetSocketAddress("localhost", port);
 			
+			execStartTime = System.currentTimeMillis();
 			rdt_send(file);
+			execEndTime = System.currentTimeMillis();
+			double timeElapsed = (execEndTime - execStartTime) / 1000.0;
+			System.out.println("Transmission time: " + timeElapsed + " seconds");
+			
+			long bytesSent = retransmissionCount * PACKET_SIZE + file.length();
+			System.out.println("Bytes sent: " + bytesSent);
+			double throughput = bytesSent / timeElapsed;
+			System.out.println("Throughput: " + throughput / 1024 + " KB/s");
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -65,7 +78,7 @@ public class Sender2 {
 				fstream.read(buffer, 2, PAYLOAD_SIZE);
 				byte[] packet = make_pkt(buffer, nextAckNum, i == chunkCount-1, i);
 				
-				System.out.printf("Sending packet # %d\n", i);
+//				System.out.printf("Sending packet # %d\n", i);
 				udt_send(packet);
 			}
 			
@@ -95,21 +108,27 @@ public class Sender2 {
 		// Set the last packet header
 		chunk[1] = isLast ? (byte) 1 : (byte) 0;
 		
-		if (isLast)
-			System.out.printf("Chunk %d is the LAST one!\n", sequenceNumber);
+//		if (isLast)
+//			System.out.printf("Chunk %d is the LAST one!\n", sequenceNumber);
 		
 		return chunk;
 	}
 	
 	private void udt_send(byte[] data) throws IOException {
 		DatagramPacket packet = new DatagramPacket(data, data.length, address);
-		System.out.println("Sending packet.");
+//		System.out.println("Sending packet.");
 		socket.send(packet);
-		System.out.println(socket.getLocalPort());
+//		System.out.println(socket.getLocalPort());
+		
+		long timeoutTime = System.nanoTime() + 1000000  * timeout;
 		
 		// Keep sending the packet until we get an ACK
 		while (!rdt_rcv()) {
-			socket.send(packet);
+			// If our timer has timed out, resend the packet. Otherwise wait
+			if (timeoutTime - System.nanoTime() < 0) {
+				socket.send(packet);
+				retransmissionCount += 1;
+			}
 		}
 		
 		// Flip sequence number
@@ -120,15 +139,15 @@ public class Sender2 {
 		byte[] buffer = new byte[ACK_SIZE];
 		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 		// Receive the ACK
-		try {
+		try {			
 			socket.setSoTimeout(timeout);
 			socket.receive(packet);
 			
 			boolean isack = isACK(packet.getData());
-			System.out.println("ACK received.");
+//			System.out.println("ACK received.");
 			return isack;
 		} catch (SocketTimeoutException e) {
-			System.out.println("Receiving an ACK timed out. Resending the packet.");
+//			System.out.println("Receiving an ACK timed out. Resending the packet.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -151,7 +170,7 @@ public class Sender2 {
 			// Initialize file 
 			File file = new File(filename);
 			
-			System.out.println("Starting Sender1.");
+//			System.out.println("Starting Sender1.");
 			
 			// Start Sender
 			new Sender2(port, file, timeout);
