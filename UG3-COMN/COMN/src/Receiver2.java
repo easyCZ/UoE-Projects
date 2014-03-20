@@ -62,6 +62,8 @@ public class Receiver2 {
 				try {
 					socket.receive(packet);
 					
+					System.out.println("Packet size: " + packet.getLength());
+					
 					if (buffer[0] == nextAckNum) {
 						packetReceived = true;
 						send_response(packet.getAddress(), packet.getPort(), nextAckNum);

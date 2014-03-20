@@ -68,18 +68,22 @@ public class Sender2 {
 		
 		long fsize = file.length();
 		int chunkCount = (int) Math.floor(fsize / (double) PAYLOAD_SIZE);
-		
+		long remainingSize = fsize;
 		// Submit each chunk
 		try {
-			for (short i = 0; i < chunkCount; i++) {
+			for (short i = 0; i <= chunkCount; i++) {
+				
+				System.out.println("Remaining size:" + remainingSize);
 				
 				byte[] buffer = new byte[PACKET_SIZE];
 			
 				fstream.read(buffer, HEADER_SIZE, PAYLOAD_SIZE);
-				byte[] packet = make_pkt(buffer, nextAckNum, i == chunkCount-1, i);
+				byte[] packet = make_pkt(buffer, nextAckNum, i == chunkCount, i);
 				
 				System.out.printf("Sending packet # %d\n", i);
 				udt_send(packet);
+				
+				remainingSize -= buffer.length - HEADER_SIZE;
 			}
 			
 			fstream.close();
