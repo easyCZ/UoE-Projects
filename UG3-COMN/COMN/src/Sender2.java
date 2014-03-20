@@ -125,15 +125,16 @@ public class Sender2 {
 		socket.send(packet);
 //		System.out.println(socket.getLocalPort());
 		
-		double timeoutTime = System.nanoTime() + timeout / 1000000.0;
+		double timeoutTime = System.currentTimeMillis() + timeout;
 		
 		// Keep sending the packet until we get an ACK
 		while (!rdt_rcv()) {
 			// If our timer has timed out, resend the packet. Otherwise wait
-			System.out.println("Timeout left: " + (timeoutTime - System.nanoTime()));
+			System.out.println("Timeout left: " + (timeoutTime - System.currentTimeMillis()));
 			
-			if (timeoutTime - System.nanoTime() < 0) {
+			if (timeoutTime - System.currentTimeMillis() < 0) {
 				socket.send(packet);
+				timeoutTime = System.currentTimeMillis() + timeout;
 				retransmissionCount += 1;
 			}
 		}
