@@ -210,7 +210,9 @@ public class Sender3 {
 				try {
 //					System.out.println("Socket is null: " + (socket == null));
 					if (socket != null) {
-						socket.send(packetBuffer.get(i));
+						DatagramPacket packet = packetBuffer.get(i);
+						if (packet != null)
+							socket.send(packet);
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
