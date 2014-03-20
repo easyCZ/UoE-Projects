@@ -130,6 +130,8 @@ public class Sender2 {
 		// Keep sending the packet until we get an ACK
 		while (!rdt_rcv()) {
 			// If our timer has timed out, resend the packet. Otherwise wait
+			System.out.println("Timeout left: " + (timeoutTime - System.nanoTime()));
+			
 			if (timeoutTime - System.nanoTime() < 0) {
 				socket.send(packet);
 				retransmissionCount += 1;
