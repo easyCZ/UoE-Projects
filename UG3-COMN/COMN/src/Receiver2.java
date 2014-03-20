@@ -31,9 +31,8 @@ public class Receiver2 {
 	private File file;
 	private int timeout;
 
-	public Receiver2(int port, File file, int timeout) {
+	public Receiver2(int port, File file) {
 		this.file = file;
-		this.timeout = timeout;
 		try {
 			// Bind a socket to port
 			socket = new DatagramSocket(port);
@@ -166,7 +165,6 @@ public class Receiver2 {
 		try {
 			int port = Integer.parseInt(args[0]);
 			String filename = args[1];
-			int timeout = Integer.parseInt(args[2]);
 			
 			// Initialize file 
 			File file = new File("receive.jpg");
@@ -174,7 +172,7 @@ public class Receiver2 {
 			System.out.println("Starting Receiver1.");
 			
 			// Start Sender
-			new Receiver2(port, file, timeout);
+			new Receiver2(port, file);
 			
 			
 		} catch(IndexOutOfBoundsException e) {
