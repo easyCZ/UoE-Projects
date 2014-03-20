@@ -33,7 +33,7 @@ public class Receiver2 {
 
 	public Receiver2(int port, File file, int timeout) {
 		this.file = file;
-		this.timeout = 1000 * timeout;
+		this.timeout = timeout;
 		try {
 			// Bind a socket to port
 			socket = new DatagramSocket(port);
@@ -65,13 +65,13 @@ public class Receiver2 {
 					if (buffer[0] == nextAckNum) {
 						packetReceived = true;
 						send_response(packet.getAddress(), packet.getPort(), nextAckNum);
-						System.out.println("ACK sent.");
+//						System.out.println("ACK sent.");
 					} else
 						// Send ACK for previous
-						System.out.println("Sending an ACK for previous packet.");
+//						System.out.println("Sending an ACK for previous packet.");
 						send_response(packet.getAddress(), packet.getPort(), (byte) (((int)nextAckNum + 1) % 2));
 				} catch (SocketTimeoutException e) {
-					System.out.println("Receive packet timout occured. NAK sent.");
+//					System.out.println("Receive packet timout occured. NAK sent.");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -97,7 +97,7 @@ public class Receiver2 {
 			try {
 				packet = new DatagramPacket(data, data.length, socketAddr);
 				socket.send(packet);
-				System.out.println("Sent a NAK");
+//				System.out.println("Sent a NAK");
 			} catch (SocketException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -117,7 +117,7 @@ public class Receiver2 {
 		
 		byte[] payload = Arrays.copyOfRange(packet, 2, packet.length);
 		
-//		System.out.printf("Packet %d has %d bytes.\n", sequenceNum, packet.length);
+		System.out.printf("Packet %d has %d bytes.\n", sequenceNum, packet.length);
 		
 		// Write the payload, payload located at packet[3] - end of packet
 		try {
@@ -137,7 +137,7 @@ public class Receiver2 {
 			FileOutputStream fileStream = new FileOutputStream(file);
 			BufferedOutputStream bufferedOutput = new BufferedOutputStream(fileStream);
 			
-			System.out.println("Buffer has length " + output.size());
+//			System.out.println("Buffer has length " + output.size());
 			
 			// Write to a file
 			bufferedOutput.write(output.toByteArray());
