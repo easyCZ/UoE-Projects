@@ -183,12 +183,13 @@ public class Sender3 {
 //						System.out.println("Removed from buffer. New size is " + packetBuffer.size());
 						// Update maximum ACK received
 						maxACKreceived = ackNumber;
-					} else {
-						if (timeoutTimer - System.currentTimeMillis() < 0) {
-							resendPackets();
-							timeoutTimer = System.currentTimeMillis() + socketTimeout;
-						}
-					}					
+					} 
+//					else {
+//						if (timeoutTimer - System.currentTimeMillis() < 0) {
+//							resendPackets();
+//							timeoutTimer = System.currentTimeMillis() + socketTimeout;
+//						}
+//					}					
 //					System.out.println("ACK Packet #" + ackNumber);
 				} catch (SocketTimeoutException e) {
 //					System.out.println("ACK Listener Socket timeout occured.");
