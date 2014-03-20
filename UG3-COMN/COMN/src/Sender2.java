@@ -52,6 +52,7 @@ public class Sender2 {
 			System.out.println("Bytes sent: " + bytesSent);
 			double throughput = bytesSent / timeElapsed;
 			System.out.println("Throughput: " + throughput / 1024 + " KB/s");
+			System.out.println("# of retransmissions: " + retransmissionCount);
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
