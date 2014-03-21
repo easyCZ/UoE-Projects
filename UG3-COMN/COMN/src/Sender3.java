@@ -65,7 +65,7 @@ public class Sender3 {
 					int readSize = fstream.read(buffer, HEADER_SIZE, PAYLOAD_SIZE);
 					
 					// Adjust buffer if it's the last packet
-					if (readSize < PACKET_SIZE)
+					if (readSize < PAYLOAD_SIZE)
 						buffer = Arrays.copyOfRange(buffer, 0, readSize + 3);
 					
 					DatagramPacket packet = make_pkt(buffer, i, i == chunks);
@@ -105,6 +105,7 @@ public class Sender3 {
 		for (int i = 0; i < byteSequence.length; i++)
 			chunk[i] = byteSequence[i];
 
+		
 		chunk[2] = isLast ? (byte) 1 : (byte) 0;
 
 //		if (isLast)

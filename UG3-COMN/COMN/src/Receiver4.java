@@ -24,7 +24,7 @@ public class Receiver4 {
 	private int windowSize;
 	private DatagramSocket socket;
 	private File file;
-	private FileOutputStream outputStream;
+	private FileOutputStream fileStream;
 	
 	private HashMap<Integer, DatagramPacket> packetBuffer;
 	private boolean isListening = false;
@@ -37,7 +37,7 @@ public class Receiver4 {
 		try {
 			socket = new DatagramSocket(port);
 	
-			outputStream = new FileOutputStream(file);
+			fileStream = new FileOutputStream(file);
 			
 			rdt_rcv();
 			
@@ -107,7 +107,7 @@ public class Receiver4 {
 	
 	private void deliver_data() {
 		try {
-			outputStream.close();
+			fileStream.close();
 		} catch (FileNotFoundException e) {
 			System.err.println("Could not find file to write to.");
 		} catch (IOException e) {
@@ -152,7 +152,7 @@ public class Receiver4 {
 				// Write the packet
 				byte[] payload = Arrays.copyOfRange(packet.getData(), 3, packet.getLength());
 				try {
-					outputStream.write(payload);
+					fileStream.write(payload);
 					lastWritten += 1;
 				} catch (IOException e) {
 					e.printStackTrace();
