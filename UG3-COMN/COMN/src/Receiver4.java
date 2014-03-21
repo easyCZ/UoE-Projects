@@ -53,6 +53,7 @@ public class Receiver4 {
 		// Set up buffer
 		byte[] buffer = new byte[PACKET_SIZE];
 		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+		boolean isDelivered = false;
 		
 		while (isListening) {
 			try {
@@ -80,7 +81,9 @@ public class Receiver4 {
 				}
 				
 				writeToBufferedOutput();
-				isListening = !isLast;
+				if (isLast && !isDelivered)
+					deliver_data();
+//				isListening = !isLast;
 				
 				System.out.println("ACK Base: " + ackBase);
 				System.out.println("Packet Buffer Size: " + packetBuffer.size());
@@ -90,7 +93,7 @@ public class Receiver4 {
 			}
 		}
 		
-		deliver_data();
+		
 	}
 	
 	private void deliver_data() {

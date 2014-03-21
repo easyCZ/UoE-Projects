@@ -8,6 +8,8 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -25,6 +27,8 @@ public class Sender4 {
 	private ConcurrentHashMap<Integer, DatagramPacket> packetBuffer;
 	private ConcurrentHashMap<Integer, Long> timeouts;
 	private boolean isListeningACKs = true;
+	private int totalPackets;
+	private Set<Integer> acksReceived;
 	
 	private int ACK_SIZE = 2;
 
@@ -32,15 +36,14 @@ public class Sender4 {
 		this.timeout = timeout;
 		this.windowSize = windowSize;
 		
+		acksReceived = new HashSet<Integer>();
+		
 		packetBuffer = new ConcurrentHashMap<Integer, DatagramPacket>();
 		timeouts = new ConcurrentHashMap<Integer, Long>();
 		
 		try {
 			socket = new DatagramSocket();
 			address = new InetSocketAddress("localhost", port);
-			
-			ACKListener ackListener = new ACKListener();
-			ackListener.start();
 			
 			rdt_send(file);
 		} catch (SocketException e) {
@@ -55,7 +58,11 @@ public class Sender4 {
 		
 		long fsize = file.length();
 		int chunkCount = (int) Math.ceil(fsize / (double) PAYLOAD_SIZE);
+		totalPackets = chunkCount;
 		int i = 1;
+		
+		ACKListener ackListener = new ACKListener();
+		ackListener.start();
 		
 		try {
 			// Do the hard work.
@@ -147,6 +154,11 @@ public class Sender4 {
 						int ackNumber = Tools.byteArrayToInt(buffer);
 						
 						System.out.println("Received ACK # " + ackNumber);
+						
+						acksReceived.add(ackNumber);
+						
+						if (acksReceived.size() == totalPackets)
+							isListeningACKs = false;
 						
 						// Remove packet from buffers
 						packetBuffer.remove(ackNumber);
