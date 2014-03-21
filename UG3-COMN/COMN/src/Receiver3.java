@@ -29,8 +29,6 @@ public class Receiver3 {
 	private DatagramSocket socket;
 	private File file;
 	
-	private int timeout = 40;
-	
 	private int highestPacketReceived = -1;
 
 	public Receiver3(int port, File file) {
@@ -61,7 +59,6 @@ public class Receiver3 {
 			do {
 				// Receive the packet
 				try {
-					socket.setSoTimeout(timeout);
 					socket.receive(packet);
 					
 					byte[] byteHeader = Arrays.copyOfRange(packet.getData(), 0, 2);
@@ -77,12 +74,6 @@ public class Receiver3 {
 //						System.out.println("ACK for packet " + packetSequenceNum + " sent");
 					} 
 
-				} catch (SocketTimeoutException e) {
-					if (highestPacketReceived != -1) {
-						byte[] lastValidPacketNum = shortToByteArray((short)highestPacketReceived);
-						send_response(packet.getAddress(), packet.getPort(), lastValidPacketNum);
-//						System.out.println("Sending highest packet obtained. " + highestPacketReceived);
-					}
 				} catch (IOException e) {
 					System.err.println("Receiving an ACK failed. Exiting.");
 					System.exit(0);
