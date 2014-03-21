@@ -113,7 +113,7 @@ public class Sender3 {
 //						System.out.println("*** Frame is full, waiting for ACKs");
 					}
 				}
-				isListening = false;
+//				isListening = false;
 				fstream.close();
 					
 			} catch (IOException e) {

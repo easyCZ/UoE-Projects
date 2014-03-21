@@ -57,9 +57,9 @@ class Cache(object):
         read_miss_rate = 100 * stats['r_miss'] / float(stats['r_miss'] + stats['r_hit'])
         write_miss_rate = 100 * stats['w_miss'] / float(stats['w_miss'] + stats['w_hit'])
 
-        print 'Total miss rate: %.6f' % total_miss_rate
-        print 'Read miss rate: %.6f' % read_miss_rate
-        print 'Write miss rate: %.6f' % write_miss_rate
+        print 'Total miss rate: %.4f' % total_miss_rate
+        print 'Read miss rate:  %.4f' % read_miss_rate
+        print 'Write miss rate: %.4f' % write_miss_rate
 
 
 class DirectMapped(Cache):
