@@ -126,7 +126,7 @@ public class Sender4 {
 	private void udt_send(DatagramPacket packet, int sequenceNum) throws IOException {
 		socket.send(packet);
 		
-//		System.out.println("Sending packet # " + sequenceNum);
+		System.out.println("Sending packet # " + sequenceNum);
 		
 		// Add to packet timeouts
 		timeouts.put(sequenceNum, System.currentTimeMillis() + timeout);
@@ -150,7 +150,7 @@ public class Sender4 {
 						
 						setBaseToMin();
 						
-//						System.out.println("Received ACK # " + ackNumber);
+						System.out.println("Received ACK # " + ackNumber);
 						
 						acksReceived.add(ackNumber);
 						

@@ -29,18 +29,9 @@ public class Receiver4 {
 	private HashMap<Integer, DatagramPacket> packetBuffer;
 	private boolean isListening = false;
 	
-	FileOutputStream fileStream;
-	
 	public Receiver4(int port, File file, int windowSize) {
 		this.windowSize = windowSize;
 		this.file = file;
-		
-		try {
-			fileStream = new FileOutputStream(file);
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 		
 		// Set up sockets and address
 		try {
@@ -70,7 +61,7 @@ public class Receiver4 {
 				
 				int packetNumber = getSequenceNumber(packet.getData(), packet.getLength());
 				
-//				System.out.println("Received packet # " + packetNumber);
+				System.out.println("Received packet # " + packetNumber);
 				
 				boolean isLast = isLastPacket(packet.getData());
 				
@@ -94,12 +85,11 @@ public class Receiver4 {
 				}
 				
 				writeToBufferedOutput();
-				if (isLast && !isDelivered)
+				if (isLast && !isDelivered) {
+					isDelivered = true;
 					deliver_data();
+				}
 //				isListening = !isLast;
-				
-				if (isLast)
-					fileStream.close();
 				
 //				System.out.println("ACK Base: " + ackBase);
 //				System.out.println("Packet Buffer Size: " + packetBuffer.size());
@@ -114,7 +104,7 @@ public class Receiver4 {
 	
 	private void deliver_data() {
 		try {
-			
+			FileOutputStream fileStream = new FileOutputStream(file);
 			BufferedOutputStream bufferedOutput = new BufferedOutputStream(fileStream);
 			
 			bufferedOutput.write(output.toByteArray());
@@ -166,7 +156,7 @@ public class Receiver4 {
 				// Write the packet
 				byte[] payload = Arrays.copyOfRange(packet.getData(), 3, packet.getLength());
 				try {
-					fileStream.write(payload);
+					output.write(payload);
 					lastWritten += 1;
 				} catch (IOException e) {
 					e.printStackTrace();

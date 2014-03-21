@@ -8,6 +8,7 @@ import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -24,6 +25,7 @@ public class Sender3 {
 	private boolean isListening = true;
 	private int maxACKreceived = -1;
 	private int totalPackets = -1;
+	private int base;
 	
 	private DatagramSocket socket;
 	private InetSocketAddress address;
@@ -93,7 +95,12 @@ public class Sender3 {
 //						System.out.println("Window size: " + packetBuffer.size());
 						byte[] buffer = new byte[PACKET_SIZE];
 						
-						fstream.read(buffer, HEADER_SIZE, PAYLOAD_SIZE);
+						int readSize = fstream.read(buffer, HEADER_SIZE, PAYLOAD_SIZE);
+						
+						if (readSize < PACKET_SIZE) {
+							buffer = Arrays.copyOfRange(buffer, 0, readSize + 3);
+						}
+						
 						DatagramPacket packet = make_pkt(buffer, i, i == chunkCount-1);
 						
 						packetBuffer.put(i, packet);
@@ -184,7 +191,7 @@ public class Sender3 {
 						// Update maximum ACK received
 						maxACKreceived = ackNumber;
 					} 
-//					else {
+//					else {meoutTimer - Sys
 //						if (timeoutTimer - System.currentTimeMillis() < 0) {
 //							resendPackets();
 //							timeoutTimer = System.currentTimeMillis() + socketTimeout;

@@ -25,20 +25,23 @@ public class Receiver3 {
 	private static int HEADER_SIZE = 3;	//  bytes
 	private static int ACK_SIZE = 2;
 	
-	private ByteArrayOutputStream output;	
 	private DatagramSocket socket;
-	private File file;
+	FileOutputStream fileStream;
 	
 	private int highestPacketReceived = -1;
 
 	public Receiver3(int port, File file) {
-		this.file = file;
+		
+		try {
+			fileStream = new FileOutputStream(file);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		try {
 			// Bind a socket to port
 			socket = new DatagramSocket(port);
 			
-			// Init buffered stream
-			output = new ByteArrayOutputStream();
 			rdt_rcv();
 			
 		} catch (Exception e) {
@@ -81,7 +84,7 @@ public class Receiver3 {
 			} while (!packetReceived);	
 			
 			// Extract data and determine if we need to receive more
-			listening = extract(packet.getData());
+			listening = extract(packet.getData(), packet.getLength());
 //			System.out.println("Are we listening for more: " + listening);
 		}
 		
@@ -119,7 +122,7 @@ public class Receiver3 {
 	
 	
 	
-	public boolean extract(byte[] packet) {
+	public boolean extract(byte[] packet, int size) {
 		// Slice packet into a header
 		byte[] byteHeader = Arrays.copyOfRange(packet, 0, 2);
 		// Get the sequence number as an integer
@@ -129,13 +132,13 @@ public class Receiver3 {
 		byte[] byteEof = Arrays.copyOfRange(packet, 2, 3);
 		int eof = new BigInteger(byteEof).intValue();
 		
-		byte[] payload = Arrays.copyOfRange(packet, 3, packet.length);
+		byte[] payload = Arrays.copyOfRange(packet, 3, size);
 		
 //		System.out.printf("Packet %d has %d bytes.\n", sequenceNum, packet.length);
 		
 		// Write the payload, payload located at packet[3] - end of packet
 		try {
-			output.write(payload);
+			fileStream.write(payload);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.err.println("Could not write bytes into the output buffer.");
@@ -149,20 +152,8 @@ public class Receiver3 {
 	public boolean deliver_data() {
 		boolean success = false;
 		try {
-			// Set up streams
-			FileOutputStream fileStream = new FileOutputStream(file);
-			BufferedOutputStream bufferedOutput = new BufferedOutputStream(fileStream);
-			
-//			System.out.println("Buffer has length " + output.size());
-			
-			// Write to a file
-			bufferedOutput.write(output.toByteArray());
-						
-			// Housekeeping
-			bufferedOutput.flush();
-			bufferedOutput.close();
-			success = true;
-			output.close();
+			fileStream.flush();
+			fileStream.close();			
 			
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
