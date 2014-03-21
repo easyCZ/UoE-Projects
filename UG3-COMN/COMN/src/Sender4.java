@@ -88,7 +88,7 @@ public class Sender4 {
 			e.printStackTrace();
 		}
 		
-		isListeningACKs = false;
+//		isListeningACKs = false;
 		try {
 			fstream.close();
 		} catch (IOException e) {
