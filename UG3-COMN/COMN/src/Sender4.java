@@ -31,10 +31,15 @@ public class Sender4 {
 	private Set<Integer> acksReceived;
 	
 	private int ACK_SIZE = 2;
+	
+	private long execStartTime;
+	private long fileLength;
 
 	public Sender4(int port, File file, int timeout, int windowSize) {
 		this.timeout = timeout;
 		this.windowSize = windowSize;
+		
+		fileLength = file.length();
 		
 		acksReceived = new HashSet<Integer>();
 		
@@ -45,7 +50,9 @@ public class Sender4 {
 			socket = new DatagramSocket();
 			address = new InetSocketAddress("localhost", port);
 			
+			execStartTime = System.currentTimeMillis();
 			rdt_send(file);
+			
 		} catch (SocketException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
@@ -133,6 +140,11 @@ public class Sender4 {
 					byte[] buffer = new byte[ACK_SIZE];
 					DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 					
+					for (Integer i: timeouts.keySet()) {
+						if (timeouts.get(i) - System.currentTimeMillis() < 0)
+							resendPacket(i);
+					}
+					
 					
 					int earlyTimeoutKey = findSoonestToTimeOut();
 					
@@ -173,6 +185,10 @@ public class Sender4 {
 					}
 				}
 			}
+			long execEndTime = System.currentTimeMillis();
+			double timeElapsed = (execEndTime - execStartTime) / 1000.0;				
+			double throughput = fileLength / timeElapsed;
+			System.out.println("Throughput: " + throughput / 1024 + " KB/s");;
 		}
 		
 		private void resendPacket(int key) {
