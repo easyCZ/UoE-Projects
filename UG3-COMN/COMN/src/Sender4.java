@@ -34,6 +34,8 @@ public class Sender4 {
 	
 	private long execStartTime;
 	private long fileLength;
+	
+	private int base = 0;
 
 	public Sender4(int port, File file, int timeout, int windowSize) {
 		this.timeout = timeout;
@@ -74,8 +76,8 @@ public class Sender4 {
 		try {
 			// Do the hard work.
 			while (i <= chunkCount) {
-				// Send a packet if we haven't reached the window
-				if (packetBuffer.size() <= windowSize) {
+				// Send a packet if we haven't reached the window				
+				if (packetBuffer.size() <= windowSize && i + packetBuffer.size() >= base) {
 					byte[] buffer = new byte[PACKET_SIZE];
 					
 					// Read from buffer
@@ -140,30 +142,13 @@ public class Sender4 {
 					byte[] buffer = new byte[ACK_SIZE];
 					DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 					
-					for (Integer i: timeouts.keySet()) {
-						if (timeouts.get(i) - System.currentTimeMillis() < 0)
-							resendPacket(i);
-					}
-					
-					
-					int earlyTimeoutKey = findSoonestToTimeOut();
-					
-					System.out.println("Timeout Key: " + earlyTimeoutKey);
-					
-					int earlyTimeout;
-					if (timeouts.get(earlyTimeoutKey) != null)
-						earlyTimeout = (int) timeouts.get(earlyTimeoutKey).longValue();
-					else
-						earlyTimeout = timeout;
-					
 					try {
-						if (earlyTimeout > 0)
-							socket.setSoTimeout(earlyTimeout);
-						else
-							socket.setSoTimeout(timeout);
+						socket.setSoTimeout(timeout);
 						socket.receive(packet);
 						
 						int ackNumber = Tools.byteArrayToInt(buffer);
+						
+						setBaseToMin();
 						
 						System.out.println("Received ACK # " + ackNumber);
 						
@@ -179,7 +164,10 @@ public class Sender4 {
 					} catch (SocketException e) {
 						e.printStackTrace();
 					} catch (SocketTimeoutException e) {
-						resendPacket(earlyTimeout);
+						for (Integer i: timeouts.keySet()) {
+							if (timeouts.get(i) - System.currentTimeMillis() < 0)
+								resendPacket(i);
+						}
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -189,6 +177,14 @@ public class Sender4 {
 			double timeElapsed = (execEndTime - execStartTime) / 1000.0;				
 			double throughput = fileLength / timeElapsed;
 			System.out.println("Throughput: " + throughput / 1024 + " KB/s");;
+		}
+		
+		private void setBaseToMin() {
+			int min = base;
+			for (Integer i : timeouts.keySet()) {
+				if (i > min)
+					min = i;
+			}
 		}
 		
 		private void resendPacket(int key) {

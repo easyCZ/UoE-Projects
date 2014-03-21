@@ -67,9 +67,13 @@ public class Receiver4 {
 				
 				System.out.println("Is last packet: " + isLast);
 				// Check packet falls within the window
+				acknowledgePacket(packetNumber, packet);
+				
+				System.out.println();
+				
 				if (packetNumber >= ackBase && packetNumber < ackBase + windowSize) {
 					bufferPacket(packetNumber, packet);
-					acknowledgePacket(packetNumber, packet);
+					
 					
 					// Increment base ACK
 					for (int i = ackBase; i < ackBase + windowSize; i++) {
