@@ -87,7 +87,7 @@ public class Sender4 {
 						buffer = Arrays.copyOfRange(buffer, 0, sizeRead+3);
 					}
 					
-					System.out.println("Size read: " + sizeRead);
+//					System.out.println("Size read: " + sizeRead);
 					
 					// Build packet
 					DatagramPacket packet = make_pkt(buffer, i, i == chunkCount);
@@ -126,7 +126,7 @@ public class Sender4 {
 	private void udt_send(DatagramPacket packet, int sequenceNum) throws IOException {
 		socket.send(packet);
 		
-		System.out.println("Sending packet # " + sequenceNum);
+//		System.out.println("Sending packet # " + sequenceNum);
 		
 		// Add to packet timeouts
 		timeouts.put(sequenceNum, System.currentTimeMillis() + timeout);
@@ -150,7 +150,7 @@ public class Sender4 {
 						
 						setBaseToMin();
 						
-						System.out.println("Received ACK # " + ackNumber);
+//						System.out.println("Received ACK # " + ackNumber);
 						
 						acksReceived.add(ackNumber);
 						
@@ -192,7 +192,7 @@ public class Sender4 {
 			if (packet != null) {
 				try {
 					socket.send(packet);
-					System.out.println("Resending packet # " + key);
+//					System.out.println("Resending packet # " + key);
 					timeouts.put(key, System.currentTimeMillis() + timeout);
 				} catch (IOException e) {
 					e.printStackTrace();

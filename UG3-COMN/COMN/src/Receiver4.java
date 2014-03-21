@@ -61,15 +61,15 @@ public class Receiver4 {
 				
 				int packetNumber = getSequenceNumber(packet.getData(), packet.getLength());
 				
-				System.out.println("Received packet # " + packetNumber);
+//				System.out.println("Received packet # " + packetNumber);
 				
 				boolean isLast = isLastPacket(packet.getData());
 				
-				System.out.println("Is last packet: " + isLast);
+//				System.out.println("Is last packet: " + isLast);
 				// Check packet falls within the window
 				acknowledgePacket(packetNumber, packet);
 				
-				System.out.println();
+//				System.out.println();
 				
 				if (packetNumber >= ackBase && packetNumber < ackBase + windowSize) {
 					bufferPacket(packetNumber, packet);
@@ -89,8 +89,8 @@ public class Receiver4 {
 					deliver_data();
 //				isListening = !isLast;
 				
-				System.out.println("ACK Base: " + ackBase);
-				System.out.println("Packet Buffer Size: " + packetBuffer.size());
+//				System.out.println("ACK Base: " + ackBase);
+//				System.out.println("Packet Buffer Size: " + packetBuffer.size());
 				
 			} catch (IOException e) {
 				e.printStackTrace();
