@@ -1,0 +1,189 @@
+CS3 Operating Systems 2013-14, Practical Exercise.
+
+PHASE 3
+-------
+
+The assessed submission for this practical comprises three
+installments. This is the third and final installment, counting
+for 40% of the practical marks.
+
+Part 3
+------
+
+In this part, you are asked to modify the worker module to do
+something (possibly) useful.
+As in previous parts, you should need to write little actual code.
+It should not take you more than a few hours, even allowing for
+making silly mistakes and crashing your kernel a few times.
+
+NOTE: this has been updated for the 2.6 kernel we're using. However,
+it's always possible that I've made some silly mistakes in my
+understanding or explanations of the 2.6 code - so if you have any
+suspicions about anything, mail me or the class list.
+
+
+
+First, some background.
+There are certain I/O devices which, even these days, do not have a
+proper interrupt-driven interface. Rather, the CPU has to busy-wait
+while the data is transferred to the device. For example, PC-card
+SCSI adapters have this problem.
+The consequence is that if you are transferring data to such a device,
+the CPU is busy-waiting almost all the time; worse, a single transfer
+may take significant (even by human standards) time. Since I/O is done
+in the kernel, which cannot be preempted, nothing else happens during
+that time. This brings system response down to a crawl: especially
+under X windows, where every keystroke results in many context
+switches. For example, if you back up a laptop to a SCSI tape drive
+attached via a PC-card, the machine will be effectively unusable for
+anything else during the backup, which may take several hours.
+It doesn't even help to "nice" the backup process, because on a normal
+system, even a nice'd process will get enough time to saturate the I/O
+interface.
+
+You can see this problem in action on a kernel patched to fake the
+effect. We have modified the kernel you are using to simulate the
+problem on the virtual disk attached that appears as /dev/sdc1, and is
+mounted on /mnt/sdc1: the kernel busy-waits for 1 second on every
+access to this device.
+
+To see this, issue a command that will transfer lots of data
+from the sdc1 disk, for example
+  ls -lR /mnt/sdc1 
+This will slowly produce a listing. Leave it running, and switch to
+another console (right-ctrl-F2) and log in: observe the lousy
+interactive response you get.
+You can switch back to the first console (right-ctrl-F1) and terminate
+the listing with ctrl-C, though it may take a little while to notice.
+
+
+
+Your task
+---------
+
+Your task is to produce a module that starts a kernel thread
+that takes action to alleviate this problem, by preventing
+busy-waiting processes from executing while there appears to be user
+activity going on. On the other hand, the busy-waiting process should
+not be completely starved: it should get some run time, even if
+the user is typing continously. (The user will necessarily be
+delayed while the busy process is running, but that's too bad.)
+
+To keep things simple, you should stick with the  worker  scheduling
+policy of just doing its work every ten seconds.
+The worker's work should be as follows:
+if a key has been pressed in the last ten seconds (i.e. since the
+last time round), any excessively busy process should be prevented
+from executing during the next minute (i.e. six times round).
+
+I will now flesh this out a bit, so that you do not have to do
+excessive amounts of research in the kernel...
+
+To detect key presses, it suffices to check whether the number of
+"keyboard" interrupts has changed since last time. On the standard
+PC architecture, the keyboard is on interrupt line 1.
+You can get the total number of interrupts on line 1 since
+boot-up by calling   kstat_irqs(1)  . To get the kstat_irqs function,
+you need to 
+#include <linux/kernel_stat.h>
+in the top of your program.
+
+The next problem is, what does "excessively busy" mean?
+The following definition is not particularly principled, but
+is a plausible first guess, which has the advantage of automatically
+ensuring that the excessively busy process will run 10% of the time,
+even if there is a user working. We will say a process is "excessively
+busy" if all of the following are true:
+ (1) It has used more than 1 second of CPU time in kernel routines.
+     (This prevents your module from stopping short commands that
+     just do a bit of I/O.) The figure of 1 second is a guess;
+     you should make this a variable or #define, so that it
+     can easily be changed.
+ (2) It has used CPU time in kernel routines that amounts to
+     more than 10% of the elapsed time since the process started.
+ (3) It is a user process, not a kernel thread. (You may ignore
+     this requirement, since in practice there are no kernel
+     threads that will satisfy the first two requirements, but
+     in principle it should be observed.)
+
+
+For (1), you need to find the amount of CPU time a process has spent
+inside kernel routines. Fortunately, the kernel keeps track of this.
+It is stored in the  stime  field in the task_struct.
+It is kept in units of "jiffies"; there is a macro cputime_to_sec to convert
+jiffies to seconds, so if  p  is a pointer to a task struct,
+cputime_to_secs(p->stime)
+is the number of seconds of kernel time the task has consumed.
+
+For (2), you need to know how roughly long the process has been
+running.  The start_time field of the task_struct records the time the
+process started, measured in seconds since boot. This field is a
+struct timespec ; the tv_sec field is seconds, so p->start_time.tv_sec
+is the time in seconds at which the process started. The current time
+in the same format may be obtained from
+do_posix_clock_monotonic_gettime()
+which requires that your module is declared to be
+MODULE_LICENSE("GPL")
+
+
+Thus, your routine should traverse the task list (NOT the run queue!),
+check each task to see whether it is currently excessively busy, and
+if so, stop it from being executed in the next minute.
+Note that the task list can be traversed by the next_task macro, 
+starting at &init_task.
+
+There are (at least) two issues remaining that we may reasonably
+discuss.
+
+Firstly, this problem seems to require you to keep some information
+about the excessively busy processes, so you can keep them stopped
+for a minute. In general, this would require you to allocate some
+kernel memory. I don't want to get into memory allocation in C,
+let alone kernel memory allocation. Therefore you may make the
+following simplifying assumption:
+  You may assume that there are at most N, for some fixed value
+  of N, excessively busy processes.
+  If you don't even want to use arrays, you may even assume that
+  there is at most one excessively busy process.
+  However, in either case, you should have your routine print
+  a warning if it finds more than N busy processes. In that
+  case, it should stop only the first N busy processes on the
+  task list.
+
+Secondly, how do you stop a process from being scheduled?
+There are several possibilities, which you will find by looking
+through the scheduler code.
+
+As a further simplifying assumption, you may, for 30 of the 40 marks,
+assume a uniprocessor system. If you wish to obtain the final 10
+marks, you should add the necessary code to make your routines
+SMP-safe.
+Please add a comment on the FIRST LINE of your module code that is
+either
+/* This module is *not* SMP-safe */
+or 
+/* This module *is* SMP-safe */
+
+
+
+Your module should use printk to print some diagnostics: at the least,
+when it disable or enables a busy process, it should log this,
+preferably with the PID and command name of the process.
+
+
+You should name your module  relaxer.c.
+
+You should also capture the output of dmesg in a file
+part3-output immediately after doing a successful test of your module.
+
+
+Finally, a warning: even in the relatively friendly enviroment of a
+virtual machine, mistakes in kernel routines are annoying. I strongly
+suggest that you develop incrementally, testing every small
+change. For example, check your task list scanning code with some
+printk's, before you think about doing anything with the task.
+
+
+By the practical deadline, you should submit your answers via
+
+submit os 1 relaxer.c part3-output
