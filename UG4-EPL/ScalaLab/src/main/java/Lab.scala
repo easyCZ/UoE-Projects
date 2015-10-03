@@ -18,7 +18,7 @@ def factorial1(n: Int): Int = {
 
 
 def factorial2(n: Int): Int = {
-  val m = n-1;
+  val m = n - 1
   if (n == 0) {1} else {n * factorial2(m)}
 }
 
@@ -42,7 +42,7 @@ def sum(n: Int): Int =
 /* Part 3 */
 
 /* Exercise 3 */
-def cycle(x:Int,y:Int,z:Int): (Int,Int,Int) = sys.error("todo")
+def cycle(x:Int,y:Int,z:Int): (Int,Int,Int) = (y, z, x)
 
 
 /* Part 4 */
@@ -63,19 +63,30 @@ def numFromName(presidentName: String): Int = presidentName match {
 }
 
 /* Exercise 4 */
-def suffix(n: Int): String = sys.error("todo")
+def suffix(n: Int): String = n match {
+  case 11 | 12 | 13 => n + "th"
+  case _ => n + n % 10 match {
+    case 1 => "st"
+    case 2 => "nd"
+    case 3 => "rd"
+    case _ => "th"
+  }
+}
+
 
 
 abstract class Colour
 case class Red() extends Colour
 case class Green() extends Colour
 case class Blue() extends Colour
+case class Black() extends Colour
 
 /* Exercise 5 */
 def favouriteColour(c: Colour): Boolean = c match {
   case Red() => false;
   case Blue() => true;
   case Green() => false;
+  case Black() => true;
 }
 
 
@@ -89,10 +100,18 @@ def center(s: Shape): (Double,Double) = s match {
 }
 
 /* Exercise 6 */
-def boundingBox(s: Shape): Shape = sys.error("todo")
+def boundingBox(s: Shape): Shape = s match {
+  case Rectangle(llx, lly, w, h) => s.asInstanceOf[Rectangle]
+  case Circle(r, x, y) => Rectangle(x - r, y - r, 2 * r, 2 * r)
+}
 
 /* Exercise 7 */
-def mayOverlap(s1: Shape, s2: Shape) = sys.error("todo")
+def mayOverlap(s1: Shape, s2: Shape) = {
+  val bb1 = boundingBox(s1)
+  val bb2 = boundingBox(s2)
+
+
+}
 
 
 
