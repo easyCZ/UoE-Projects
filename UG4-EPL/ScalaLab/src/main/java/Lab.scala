@@ -110,6 +110,9 @@ def mayOverlap(s1: Shape, s2: Shape) = {
   val bb1 = boundingBox(s1)
   val bb2 = boundingBox(s2)
 
+  val minX = math.min(bb1.llx)
+
+  val combined = boundingBox(Rectangle())
 
 }
 

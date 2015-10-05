@@ -13,35 +13,38 @@ def power(x: Int, n: Int): Int =
   if (n == 0) {1} else {x * power(x,n-1)}
 
 def factorial1(n: Int): Int = {
-val m = n-1 ; if (n == 0) {1} else {n * factorial1(m)}
+  val m = n-1 ; if (n == 0) {1} else {n * factorial1(m)}
 }
 
 
 def factorial2(n: Int): Int = {
-val m = n-1;
-if (n == 0) {1} else {n * factorial2(m)}
+  val m = n-1;
+  if (n == 0) {1} else {n * factorial2(m)}
 }
 
 
-def factorial3(n: Int): Int = { val m = n-1;
-if (n == 0) {
-   return 1;
+def factorial3(n: Int): Int = {
+  val m = n-1;
+  if (n == 0) {
+    return 1;
   } else {
-   return n * factorial3(m);
+    return n * factorial3(m);
   }
 }
 
 /* Exercise 1 */
-def p(x: Int, y:Int): Int = sys.error("todo")
+def p(x: Int, y:Int): Int =
+  square(x) + 2 * x * y + power(y, 3) - 1
 
 /* Exercise 2 */
-def sum(n: Int): Int = sys.error("todo")
+def sum(n: Int): Int =
+  if (n == 0) 0 else n + sum(n-1)
 
 /* Part 3 */
 
 /* Exercise 3 */
-def cycle(x:Int,y:Int,z:Int): (Int,Int,Int) = sys.error("todo")
-
+def cycle(q:(Int,Int,Int)): (Int,Int,Int) =
+  (q._2, q._3, q._1)
 
 /* Part 4 */
 
@@ -61,7 +64,15 @@ def numFromName(presidentName: String): Int = presidentName match {
 }
 
 /* Exercise 4 */
-def suffix(n: Int): String = sys.error("todo") 
+def suffix(n: Int): String = n match {
+  case 11 | 12 | 13 => n + "th"
+  case _ => n + n % 10 match {
+    case 1 => "st"
+    case 2 => "nd"
+    case 3 => "rd"
+    case _ => "th"
+  }
+}
 
 
 abstract class Colour
@@ -70,7 +81,7 @@ case class Green() extends Colour
 case class Blue() extends Colour
 
 /* Exercise 5 */
-def favouriteColour(c: Colour): Boolean = c match { 
+def favouriteColour(c: Colour): Boolean = c match {
   case Red() => false;
   case Blue() => true;
   case Green() => false;
@@ -87,10 +98,25 @@ def center(s: Shape): (Double,Double) = s match {
 }
 
 /* Exercise 6 */
-def boundingBox(s: Shape): Shape = sys.error("todo")
+def boundingBox(s: Shape): Rectangle = s match {
+  case Rectangle(llx, lly, w, h) => Rectangle(llx, lly, w, h)
+  case Circle(r, x, y) => Rectangle(x - r, y - r, 2 * r, 2 * r)
+}
 
 /* Exercise 7 */
-def mayOverlap(s1: Shape, s2: Shape) = sys.error("todo")
+def mayOverlap(s1: Shape, s2: Shape): Boolean = (s1, s2) match {
+  case (Circle(_, _, _), _) => mayOverlap(boundingBox(s1), s2)
+  case (_, Circle(_, _, _)) => mayOverlap(s1, boundingBox(s2))
+  case (Rectangle(llx1, lly1, w1, h1), Rectangle(llx2, lly2, w2, h2)) => {
+
+    val minX: Double = math.min(llx1, llx2)
+    val minY: Double = math.min(lly1, lly2)
+    val width: Double = math.max(llx1, llx2) - minX
+    val height: Double = math.max(lly1, lly2) - minY
+
+    return w1 + w2 > width || h1 + h2 > height
+  }
+}
 
 
 
@@ -100,26 +126,44 @@ val anonIncr = {x: Int => x+1} // anonymous version of incr
 val anonAdd = {x: Int => {y: Int => x + y}}
 
 /* Exercise 8 */
-def compose[A, B, C](f: A => B, g: B => C) = sys.error("todo")
+def compose[A, B, C](f: A => B, g: B => C) = {
+  a: A => {
+    b: B => g(f(a))
+  }
+}
 
 /* Exercise 9 */
-def e1 = sys.error("todo")
-def e2 = sys.error("todo")
+def e1 = {x: Int => "a" * x }
+def e2 = {y: String => x.length % 2 == 0 }
 
-def isEmpty[A](l: List[A]) = l match { 
+def isEmpty[A](l: List[A]) = l match {
   case Nil => true
   case x :: y => false
 }
 
+def isEven = {x: Int => x % 2 == 0}
+
 
 /* Exercise 10 */
-def map[A, B](f: A => B, l: List[A]): List[B] = sys.error("todo")
+def map[A, B](f: A => B, l: List[A]): List[B] = l match {
+  case Nil => List[B]()
+  case x :: xs => f(x) :: map(f, xs)
+}
 
 /* Exercise 11 */
-def filter[A, B](f: A => Boolean, l: List[A]): List[B] = sys.error("todo")
+def filter[A](f: A => Boolean, l: List[A]): List[A] = l match {
+  case Nil => List[A]()
+  case x :: xs => f(x) match {
+    case true => x :: filter(f, xs)
+    case _ => filter(f, xs)
+  }
+}
 
 /* Exercise 12 */
-def reverse[A](l: List[A]): List[A] = sys.error("todo")
+def reverse[A](l: List[A]): List[A] = l match {
+  case Nil => List[A]()
+  case x :: xs => reverse(xs) :+ x
+}
 
 
 /* Part 6 */
@@ -127,7 +171,11 @@ def reverse[A](l: List[A]): List[A] = sys.error("todo")
 def empty[K,V]: List[(K,V)] = List()
 
 /* Exercise 13 */
-def lookup[K, V](m: List[(K, V)], k: K): V = sys.error("todo")
+def lookup[K, V](m: List[(K, V)], k: K): V = m match {
+  case (`k`, value) :: _ => value
+  case x :: xs => lookup(xs, k)
+  case _ => sys.error("not found")
+}
 
 /* Exercise 14 */
 def update[K, V](m: List[(K, V)], k: K, v: V): List[(K, V)] = sys.error("todo")
