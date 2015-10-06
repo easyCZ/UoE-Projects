@@ -178,7 +178,11 @@ def lookup[K, V](m: List[(K, V)], k: K): V = m match {
 }
 
 /* Exercise 14 */
-def update[K, V](m: List[(K, V)], k: K, v: V): List[(K, V)] = sys.error("todo")
+def update[K, V](m: List[(K, V)], k: K, v: V): List[(K, V)] = m match {
+  case Nil => List[(K, V)]()
+  case (`k`, value) :: xs => (k, v) :: xs
+  case x :: xs => x :: update(xs, k, v)
+}
 
 /* Exercise 15 */
 def keys[K,V](m: List[(K,V)]): List[K] = sys.error("todo")
