@@ -202,4 +202,5 @@ val presidentListMap = ListMap(
 def m0_withUpdate = ListMap[Int, String]() + (1 -> "a") + (2 -> "b")
 
 /* Exercise 18 */
-def list2map[K,V](l: List[(K,V)]): ListMap[K,V] = sys.error("todo")
+def list2map[K,V](l: List[(K,V)]): ListMap[K,V] =
+  l.foldLeft(ListMap[K, V]()) ((listMap, tuple) => listMap + (tuple._1 -> tuple._2))
