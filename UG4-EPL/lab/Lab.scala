@@ -127,14 +127,27 @@ val anonAdd = {x: Int => {y: Int => x + y}}
 
 /* Exercise 8 */
 def compose[A, B, C](f: A => B, g: B => C) = {
-  a: A => {
-    b: B => g(f(a))
-  }
+  a: A => g(f(a))
 }
 
 /* Exercise 9 */
 def e1 = {x: Int => "a" * x }
-def e2 = {y: String => x.length % 2 == 0 }
+def e2 = {y: String => y.length % 2 == 0 }
+
+// scala> compose(e1, e2)(2)
+// res804: Boolean = true
+
+// scala> compose(e1, e2)(1)
+// res805: Boolean = false
+
+// scala> compose(e1, e2)
+// res802: Int => Boolean = <function1>
+
+// scala> compose(e2, e1)
+// <console>:43: error: type mismatch;
+//  found   : Int => String
+//  required: Boolean => String
+//        compose(e2, e1)
 
 def isEmpty[A](l: List[A]) = l match {
   case Nil => true
