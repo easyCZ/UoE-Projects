@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
-    -input /user/hadoop/input \
-    -output /user/hadoop/output \
+    -input /user/$USER/input \
+    -output /user/$USER/output \
     -mapper random-mapper.py \
     -file random-mapper.py
