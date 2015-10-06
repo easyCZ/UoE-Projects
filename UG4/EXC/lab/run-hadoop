@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+    -input /user/hadoop/input \
+    -output /user/hadoop/output \
+    -mapper mapper.py \
+    -reducer reducer.py
