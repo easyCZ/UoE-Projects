@@ -185,13 +185,21 @@ def update[K, V](m: List[(K, V)], k: K, v: V): List[(K, V)] = m match {
 }
 
 /* Exercise 15 */
-def keys[K,V](m: List[(K,V)]): List[K] = sys.error("todo")
+def keys[K,V](m: List[(K,V)]): List[K] = m match {
+  case Nil => List[K]()
+  case (key, value) :: xs => key :: keys(xs)
+}
 
 /* Exercise 16 */
-val presidentListMap = ListMap() // TODO
+val presidentListMap = ListMap(
+  41 -> "George H. W. Bush",
+  42 -> "Bill Clinton",
+  43 -> "George W. Bush",
+  44 -> "Barack Obama"
+)
 
 /* Exercise 17 */
-def m0_withUpdate = sys.error("todo")
+def m0_withUpdate = ListMap[Int, String]() + (1 -> "a") + (2 -> "b")
 
 /* Exercise 18 */
 def list2map[K,V](l: List[(K,V)]): ListMap[K,V] = sys.error("todo")
