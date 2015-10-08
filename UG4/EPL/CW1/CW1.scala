@@ -19,7 +19,7 @@ object CW1 {
   case class Bool(n: Boolean) extends Expr
   case class Eq(e1: Expr, e2:Expr) extends Expr
   case class IfThenElse(e: Expr, e1: Expr, e2: Expr) extends Expr
-  
+
    // Strings
   case class Str(s: String) extends Expr
   case class Length(e: Expr) extends Expr
@@ -81,6 +81,7 @@ object CW1 {
   }
 
 
+  // In e1, substitute e2 for x
   def subst(e1:Expr, e2:Expr, x: Variable): Expr =
     e1 match {
       case Num(e) => Num(e)
@@ -105,6 +106,10 @@ object CW1 {
 
       case _ => sys.error("subst: todo")
     }
+
+    // play
+    val plus = Plus(Var("x"), Num(1))
+    println(subst(plus, Num(1), "x"))
 
 
   // ======================================================================
@@ -131,7 +136,7 @@ object CW1 {
   // Exercise 3: Primitive operations
   // ======================================================================
 
-  
+
   object Value {
     // utility methods for operating on values
     def add(v1: Value, v2: Value): Value = (v1,v2) match {
@@ -144,14 +149,22 @@ object CW1 {
       case _ => sys.error("arguments to addition are non-numeric")
     }
 
-    def multiply(v1: Value, v2: Value): Value =
-      sys.error("multiply: todo")
+    def multiply(v1: Value, v2: Value): Value = (v1, v2) match {
+      case (NumV(v1), NumV(v2)) => NumV(v1 * v2)
+      case _ => sys.error("arguments to multiplication are non-numeric")
+    }
 
-    def eq(v1: Value, v2: Value): Value =
-      sys.error("eq: todo")
+    def eq(v1: Value, v2: Value): Value = (v1, v2) match {
+      case (NumV(n1), NumV(n2)) => n1 == n2
+      case (BoolV(b1), BoolV(b2)) => b1 == b2
+      case (StringV(s1), StringV(s2)) => s1 == s2
+      case _ => sys.error("arguments to equality are not one of [NumV, BoolV, StringV]")
+    }
 
-    def length(v: Value): Value =
-      sys.error("length: todo")
+    def length(v: Value): Value = v match {
+      case StringV(val) => val.length()
+      case _ => sys.error("length can be only be called on StringV types")
+    }
 
     def index(v1: Value, v2: Value): Value =
       sys.error("index: todo")
@@ -160,9 +173,9 @@ object CW1 {
       sys.error("concat: todo")
   }
 
- 
 
-  
+
+
   // ======================================================================
   // Exercise 4: Evaluation
   // ======================================================================
@@ -170,13 +183,13 @@ object CW1 {
   def eval (env: Env[Value], e: Expr): Value = e match {
     // Arithmetic
     case Num(n) => NumV(n)
-    case Plus(e1,e2) => 
+    case Plus(e1,e2) =>
       Value.add(eval(env,e1),eval(env,e2))
-    case Minus(e1,e2) => 
+    case Minus(e1,e2) =>
       Value.subtract(eval(env,e1),eval(env,e2))
     case Times(e1,e2) =>
       Value.multiply(eval(env,e1),eval(env,e2))
-      
+
     case _ => sys.error("eval: todo")
   }
 
@@ -195,7 +208,7 @@ object CW1 {
     case Num(n) => IntTy
     case Plus(e1,e2) => (tyOf(ctx,e1),tyOf(ctx,e2)) match {
       case (IntTy, IntTy) => IntTy
-      case _ => sys.error("non-integer arguments to -") 
+      case _ => sys.error("non-integer arguments to -")
     }
 
     // Variables and let-binding
@@ -215,14 +228,14 @@ object CW1 {
 
   // Example 1: the swap function
   def example1: Expr = parser.parseStr("""
-    let fun swap(x:(int,int)) = (snd(x), fst(x)) in 
+    let fun swap(x:(int,int)) = (snd(x), fst(x)) in
     swap(42,17)
     """)
 
   // Example 2: the factorial function, yet again
   def example2: Expr = parser.parseStr("""
-    let rec fact(n:int):int = 
-      if (n == 0) then 1 else n * fact(n - 1) in 
+    let rec fact(n:int):int =
+      if (n == 0) then 1 else n * fact(n - 1) in
     fact(5)
     """)
 
@@ -238,8 +251,8 @@ object CW1 {
 
   // Example 4: check whether two strings have the same last character
   def example4: Expr = parser.parseStr("""
-    let fun sameLastChar(input:(str,str)) = 
-      let (s1,s2) = input in 
+    let fun sameLastChar(input:(str,str)) =
+      let (s1,s2) = input in
       index(s1,length(s1)-1) == index(s2,length(s2)-1)
     in sameLastChar("abcz","abcdefghijklmnopqrstuvwxyz")
     """)
@@ -338,7 +351,7 @@ object CW1 {
         }
 
     lazy val typ: P[Type] =
-      funTyp 
+      funTyp
 
     lazy val funTyp: P[Type] =
       pairTyp ~ "->" ~ funTyp ^^ {
@@ -355,7 +368,7 @@ object CW1 {
 
 
     lazy val operations: P[Expr] =
-      application | 
+      application |
       ("fst" ~ "(") ~> expression <~ ")" ^^ (x => First(x)) |
         ("snd" ~ "(") ~> expression <~ ")" ^^ (x => Second(x)) |
         ("length" ~ "(") ~> expression <~ ")" ^^ (x => Length(x)) |
@@ -424,7 +437,7 @@ object CW1 {
 
   val parser = new CWParser
 
-  
+
   object Main {
     def typecheck(ast: Expr):Type =
       tyOf(Map.empty,ast);
