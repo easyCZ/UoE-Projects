@@ -60,6 +60,7 @@ def testRevtimes(): Boolean = {
     revtimes(Plus(Times(Num(1), Num(2)), Num(3))) == Plus(Times(Num(2), Num(1)), Num(3))
 }
 
+// 1. (e)
 def printExpr(e: Expr): String = e match {
     case Num(n) => n.toString()
     case Plus(e1, e2) => "(" + printExpr(e1) + " + " + printExpr(e2) + ")"
