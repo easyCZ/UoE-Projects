@@ -7,24 +7,16 @@ count = 0
 previous = ""
 
 for line in sys.stdin:
-    line = line.strip()
-    sentence, value = line.split('\t', 1)
+    sentence = line.strip()
 
-    try:
-        value = int(value)
+    if previous == sentence:
+        count += 1
+    else:
+        if previous:
+            print(previous)
 
-            if previous == sentence:
-            count += value
-        else:
-            if previous:
-                print(previous)
-
-            count = value
-            previous = sentence
-    except ValueError:
-        pass
-
-
+        count = 1
+        previous = sentence
 
 if previous == sentence:
     print(previous)
