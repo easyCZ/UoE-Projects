@@ -3,15 +3,12 @@
 import sys
 
 sentence = ""
-count = 0
 previous = ""
 
 for line in sys.stdin:
     sentence = line.strip()
 
-    if previous == sentence:
-        count += 1
-    else:
+    if previous != sentence:
         if previous:
             print(previous)
 
