@@ -2,6 +2,7 @@
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
  -input /data/assignments/ex1/webSmall.txt \
- -output /user/$USER/data/output \
+ -output /user/$USER/data/output/lower-case \
  -mapper mapper.py \
- -file mapper.py
+ -file mapper.py \
+ -jobconf mapred.job.name="Lower-case `echo $USER`"
