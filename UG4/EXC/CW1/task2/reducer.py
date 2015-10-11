@@ -2,18 +2,20 @@
 
 import sys
 
+key = ""
 sentence = ""
-previous = ""
+previous_key = ""
 
 for line in sys.stdin:
     sentence = line.strip()
+    key, sentence = sentence.split('\t', 1)
 
-    if previous != sentence:
-        if previous:
-            print(previous)
+    if previous_key != key:
+        if previous_key:
+            print(sentence)
 
-        count = 1
-        previous = sentence
+        previous_key = key
 
-if previous == sentence:
-    print(previous)
+
+if previous_key != key:
+    print(sentence)
