@@ -1,0 +1,5 @@
+e However having problems doing any modification to the tab bar after I get I can call functions inside it without much such as retrieving but I add a which is what I need to the general one class named static MyPersonalTabPanel XYZ myperosonalTabPanel my other on the click of a triggering can use my function with no but when I try to it will simply crash with a white no relevant Any seen projects add tabs but find any doing it through a static object like do not have this inside of an onClick method do I have to do that in order for me to access the static session basically being called the moment the page a GWT tab from a different
+say you want to wait until another thread has Then just call on the Thread object you want to wait
+are a couple I would lean towards is to have your server proxy the so the client only talks to your user your authenticates with your client issues the request to your server forwards the requests to the remote server forwards the response back to the
+abcd
+Phone Num :  200495955966
