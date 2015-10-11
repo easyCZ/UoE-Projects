@@ -9,16 +9,22 @@ previous = ""
 for line in sys.stdin:
     line = line.strip()
     sentence, value = line.split('\t', 1)
-    value = int(value)
 
-    if previous == sentence:
-        count += value
-    else:
-        if previous:
-            print(previous)
+    try:
+        value = int(value)
 
-        count = value
-        previous = sentence
+            if previous == sentence:
+            count += value
+        else:
+            if previous:
+                print(previous)
+
+            count = value
+            previous = sentence
+    except ValueError:
+        pass
+
+
 
 if previous == sentence:
     print(previous)
