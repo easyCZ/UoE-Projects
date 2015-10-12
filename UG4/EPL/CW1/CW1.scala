@@ -162,12 +162,14 @@ object CW1 {
     }
 
     def length(v: Value): Value = v match {
-      case StringV(val) => val.length()
+      case StringV(v) => v.length()
       case _ => sys.error("length can be only be called on StringV types")
     }
 
-    def index(v1: Value, v2: Value): Value =
-      sys.error("index: todo")
+    // def index(v1: Value, v2: Value): Value = (v1, v2) match {
+    //   case (StringV(s1), NumV(n1)) if (length(s1) -1 <= n1) => s1.charAt(n1)
+    //   case _ => sys.error("cannot get index of given types, [StringV, NumV] are required")
+    // }
 
     def concat(v1: Value, v2: Value): Value =
       sys.error("concat: todo")
