@@ -9,4 +9,8 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -file reducer.py \
  -jobconf mapred.job.name="Word Count Small `echo $USER`"
 
- hdfs dfs -ls /user/$USER/data/output/wc-small
+echo "Expected Values: "
+hdfs dfs -cat /data/assignments/samples/task_3.out/part-00000
+
+echo "Produced Values: "
+hdfs dfs -cat /user/$USER/data/output/wc-small/part-00000
