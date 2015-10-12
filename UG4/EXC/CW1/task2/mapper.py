@@ -4,7 +4,7 @@ import sys
 import hashlib
 
 for line in sys.stdin:
-    line = line.strip()
+    line = line.rstrip('\n')
 
-    key = hashlib.sha1(line).hexdigest()
+    key = hashlib.sha256(line).hexdigest()
     print("{0}\t{1}".format(key, line))

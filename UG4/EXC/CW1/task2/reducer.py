@@ -21,5 +21,5 @@ for line in sys.stdin:
         previous_key = key
 
 
-if key and previous_key != key:
+if previous_key != key:
     print(sentence)
