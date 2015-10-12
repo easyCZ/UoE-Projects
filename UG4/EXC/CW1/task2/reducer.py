@@ -15,11 +15,6 @@ for line in sys.stdin:
     sentence = "\t".join(tokens[1:])
 
     if previous_key != key:
-        if previous_key:
-            print(sentence)
+        print(sentence)
 
         previous_key = key
-
-
-if previous_key != key:
-    print(sentence)
