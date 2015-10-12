@@ -3,7 +3,7 @@
 import sys
 
 
-key = None
+key = ""
 sentence = ""
 previous_key = ""
 
@@ -18,5 +18,5 @@ for line in sys.stdin:
         previous_key = key
 
 
-if key is not None and previous_key != key:
+if key and previous_key != key:
     print(sentence)
