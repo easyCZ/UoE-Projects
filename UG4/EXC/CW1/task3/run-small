@@ -9,4 +9,4 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -file reducer.py \
  -jobconf mapred.job.name="Word Count Small `echo $USER`"
 
- hdfs dfs -ls /user/$USER/data/output/deduplicated-small
+ hdfs dfs -ls /user/$USER/data/output/wc-small
