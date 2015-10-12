@@ -10,7 +10,6 @@ previous_key = ""
 for line in sys.stdin:
     sentence = line.strip()
 
-
     tokens = sentence.split('\t')
     key = tokens[0]
     sentence = "\t".join(tokens[1:])
