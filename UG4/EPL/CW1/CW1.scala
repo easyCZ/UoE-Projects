@@ -155,24 +155,26 @@ object CW1 {
     }
 
     def eq(v1: Value, v2: Value): Value = (v1, v2) match {
-      case (NumV(n1), NumV(n2)) => n1 == n2
-      case (BoolV(b1), BoolV(b2)) => b1 == b2
-      case (StringV(s1), StringV(s2)) => s1 == s2
+      case (NumV(n1), NumV(n2)) => BoolV(n1 == n2)
+      case (BoolV(b1), BoolV(b2)) => BoolV(b1 == b2)
+      case (StringV(s1), StringV(s2)) => BoolV(s1 == s2)
       case _ => sys.error("arguments to equality are not one of [NumV, BoolV, StringV]")
     }
 
     def length(v: Value): Value = v match {
-      case StringV(v) => v.length()
+      case StringV(v) => NumV(v.length())
       case _ => sys.error("length can be only be called on StringV types")
     }
 
-    // def index(v1: Value, v2: Value): Value = (v1, v2) match {
-    //   case (StringV(s1), NumV(n1)) if (length(s1) -1 <= n1) => s1.charAt(n1)
-    //   case _ => sys.error("cannot get index of given types, [StringV, NumV] are required")
-    // }
+    def index(v1: Value, v2: Value): Value = (v1, v2) match {
+      case (StringV(s1), NumV(n1)) => StringV(s1.charAt(n1).toString())
+      case _ => sys.error("cannot get index of given types, [StringV, NumV] are required")
+    }
 
-    def concat(v1: Value, v2: Value): Value =
-      sys.error("concat: todo")
+    def concat(v1: Value, v2: Value): Value = (v1, v2) match {
+      case (StringV(s1), StringV(s2)) => StringV(s1 + s2)
+      case _ => sys.error("only StringV types can be concatenated")
+    }
   }
 
 
