@@ -187,12 +187,16 @@ object CW1 {
   def eval (env: Env[Value], e: Expr): Value = e match {
     // Arithmetic
     case Num(n) => NumV(n)
-    case Plus(e1,e2) =>
-      Value.add(eval(env,e1),eval(env,e2))
-    case Minus(e1,e2) =>
-      Value.subtract(eval(env,e1),eval(env,e2))
-    case Times(e1,e2) =>
-      Value.multiply(eval(env,e1),eval(env,e2))
+    case Plus(e1, e2) => Value.add(eval(env, e1), eval(env, e2))
+    case Minus(e1, e2) => Value.subtract(eval(env, e1), eval(env, e2))
+    case Times(e1, e2) => Value.multiply(eval(env, e1), eval(env, e2))
+
+    case Bool(b) => BoolV(b)
+    case Eq(e1, e2) => Value.eq(eval(env, e1), eval(env, e2))
+    case IfThenElse(e, e1, e2) => eval(env, e) match {
+      case BoolV(true) => eval(env, e1)
+      case BoolV(false) => eval(env, e2)
+    }
 
     case _ => sys.error("eval: todo")
   }

@@ -1,3 +1,4 @@
+import collection.immutable.ListMap
 
 // Values
 val one = CW1.NumV(1)
@@ -33,3 +34,26 @@ CW1.Value.index(sentence, CW1.NumV(17)) == CW1.StringV("e")
 
 // Concat
 CW1.Value.concat(sentence, word) == CW1.StringV("this is a sentenceword")
+
+
+// Exercise 4 - EVALUATION
+def getEnv(): ListMap[CW1.Variable, CW1.Value] = ListMap[CW1.Variable, CW1.Value]()
+val env = getEnv()
+
+val oneNum = CW1.Num(1)
+val twoNum = CW1.Num(2)
+val threeNum = CW1.Num(3)
+val onePlusTwo = CW1.Plus(oneNum, twoNum)
+val twoTimesThree = CW1.Times(twoNum, threeNum)
+
+val yesExpr = CW1.Bool(true)
+val noExpr = CW1.Bool(false)
+val yesEqualsNoExpr = CW1.Eq(yesExpr, noExpr)
+val ifYesEqualsNoThenTwoTimesThreeElseOnePlusTwo = CW1.IfThenElse(
+    yesEqualsNoExpr, twoTimesThree, onePlusTwo
+)
+
+CW1.eval(env, onePlusTwo) == three
+CW1.eval(env, twoTimesThree) == CW1.NumV(6)
+CW1.eval(env, yesEqualsNoExpr) == no
+CW1.eval(env, ifYesEqualsNoThenTwoTimesThreeElseOnePlusTwo) == three
