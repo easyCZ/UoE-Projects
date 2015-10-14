@@ -28,6 +28,7 @@ object CW1 {
 
   // Variables and let-binding
   case class Var(x: Variable) extends Expr
+  // let x = e1 in e2
   case class Let(x: Variable, e1: Expr, e2: Expr) extends Expr
   case class LetFun(f: Variable, arg: Variable, ty: Type, e1:Expr, e2:Expr)
       extends Expr
@@ -89,6 +90,14 @@ object CW1 {
       case Minus(t1,t2) => Minus(subst(t1,e2,x),subst(t2,e2,x))
       case Times(t1,t2) => Times(subst(t1,e2,x),subst(t2,e2,x))
 
+      case Bool(n) => Bool(n)
+      case Eq(l, r) => Eq(subst(l, e2, x), subst(r, e2, x))
+      case IfThenElse(cond, yes, no) => IfThenElse(
+        subst(cond, e2, x),
+        subst(yes, e2, x),
+        subst(no, e2, x)
+      )
+
       case Var(y) =>
         if (x == y) {
           e2
@@ -103,13 +112,20 @@ object CW1 {
           val fresh_t2 = subst(t2,Var(z),y);
           Let(z,subst(t1,e2,x),subst(fresh_t2,e2,x))
         }
+      case LetFun(f, arg, ty, t1, t2) => sys.error("subst: todo")
+      case LetRec(f, arg, xty, ty, t1, t2) => sys.error("subst: todo")
+      case LetPair(var1, var2, exp1, exp2) => sys.error("subst: todo")
 
-      case _ => sys.error("subst: todo")
+      case Pair(expr1, expr2) => sys.error("subst: todo")
+      case First(e) => sys.error("subst: todo")
+      case Second(e) => sys.error("subst: todo")
+
+      case Lambda(var, ty, expr) => sys.error("subst: todo")
+      case Apply(expr1, expr2) => sys.error("subst: todo")
+      case Rec(f, var, tyx, ty, expr) => sys.error("subst: todo")
+
+      case _ => sys.error("Failed to match an Expr case, forgot to implement a case class?")
     }
-
-    // play
-    val plus = Plus(Var("x"), Num(1))
-    println(subst(plus, Num(1), "x"))
 
 
   // ======================================================================
