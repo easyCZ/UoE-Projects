@@ -104,19 +104,19 @@ object CW1 {
         } else {
           Var(y)
         }
-      case Let(y,t1,t2) =>
+      case Let(y, t1, t2) =>
         if (x == y) { // we can stop early since x is re-bound here
-          Let(y,subst(t1,e2,x),t2)
+          Let(y, subst(t1, e2, x),t2)
         } else { // otherwise, we freshen y
           val z = Gensym.gensym(y);
-          val fresh_t2 = subst(t2,Var(z),y);
-          Let(z,subst(t1,e2,x),subst(fresh_t2,e2,x))
+          val fresh_t2 = subst(t2, Var(z), y);
+          Let(z, subst(t1, e2, x), subst(fresh_t2, e2, x))
         }
       case LetFun(f, arg, ty, t1, t2) => sys.error("subst: todo")
       case LetRec(f, arg, xty, ty, t1, t2) => sys.error("subst: todo")
       case LetPair(var1, var2, exp1, exp2) => sys.error("subst: todo")
 
-      case Pair(expr1, expr2) => sys.error("subst: todo")
+      case Pair(expr1, expr2) => Pair(subst(expr1, e2, x), subst(expr2, e2, x))
       case First(e) => sys.error("subst: todo")
       case Second(e) => sys.error("subst: todo")
 
