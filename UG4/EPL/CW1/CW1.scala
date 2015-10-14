@@ -138,6 +138,7 @@ object CW1 {
   // ======================================================================
 
   def desugar(e: Expr): Expr = {
+    // TODO: Remove print
     println(e)
 
     e match {
@@ -147,30 +148,39 @@ object CW1 {
     case Minus(e1,e2) => Minus(desugar(e1),desugar(e2))
     case Times(e1,e2) => Times(desugar(e1),desugar(e2))
 
-    case Var(v) => Var(v)
-    case Pair(e1, e2) => Pair(desugar(e1), desugar(e2))
+    case Bool(n) => Bool(n)
+    case Length(k) => Length(k)
+    case Index(e1, e2) => Index(desugar(e1), desugar(e2))
+    case Concat(e1, e2) => Concat(desugar(e1), desugar(e2))
 
+    case Var(v) => Var(v)
+    case Let(x, e1, e2) => Let(x, desugar(e1), desugar(e2))
+    case Pair(e1, e2) => Pair(desugar(e1), desugar(e2))
+    // let fun f(argVar) = e1 in e2  =>  let f = \argVar. e1 in e2
+    case LetFun(funcName, argVar, type, e1, e2) =>
+      Let(funcName, Lambda(argVar, type, e1), e2)
+    // let rec f(argVar) = e1 in e2  =>  let f = rec f(argVar) e1 in e2
+    case LetRec(funcName, argVar, argType, type, e1, e2) =>
+      Let(funcName, Rec(funcName, argVar, argType, type, e1), e2)
     // Let(x: Variable, e1: Expr, e2: Expr)
     // LetPair(x: Variable,y: Variable, e1:Expr, e2:Expr)
     case LetPair(x, y, pairExpression, e2) => {
       val p = Gensym.gensym("p")
-      Let(
-        p,
-        desugar(pairExpression),
-        subst(
-          subst(e2, First(Var(p)), x),
-          Second(Var(p)), y
-        )
-      )
+      Let(p, desugar(pairExpression), subst(
+        subst(e2, First(Var(p)), x),
+        Second(Var(p)), y
+      ))
     }
 
+    case Pair(e1, e2) => Pair(desugar(e1), desugar(e2))
+    case First(e1) => First(desugar(e1))
+    case Second(e1) => Second(desugar(e1))
 
+    case Lambda(x, ty, e1) => Lambda(x, ty, desugar(e1))
+    case Apply(e1, e2) => Apply(desugar(e1), desugar(e2))
+    case Rec(f, x, tyx, ty, e1) => Rec(f, x, tyx, ty, desugar(e1))
 
-
-    // case  LetRec(f, arg, ty, e1, e2) => Let(f, )
-
-    case _ => sys.error("desugar: todo")
-
+    case _ => sys.error("Failed to match Expr type to desugar.")
   }}
 
 
