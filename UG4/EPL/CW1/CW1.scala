@@ -120,13 +120,14 @@ object CW1 {
       case First(e) => First(subst(e, e2, x))
       case Second(e) => Second(subst(e, e2, x))
 
-      case Lambda(variable, type, expr) => {
-        if (variable == x) e2
+      case Lambda(variable, varType, expr) => {
+        if (variable == x) Lambda(variable, varType, subst(expr, e2, variable))
         else {
-
+          var fresh = Gensym.gensym(variable)
+          Lambda(fresh, varType, subst(expr, e2, fresh))
         }
       }
-      case Apply(expr1, expr2) => sys.error("subst: todo")
+      case Apply(expr1, expr2) => Apply(subst(expr1, e2, x), subst(expr2, e2, x))
       case Rec(f, v, tyx, ty, expr) => sys.error("subst: todo")
 
       case _ => sys.error("Failed to match an Expr case, forgot to implement a case class?")
@@ -155,13 +156,12 @@ object CW1 {
 
     case Var(v) => Var(v)
     case Let(x, e1, e2) => Let(x, desugar(e1), desugar(e2))
-    case Pair(e1, e2) => Pair(desugar(e1), desugar(e2))
     // let fun f(argVar) = e1 in e2  =>  let f = \argVar. e1 in e2
-    case LetFun(funcName, argVar, type, e1, e2) =>
-      Let(funcName, Lambda(argVar, type, e1), e2)
+    case LetFun(funcName, argVar, argType, e1, e2) =>
+      Let(funcName, Lambda(argVar, argType, e1), e2)
     // let rec f(argVar) = e1 in e2  =>  let f = rec f(argVar) e1 in e2
-    case LetRec(funcName, argVar, argType, type, e1, e2) =>
-      Let(funcName, Rec(funcName, argVar, argType, type, e1), e2)
+    case LetRec(funcName, argVar, argType, recType, e1, e2) =>
+      Let(funcName, Rec(funcName, argVar, argType, recType, e1), e2)
     // Let(x: Variable, e1: Expr, e2: Expr)
     // LetPair(x: Variable,y: Variable, e1:Expr, e2:Expr)
     case LetPair(x, y, pairExpression, e2) => {
