@@ -117,12 +117,17 @@ object CW1 {
       case LetPair(var1, var2, exp1, exp2) => sys.error("subst: todo")
 
       case Pair(expr1, expr2) => Pair(subst(expr1, e2, x), subst(expr2, e2, x))
-      case First(e) => sys.error("subst: todo")
-      case Second(e) => sys.error("subst: todo")
+      case First(e) => First(subst(e, e2, x))
+      case Second(e) => Second(subst(e, e2, x))
 
-      case Lambda(var, ty, expr) => sys.error("subst: todo")
+      case Lambda(variable, type, expr) => {
+        if (variable == x) e2
+        else {
+
+        }
+      }
       case Apply(expr1, expr2) => sys.error("subst: todo")
-      case Rec(f, var, tyx, ty, expr) => sys.error("subst: todo")
+      case Rec(f, v, tyx, ty, expr) => sys.error("subst: todo")
 
       case _ => sys.error("Failed to match an Expr case, forgot to implement a case class?")
     }
@@ -132,16 +137,41 @@ object CW1 {
   // Exercise 2: Desugaring let fun, let rec and let pair
   // ======================================================================
 
-  def desugar(e: Expr): Expr = e match {
+  def desugar(e: Expr): Expr = {
+    println(e)
+
+    e match {
 
     case Num(n) => Num(n)
     case Plus(e1,e2) => Plus(desugar(e1),desugar(e2))
     case Minus(e1,e2) => Minus(desugar(e1),desugar(e2))
     case Times(e1,e2) => Times(desugar(e1),desugar(e2))
 
+    case Var(v) => Var(v)
+    case Pair(e1, e2) => Pair(desugar(e1), desugar(e2))
+
+    // Let(x: Variable, e1: Expr, e2: Expr)
+    // LetPair(x: Variable,y: Variable, e1:Expr, e2:Expr)
+    case LetPair(x, y, pairExpression, e2) => {
+      val p = Gensym.gensym("p")
+      Let(
+        p,
+        desugar(pairExpression),
+        subst(
+          subst(e2, First(Var(p)), x),
+          Second(Var(p)), y
+        )
+      )
+    }
+
+
+
+
+    // case  LetRec(f, arg, ty, e1, e2) => Let(f, )
+
     case _ => sys.error("desugar: todo")
 
-  }
+  }}
 
 
   // ======================================================================

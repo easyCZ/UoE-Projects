@@ -1,0 +1,89 @@
+import CW1._
+
+val substExp1: Boolean = (eval(Map("y" -> NumV(1)),
+  subst(
+    parser.parseStr("""
+        (\y:int.x + y) x
+       """), parser.parseStr("(y+y)"),
+    "x"))) == NumV(4)
+
+val substExp2: Boolean = (eval(Map("y" -> NumV(1)),
+    subst(
+      parser.parseStr("""
+        let y = x in 
+        x + y
+       """), parser.parseStr("(y+y)"),
+      "x"))) == NumV(4)
+
+val substExp3: Boolean =
+  ((eval(Map("f" -> ClosureV(Map.empty,"x",(Var("x"))),
+    "y" -> NumV(10)
+  ),
+    subst(
+      parser.parseStr("""
+        (rec f (y: int): int.
+          if (y == 0) then
+            y else
+            x + f(y - 1))
+        y
+       """),
+      parser.parseStr("f y"),
+      "x")))) == NumV(100)
+
+val substExp4: Boolean = (eval(Map("y" -> NumV(1), "z" -> NumV(2)),
+  subst(
+    parser.parseStr("""
+        let (y,z) = (x,x+1) in 
+        x + y + z
+       """), parser.parseStr("(y*z)"),
+    "x"))) == NumV(7)
+
+val substExp5: Boolean = (eval(Map("y" -> NumV(1)),
+  subst(
+    parser.parseStr("""
+        let fun f(y:int) = x + y in f x
+       """), parser.parseStr("(y+y)"),
+    "x"))) == NumV(4)
+
+val substExp6: Boolean =
+  ((eval(Map("f" -> ClosureV(Map.empty,"x",(Var("x"))),
+    "y" -> NumV(10)
+  ),
+    subst(
+      parser.parseStr("""
+        let rec f (y: int): int = 
+          if (y == 0) then
+            y else
+            x + f(y - 1) 
+        in f y
+       """),
+      parser.parseStr("f y"),
+      "x")))) == NumV(100)
+
+
+
+val substExp7: Boolean =
+  eval(Map(),
+    subst(parser.parseStr("""let rec f(x:int):int = x+1 in f 12"""),Num(14),"x")) == NumV(13)
+
+
+val substExp8: Boolean =
+  eval(Map(),
+    subst(parser.parseStr("""let rec x(y:int):int = if y == 12 then x (y+1) else (y+1) in x 12"""),Num(26),"x")) == NumV(14)
+
+val substExp9: Boolean =
+  subst(Rec("f","x",IntTy,IntTy,Plus(Num(2),Var("x"))),Num(20),"x") == Rec("f","x",IntTy,IntTy,Plus(Num(2),Var("x")))
+
+
+val substExp10: Boolean =
+  eval(Map(),
+    subst(parser.parseStr("""let (a,b) = (12,13) in (let rec f(x:int):int = x+1 in f a)"""),Num(14),"x")) == NumV(13)
+
+val substExp11: Boolean =
+  eval(Map(),
+    subst(parser.parseStr("""let (a,b) = (12,13) in (let fun f(x:int) = x+1 in f a)"""),Num(14),"x")) == NumV(13)
+
+val substExp12: Boolean =
+  eval(Map(),
+    subst(parser.parseStr("""let (a,b) = (12,13) in (let rec f(x:int):int = x+1 in f a)"""),Num(14),"x")) == NumV(13)
+
