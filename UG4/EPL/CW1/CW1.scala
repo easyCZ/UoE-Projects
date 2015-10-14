@@ -198,7 +198,21 @@ object CW1 {
       case BoolV(false) => eval(env, e2)
     }
 
-    case _ => sys.error("eval: todo")
+    case Str(s) => StringV(s)
+    case Length(s) => Value.length(eval(env, s))
+    case Index(e1, e2) => Value.index(eval(env, e1), eval(env, e2))
+    case Concat(e1, e2) => Value.concat(eval(env, e1), eval(env, e2))
+
+    case Pair(e1, e2) => PairV(eval(env, e1), eval(env, e2))
+    case First(Pair(e1, e2)) => eval(env, e1)
+    case Second(Pair(e1, e2)) => eval(env, e2)
+
+    // TODO: Functions
+    case Lambda(x, ty, e) => sys.error("eval: todo")
+    case Apply(e1, e2) => sys.error("eval: todo")
+    case Rec(f, x, tyx, ty, e) => sys.error("eval: todo")
+
+    case _ => sys.error("Failed to match expression type.")
   }
 
 
