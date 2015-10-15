@@ -65,104 +65,104 @@ def aequiv(e1: Expr, e2:Expr): Boolean = {
   go(Nil,e1,e2)
 }
 
-val substExp1: Boolean = aequiv(
-  subst(
-    parser.parseStr("""
-        (\y:int.x + y) x
-       """
-    ),
-    parser.parseStr(
-      "(y+y)"
-    ),
-    "x"
-  ),
-  parser.parseStr("""
-      (\z:int.(y + y) + z) (y+y)
-     """
-  )
-)
+// val substExp1: Boolean = aequiv(
+//   subst(
+//     parser.parseStr("""
+//         (\y:int.x + y) x
+//        """
+//     ),
+//     parser.parseStr(
+//       "(y+y)"
+//     ),
+//     "x"
+//   ),
+//   parser.parseStr("""
+//       (\z:int.(y + y) + z) (y+y)
+//      """
+//   )
+// )
 
-val substExp2: Boolean = aequiv(
-    subst(
-      parser.parseStr("""
-        let y = x in
-        x + y
-       """), parser.parseStr("(y+y)"),
-      "x"),
-      parser.parseStr("""
-        let z = (y + y) in (y + y) + z
-       """))
+// val substExp2: Boolean = aequiv(
+//     subst(
+//       parser.parseStr("""
+//         let y = x in
+//         x + y
+//        """), parser.parseStr("(y+y)"),
+//       "x"),
+//       parser.parseStr("""
+//         let z = (y + y) in (y + y) + z
+//        """))
 
-val substExp3: Boolean =
-  aequiv(
-    subst(
-      parser.parseStr("""
-        (rec f (y: int): int.
-          if (y == 0) then
-            y else
-            x + f(y - 1))
-        y
-       """),
-      parser.parseStr("f y"),
-      "x"),
-    parser.parseStr("""
-        (rec g (z: int): int.
-          if (z == 0) then
-            z else
-            (f y) + g(z - 1))
-        y
-       """))
-
-
-
-
-val substExp4: Boolean = aequiv(
-  subst(
-    parser.parseStr("""
-        let (y,z) = (x,x+1) in
-        x + y + z
-       """), parser.parseStr("(y*z)"),
-    "x"),
-    parser.parseStr("""
-        let (a,b) = ((y*z),(y*z)+1) in
-        (y*z) + a + b
-       """))
-
-val substExp5: Boolean = aequiv(
-  subst(
-    parser.parseStr("""
-        let fun f(y:int) = x + y in f x
-       """), parser.parseStr("(y+y)"),
-    "x"),
-      parser.parseStr("""
-        let fun f(z:int) = (y+y) + z in f (y+y)
-       """))
-
-val substExp6: Boolean =
-  aequiv(
-    subst(
-      parser.parseStr("""
-        let rec f (y: int): int =
-          if (y == 0) then
-            y else
-            x + f(y - 1)
-        in f y
-       """),
-      parser.parseStr("f y"),
-      "x"),
-    parser.parseStr("""
-        let rec g (z: int): int =
-          if (z == 0) then
-            z else
-            (f y) + g(z - 1)
-        in g y
-       """))
+// val substExp3: Boolean =
+//   aequiv(
+//     subst(
+//       parser.parseStr("""
+//         (rec f (y: int): int.
+//           if (y == 0) then
+//             y else
+//             x + f(y - 1))
+//         y
+//        """),
+//       parser.parseStr("f y"),
+//       "x"),
+//     parser.parseStr("""
+//         (rec g (z: int): int.
+//           if (z == 0) then
+//             z else
+//             (f y) + g(z - 1))
+//         y
+//        """))
 
 
 
-val substExp7: Boolean =
-  eval(Map(),
-    subst(parser.parseStr("""let rec f(x:int):int = x+1 in f 12"""),Num(14),"x")) == NumV(13)
+
+// val substExp4: Boolean = aequiv(
+//   subst(
+//     parser.parseStr("""
+//         let (y,z) = (x,x+1) in
+//         x + y + z
+//        """), parser.parseStr("(y*z)"),
+//     "x"),
+//     parser.parseStr("""
+//         let (a,b) = ((y*z),(y*z)+1) in
+//         (y*z) + a + b
+//        """))
+
+// val substExp5: Boolean = aequiv(
+//   subst(
+//     parser.parseStr("""
+//         let fun f(y:int) = x + y in f x
+//        """), parser.parseStr("(y+y)"),
+//     "x"),
+//       parser.parseStr("""
+//         let fun f(z:int) = (y+y) + z in f (y+y)
+//        """))
+
+// val substExp6: Boolean =
+//   aequiv(
+//     subst(
+//       parser.parseStr("""
+//         let rec f (y: int): int =
+//           if (y == 0) then
+//             y else
+//             x + f(y - 1)
+//         in f y
+//        """),
+//       parser.parseStr("f y"),
+//       "x"),
+//     parser.parseStr("""
+//         let rec g (z: int): int =
+//           if (z == 0) then
+//             z else
+//             (f y) + g(z - 1)
+//         in g y
+//        """))
+
+
+
+// val substExp7: Boolean =
+//   eval(Map(),
+//     subst(parser.parseStr("""let rec f(x:int):int = x+1 in f 12"""),Num(14),"x")) == NumV(13)
 
 
 // val substExp8: Boolean =
@@ -177,9 +177,9 @@ val substExp7: Boolean =
 //   eval(Map(),
 //     subst(parser.parseStr("""let (a,b) = (12,13) in (let rec f(x:int):int = x+1 in f a)"""),Num(14),"x")) == NumV(13)
 
-// val substExp11: Boolean =
-//   eval(Map(),
-//     subst(parser.parseStr("""let (a,b) = (12,13) in (let fun f(x:int) = x+1 in f a)"""),Num(14),"x")) == NumV(13)
+val substExp11: Boolean =
+  eval(Map(),
+    subst(parser.parseStr("""let (a,b) = (12,13) in (let fun f(x:int) = x+1 in f a)"""),Num(14),"x")) == NumV(13)
 
 // val substExp12: Boolean =
 //   eval(Map(),

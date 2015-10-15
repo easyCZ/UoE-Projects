@@ -177,51 +177,62 @@ object CW1 {
   // ======================================================================
 
   def desugar(e: Expr): Expr = {
-    e match {
 
-    case Num(n) => Num(n)
-    case Plus(e1,e2) => Plus(desugar(e1),desugar(e2))
-    case Minus(e1,e2) => Minus(desugar(e1),desugar(e2))
-    case Times(e1,e2) => Times(desugar(e1),desugar(e2))
+    println(s"[desugar]\t${e}")
 
-    case Bool(n) => Bool(n)
-    case Eq(e1, e2) => Eq(desugar(e1), desugar(e2))
-    case IfThenElse(cond, e1, e2) =>
-      IfThenElse(desugar(cond), desugar(e1), desugar(e2))
+    var test = e match {
 
-    case Str(s) => Str(s)
-    case Length(k) => Length(k)
-    case Index(e1, e2) => Index(desugar(e1), desugar(e2))
-    case Concat(e1, e2) => Concat(desugar(e1), desugar(e2))
+      case Num(n) => Num(n)
+      case Plus(e1,e2) => Plus(desugar(e1),desugar(e2))
+      case Minus(e1,e2) => Minus(desugar(e1),desugar(e2))
+      case Times(e1,e2) => Times(desugar(e1),desugar(e2))
 
-    case Var(v) => Var(v)
-    case Let(x, e1, e2) => Let(x, desugar(e1), desugar(e2))
-    // let fun f(argVar) = e1 in e2  =>  let f = \argVar. e1 in e2
-    case LetFun(funcName, argVar, argType, e1, e2) =>
-      Let(funcName, Lambda(argVar, argType, e1), e2)
-    // let rec f(argVar) = e1 in e2  =>  let f = rec f(argVar) e1 in e2
-    case LetRec(funcName, argVar, argType, recType, e1, e2) =>
-      Let(funcName, Rec(funcName, argVar, argType, recType, e1), e2)
-    // Let(x: Variable, e1: Expr, e2: Expr)
-    // LetPair(x: Variable,y: Variable, e1:Expr, e2:Expr)
-    case LetPair(x, y, pairExpression, e2) => {
-      val p = Gensym.gensym("p")
-      Let(p, desugar(pairExpression), subst(
-        subst(e2, First(Var(p)), x),
-        Second(Var(p)), y
-      ))
+      case Bool(n) => Bool(n)
+      case Eq(e1, e2) => Eq(desugar(e1), desugar(e2))
+      case IfThenElse(cond, e1, e2) =>
+        IfThenElse(desugar(cond), desugar(e1), desugar(e2))
+
+      case Str(s) => Str(s)
+      case Length(k) => Length(k)
+      case Index(e1, e2) => Index(desugar(e1), desugar(e2))
+      case Concat(e1, e2) => Concat(desugar(e1), desugar(e2))
+
+      case Var(v) => Var(v)
+      case Let(x, e1, e2) => Let(x, desugar(e1), desugar(e2))
+      // let fun f(argVar) = e1 in e2  =>  let f = \argVar. e1 in e2
+      case LetFun(funcName, argVar, argType, e1, e2) =>
+        Let(funcName, Lambda(argVar, argType, e1), e2)
+      // let rec f(argVar) = e1 in e2  =>  let f = rec f(argVar) e1 in e2
+      case LetRec(funcName, argVar, argType, recType, e1, e2) =>
+        Let(funcName, Rec(funcName, argVar, argType, recType, e1), e2)
+      // Let(x: Variable, e1: Expr, e2: Expr)
+      // LetPair(x: Variable,y: Variable, e1:Expr, e2:Expr)
+      case LetPair(x, y, pairExpression, e2) => {
+        println("Desugarig LETPAIR")
+        val p = Gensym.gensym("p")
+        val out = Let(p, desugar(pairExpression), subst(
+          subst(e2, First(Var(p)), x),
+          Second(Var(p)), y
+        ))
+        println("Desugared into " + out)
+        out
+
+      }
+
+      case Pair(e1, e2) => Pair(desugar(e1), desugar(e2))
+      case First(e1) => First(desugar(e1))
+      case Second(e1) => Second(desugar(e1))
+
+      case Lambda(x, ty, e1) => Lambda(x, ty, desugar(e1))
+      case Apply(e1, e2) => Apply(desugar(e1), desugar(e2))
+      case Rec(f, x, tyx, ty, e1) => Rec(f, x, tyx, ty, desugar(e1))
+
+      case _ => sys.error("Failed to match Expr type to desugar.")
     }
 
-    case Pair(e1, e2) => Pair(desugar(e1), desugar(e2))
-    case First(e1) => First(desugar(e1))
-    case Second(e1) => Second(desugar(e1))
-
-    case Lambda(x, ty, e1) => Lambda(x, ty, desugar(e1))
-    case Apply(e1, e2) => Apply(desugar(e1), desugar(e2))
-    case Rec(f, x, tyx, ty, e1) => Rec(f, x, tyx, ty, desugar(e1))
-
-    case _ => sys.error("Failed to match Expr type to desugar.")
-  }}
+    println(s"[desugar] out\t${test}")
+    test
+  }
 
 
   // ======================================================================
@@ -280,73 +291,100 @@ object CW1 {
   // Exercise 4: Evaluation
   // ======================================================================
 
-  def eval (env: Env[Value], e: Expr): Value = e match {
-    // Arithmetic
-    case Num(n) => NumV(n)
-    case Plus(e1, e2) => Value.add(eval(env, e1), eval(env, e2))
-    case Minus(e1, e2) => Value.subtract(eval(env, e1), eval(env, e2))
-    case Times(e1, e2) => Value.multiply(eval(env, e1), eval(env, e2))
+  def eval (env: Env[Value], e: Expr): Value = {
+    println()
+    println("[eval] exp:\t" + e)
+    println("[eval] env:\t" + env)
 
-    case Bool(b) => BoolV(b)
-    case Eq(e1, e2) => Value.eq(eval(env, e1), eval(env, e2))
-    case IfThenElse(e, e1, e2) => eval(env, e) match {
-      case BoolV(true) => eval(env, e1)
-      case BoolV(false) => eval(env, e2)
-    }
 
-    case Str(s) => StringV(s)
-    case Length(s) => Value.length(eval(env, s))
-    case Index(e1, e2) => Value.index(eval(env, e1), eval(env, e2))
-    case Concat(e1, e2) => Value.concat(eval(env, e1), eval(env, e2))
+    e match {
+      // Arithmetic
+      case Num(n) => NumV(n)
+      case Plus(e1, e2) => Value.add(eval(env, e1), eval(env, e2))
+      case Minus(e1, e2) => Value.subtract(eval(env, e1), eval(env, e2))
+      case Times(e1, e2) => Value.multiply(eval(env, e1), eval(env, e2))
 
-    case Var(x) => if (env contains x) env(x) else sys.error(
-      "eval: Key " + x + " not found in environment. env=" + env
-    )
-    case Let(x, e1, e2) => {
-      val updatedEnv = env + (x -> eval(env, e1))
-      eval(updatedEnv, e2)
-    }
-
-    case Pair(e1, e2) => PairV(eval(env, e1), eval(env, e2))
-    case First(Pair(e1, e2)) => eval(env, e1)
-    case Second(Pair(e1, e2)) => eval(env, e2)
-
-    // TODO: Functions
-    case Lambda(x, ty, e) => ClosureV(env, x, e)
-    case Apply(e1, e2) => {
-      val expVal = eval(env, e2)
-      e1 match {
-
-        case Lambda(x, ty, lambdaExpr) => {
-          // Update env with result of expVal
-          val environment = env + (x -> expVal)
-          eval(environment, lambdaExpr)
-        }
-
-        case Rec(funName, argName, typeOfX, ty, recExpr) => {
-          // Update env
-          val env1 = env + (argName -> expVal)
-          val recVal = RecV(env1, funName, argName, recExpr)
-          val env2 = env1 + (funName -> recVal)
-
-          eval(env2, recExpr)
-        }
-
-        case _ => sys.error("Failed to match application rule for " + e1)
+      case Bool(b) => BoolV(b)
+      case Eq(e1, e2) => Value.eq(eval(env, e1), eval(env, e2))
+      case IfThenElse(e, e1, e2) => eval(env, e) match {
+        case BoolV(true) => eval(env, e1)
+        case BoolV(false) => eval(env, e2)
       }
 
+      case Str(s) => StringV(s)
+      case Length(s) => Value.length(eval(env, s))
+      case Index(e1, e2) => Value.index(eval(env, e1), eval(env, e2))
+      case Concat(e1, e2) => Value.concat(eval(env, e1), eval(env, e2))
+
+      case Var(x) => if (env contains x) env(x) else sys.error(
+        "eval: Key " + x + " not found in environment. env=" + env
+      )
+      case Let(x, e1, e2) => {
+
+        val updatedEnv = env + (x -> eval(env, e1))
+        println(s"[eval] (Let) updated env: \t ${updatedEnv}")
+        eval(updatedEnv, e2)
+      }
+
+      case Pair(e1, e2) => PairV(eval(env, e1), eval(env, e2))
+      case First(Pair(e1, e2)) => eval(env, e1)
+      case Second(Pair(e1, e2)) => eval(env, e2)
+
+      // TODO: Functions
+      case Lambda(x, ty, e) => ClosureV(env, x, e)
+      case Apply(e1, e2) => {
+        println(s"[eval](Apply) ${e1} ${e2}")
+        val expVal = eval(env, e2)
+
+        println(s"Apply E1: ${e1}")
+        e1 match {
+
+          case Var(z) => {
+            // Must be a closure, fetch it
+            val closure = env(z)
+
+            // println(s"[eval](Apply Var)\t${closure}")
+            println(closure)
+
+            sys.error("blah")
+          }
+
+          case Lambda(x, ty, lambdaExpr) => {
+            // Update env with result of expVal
+            val environment = env + (x -> expVal)
+            eval(environment, lambdaExpr)
+          }
+
+          case Rec(funName, argName, typeOfX, ty, recExpr) => {
+            println(s"[eval](Apply Rec) ${e1}")
+            // Update env
+            val env1 = env + (argName -> expVal)
+            val recVal = RecV(env1, funName, argName, recExpr)
+            val env2 = env1 + (funName -> recVal)
+
+            eval(env2, recExpr)
+          }
+
+          case _ => sys.error("Failed to match application rule for " + e1)
+        }
+
+      }
+      case Rec(f, x, tyx, ty, e) => ClosureV(env, x, e)
+
+      case LetFun(f, arg, ty, e1, e2) => {
+        val desugared = desugar(e)
+        println(s"[eval] (LetFun) desugared: ${desugared}")
+        eval(env, desugared)
+      }
+        // sys.error("eval: LetFun should have been desugared.")
+      case LetRec(f, arg, xty, ty, e1, e2) => eval(env, desugar(e))
+        // eval()
+        // sys.error("eval: LetRec should have been desugared.")
+      case LetPair(x, y, e1, e2) => eval(env, desugar(e))
+        // sys.error("eval: LetPair should have been desugared.")
+
+      case _ => sys.error("Failed to match expression " + e + "type to eval.")
     }
-    case Rec(f, x, tyx, ty, e) => ClosureV(env, x, e)
-
-    case LetFun(f, arg, ty, e1, e2) => eval(env, desugar(e))
-      // sys.error("eval: LetFun should have been desugared.")
-    case LetRec(f, arg, xty, ty, e1, e2) => eval(env, desugar(e))
-      // eval()
-      // sys.error("eval: LetRec should have been desugared.")
-    case LetPair(x, y, e1, e2) => eval(env, desugar(e))
-      // sys.error("eval: LetPair should have been desugared.")
-
-    case _ => sys.error("Failed to match expression " + e + "type to eval.")
   }
 
 
