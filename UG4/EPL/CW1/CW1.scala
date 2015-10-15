@@ -83,7 +83,9 @@ object CW1 {
 
 
   // In e1, substitute e2 for x
-  def subst(e1:Expr, e2:Expr, x: Variable): Expr =
+  // substtute e2 for x in e1
+  def subst(e1:Expr, e2:Expr, x: Variable): Expr = {
+    println("<subst>" + e1 + " | " + e2+ " | " + x)
     e1 match {
       case Num(e) => Num(e)
       case Plus(t1,t2) => Plus(subst(t1,e2,x),subst(t2,e2,x))
@@ -112,26 +114,63 @@ object CW1 {
           val fresh_t2 = subst(t2, Var(z), y);
           Let(z, subst(t1, e2, x), subst(fresh_t2, e2, x))
         }
-      case LetFun(f, arg, ty, t1, t2) => sys.error("subst: todo")
-      case LetRec(f, arg, xty, ty, t1, t2) => sys.error("subst: todo")
-      case LetPair(var1, var2, exp1, exp2) => sys.error("subst: todo")
+      // let fun g(x) = 2 * x in g(x) * z(k) * x  =>
+      //    let g_1(x_1) = 2 * x_1 in g_1(x) * z(k) * x
+      case LetFun(f, arg, ty, t1, t2) => {
+        val funName = Gensym.gensym(f)
+        val argName = Gensym.gensym(arg)
+
+        // Rename arguments
+        val t1Sub = subst(t1, Var(argName), arg)
+        // Rename function name
+        val t2Sub = subst(t2, Var(funName), f)
+
+        LetFun(funName, argName, ty, t1Sub, t2Sub)
+      }
+      case LetRec(f, arg, xty, ty, t1, t2) => {
+        val fNew = Gensym.gensym(f)
+        LetRec(fNew, arg, xty, ty, t1, subst(t2, e2, fNew))
+      }
+      case LetPair(var1, var2, exp1, exp2) => {
+        val v1 = Gensym.gensym(var1)
+        val v2 = Gensym.gensym(var2)
+
+        LetPair(v1, v2, exp1, subst(subst(exp2, e2, v2), e2, v1))
+      }
 
       case Pair(expr1, expr2) => Pair(subst(expr1, e2, x), subst(expr2, e2, x))
       case First(e) => First(subst(e, e2, x))
       case Second(e) => Second(subst(e, e2, x))
 
+      // \variable. expr
       case Lambda(variable, varType, expr) => {
-        if (variable == x) Lambda(variable, varType, subst(expr, e2, variable))
+        if (variable == x) Lambda(variable, varType, subst(expr, e2, x))
         else {
-          var fresh = Gensym.gensym(variable)
-          Lambda(fresh, varType, subst(expr, e2, fresh))
+          val freshArg = Gensym.gensym(variable)
+          val updatedLambda = subst(expr, Var(freshArg), variable)
+
+          Lambda(freshArg, varType, subst(updatedLambda, e2, x))
         }
       }
-      case Apply(expr1, expr2) => Apply(subst(expr1, e2, x), subst(expr2, e2, x))
-      case Rec(f, v, tyx, ty, expr) => sys.error("subst: todo")
+      case Apply(expr1, expr2) =>
+        Apply(subst(expr1, e2, x), subst(expr2, e2, x))
+
+      // rec f(argName: tyx): ty = expr
+      case Rec(funcName, argName, tyx, ty, expr) => {
+          val newFuncName = Gensym.gensym(funcName)
+          val newFuncArg = Gensym.gensym(argName)
+
+          // Update expr with new name
+          val newFuncExpr = subst(expr, Var(newFuncName), funcName)
+          val newArgExpr = subst(newFuncExpr, Var(newFuncArg), argName)
+
+          Rec(newFuncName, newFuncArg, tyx, ty, subst(newArgExpr, e2, x))
+        // }
+      }
 
       case _ => sys.error("Failed to match an Expr case, forgot to implement a case class?")
     }
+  }
 
 
   // ======================================================================
@@ -139,9 +178,6 @@ object CW1 {
   // ======================================================================
 
   def desugar(e: Expr): Expr = {
-    // TODO: Remove print
-    println(e)
-
     e match {
 
     case Num(n) => Num(n)
@@ -150,6 +186,11 @@ object CW1 {
     case Times(e1,e2) => Times(desugar(e1),desugar(e2))
 
     case Bool(n) => Bool(n)
+    case Eq(e1, e2) => Eq(desugar(e1), desugar(e2))
+    case IfThenElse(cond, e1, e2) =>
+      IfThenElse(desugar(cond), desugar(e1), desugar(e2))
+
+    case Str(s) => Str(s)
     case Length(k) => Length(k)
     case Index(e1, e2) => Index(desugar(e1), desugar(e2))
     case Concat(e1, e2) => Concat(desugar(e1), desugar(e2))
@@ -259,16 +300,54 @@ object CW1 {
     case Index(e1, e2) => Value.index(eval(env, e1), eval(env, e2))
     case Concat(e1, e2) => Value.concat(eval(env, e1), eval(env, e2))
 
+    case Var(x) => if (env contains x) env(x) else sys.error(
+      "eval: Key " + x + " not found in environment. env=" + env
+    )
+    case Let(x, e1, e2) => {
+      val updatedEnv = env + (x -> eval(env, e1))
+      eval(updatedEnv, e2)
+    }
+
     case Pair(e1, e2) => PairV(eval(env, e1), eval(env, e2))
     case First(Pair(e1, e2)) => eval(env, e1)
     case Second(Pair(e1, e2)) => eval(env, e2)
 
     // TODO: Functions
-    case Lambda(x, ty, e) => sys.error("eval: todo")
-    case Apply(e1, e2) => sys.error("eval: todo")
-    case Rec(f, x, tyx, ty, e) => sys.error("eval: todo")
+    case Lambda(x, ty, e) => ClosureV(env, x, e)
+    case Apply(e1, e2) => {
+      val expVal = eval(env, e2)
+      e1 match {
 
-    case _ => sys.error("Failed to match expression type.")
+        case Lambda(x, ty, lambdaExpr) => {
+          // Update env with result of expVal
+          val environment = env + (x -> expVal)
+          eval(environment, lambdaExpr)
+        }
+
+        case Rec(funName, argName, typeOfX, ty, recExpr) => {
+          // Update env
+          val env1 = env + (argName -> expVal)
+          val recVal = RecV(env1, funName, argName, recExpr)
+          val env2 = env1 + (funName -> recVal)
+
+          eval(env2, recExpr)
+        }
+
+        case _ => sys.error("Failed to match application rule for " + e1)
+      }
+
+    }
+    case Rec(f, x, tyx, ty, e) => ClosureV(env, x, e)
+
+    case LetFun(f, arg, ty, e1, e2) => eval(env, desugar(e))
+      // sys.error("eval: LetFun should have been desugared.")
+    case LetRec(f, arg, xty, ty, e1, e2) => eval(env, desugar(e))
+      // eval()
+      // sys.error("eval: LetRec should have been desugared.")
+    case LetPair(x, y, e1, e2) => eval(env, desugar(e))
+      // sys.error("eval: LetPair should have been desugared.")
+
+    case _ => sys.error("Failed to match expression " + e + "type to eval.")
   }
 
 
