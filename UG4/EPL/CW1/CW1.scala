@@ -85,7 +85,7 @@ object CW1 {
   // In e1, substitute e2 for x
   // substtute e2 for x in e1
   def subst(e1:Expr, e2:Expr, x: Variable): Expr = {
-    println("<subst>" + e1 + " | " + e2+ " | " + x)
+    // println("<subst>" + e1 + " | " + e2+ " | " + x)
     e1 match {
       case Num(e) => Num(e)
       case Plus(t1,t2) => Plus(subst(t1,e2,x),subst(t2,e2,x))
@@ -165,7 +165,6 @@ object CW1 {
           val newArgExpr = subst(newFuncExpr, Var(newFuncArg), argName)
 
           Rec(newFuncName, newFuncArg, tyx, ty, subst(newArgExpr, e2, x))
-        // }
       }
 
       case _ => sys.error("Failed to match an Expr case, forgot to implement a case class?")
