@@ -71,3 +71,43 @@ tyOf(env, LetFun(
     Concat(Var("x"), Str("world")),
     Apply(Var("f"), Str("hello"))
 )) == StringTy
+
+
+// LetRec
+tyOf(
+    env,
+    LetRec(
+        "f", "x", IntTy, IntTy,
+        IfThenElse(
+            Eq(Var("x"), Num(10)),
+            Num(2),
+            Apply(
+                Var("f"),
+                Plus(Var("x"), Num(1))
+            )
+        ),
+        Apply(
+            Var("f"),
+            Num(5)
+        )
+    )
+) == IntTy
+
+tyOf(
+    env,
+    LetRec(
+        "f", "x", StringTy, StringTy,
+        IfThenElse(
+            Eq(Length(Var("x")), Num(10)),
+            Var("x"),
+            Apply(
+                Var("f"),
+                Concat(Var("x"), Str("aa"))
+            )
+        ),
+        Apply(
+            Var("f"),
+            Str("hello")
+        )
+    )
+) == StringTy

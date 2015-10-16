@@ -480,6 +480,11 @@ object CW1 {
       val e1Type = tyOf(ctx + (x -> ty), e1)
       tyOf(ctx + (f -> FunTy(ty, e1Type)), e2)
     }
+    case LetRec(f, x, xty, ty, e1, e2) => {
+      val e1Type = tyOf(ctx + (x -> xty) + (f -> FunTy(xty, ty)), e1)
+      tyOf(ctx + (f -> FunTy(xty, ty)), e2)
+    }
+
 
     case Apply(e1, e2) => {
       val e2Type = tyOf(ctx, e2)
