@@ -459,6 +459,18 @@ object CW1 {
     }
 
     case Str(s) => StringTy
+    case Length(s) => {
+      if (tyOf(ctx, s) == StringTy) IntTy
+      else sys.error("Length requires a string as argument")
+    }
+    case Index(s, i) => {
+      if (tyOf(ctx, s) == StringTy && tyOf(ctx, i) == IntTy) StringTy
+      else sys.error("Index requires a String and Integer and as arguments")
+    }
+    case Concat(e1, e2) => {
+      if (tyOf(ctx, e1) == StringTy && tyOf(ctx, e2) == StringTy) StringTy
+      else sys.error("Concat requires two Strings as arguments")
+    }
 
 
     // Variables and let-binding
