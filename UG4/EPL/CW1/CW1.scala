@@ -446,6 +446,17 @@ object CW1 {
       if (isValidType && lhs == rhs) BoolTy
       else sys.error(s"Types of <lhs> == <rhs> did not match or were not one of ${validTypes}")
     }
+    case IfThenElse(conditional, trueBranch, falseBranch) => {
+      val isConditionalBool = tyOf(ctx, conditional) == BoolTy
+      val trueType = tyOf(ctx, trueBranch)
+      val falseType = tyOf(ctx, falseBranch)
+
+      // need if (BoolTy) then <K> else <K>
+      if (isConditionalBool && trueType == falseType)
+        trueType
+      else
+        sys.error("IfThenElse needs BoolTy on conditional and matching branch types")
+    }
 
     case Str(s) => StringTy
 
