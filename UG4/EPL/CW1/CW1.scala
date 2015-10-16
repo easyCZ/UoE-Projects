@@ -556,7 +556,7 @@ object CW1 {
 
   // Example 4: check whether two strings have the same last character
   def example4: Expr = parser.parseStr("""
-    let fun sameLastChar(input:(str,str)) =
+    let fun sameLastChar(input: str * str) =
       let (s1,s2) = input in
       index(s1,length(s1)-1) == index(s2,length(s2)-1)
     in sameLastChar("abcz","abcdefghijklmnopqrstuvwxyz")
@@ -581,7 +581,22 @@ object CW1 {
   // Exercise 7: Substrings
   // ======================================================================
 
-  def substring: Expr = sys.error("substring: todo")
+  def substring: Expr = parser.parseStr("""
+    let fun subs(input:str * str) =
+
+      let (substring, string) = input in
+
+        let rec match(counts: int * int): int * int =
+          let (x, y) = counts in
+            if (x == length(substring)) then (x, y)
+            else if (y == length(string)) then (x, y)
+            else if (index(substring, x) == index(string, y)) then match (x + 1, y + 1)
+            else match (0, y + 1)
+
+        in fst(match (0, 0)) == length(substring)
+
+    in subs
+  """)
 
 
   /*======================================================================
