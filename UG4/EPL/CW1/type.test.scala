@@ -58,3 +58,16 @@ tyOf(env, Concat(Num(1), Num(2)))
 tyOf(env, Concat(Bool(true), Bool(false)))
 println(">>> Expect errors stop")
 println()
+
+// LetFun
+tyOf(env, LetFun(
+    "f", "x", IntTy,
+    Plus(Var("x"), Num(1)),
+    Apply(Var("f"), Num(10))
+)) == IntTy
+
+tyOf(env, LetFun(
+    "f", "x", StringTy,
+    Concat(Var("x"), Str("world")),
+    Apply(Var("f"), Str("hello"))
+)) == StringTy

@@ -475,9 +475,29 @@ object CW1 {
 
     // Variables and let-binding
     case Var(x) => ctx(x)
-    case Let(x,e1,e2) => tyOf(ctx + (x -> (tyOf(ctx,e1))), e2)
+    case Let(x, e1, e2) => tyOf(ctx + (x -> (tyOf(ctx, e1))), e2)
+    case LetFun(f, x, ty, e1, e2) => {
+      val e1Type = tyOf(ctx + (x -> ty), e1)
+      tyOf(ctx + (f -> FunTy(ty, e1Type)), e2)
+    }
 
-    case _ => sys.error(s"[tyOf] Failed to match expression ${e}")
+    case Apply(e1, e2) => {
+      val e2Type = tyOf(ctx, e2)
+
+      tyOf(ctx, e1) match {
+
+        case FunTy(argType, funcOutType) => {
+          if (argType == e2Type) funcOutType
+          else {
+            sys.error("Apply requires the argument to match the abstraction function")
+          }
+        }
+
+        case _ => sys.error("Apply failed to match FunTy, this shouldn't be happening really.")
+      }
+    }
+
+    case _ => sys.error(s"[tyOf] Failed to match expression ${e} in context ${ctx}")
   }
 
 
