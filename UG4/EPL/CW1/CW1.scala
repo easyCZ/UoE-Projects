@@ -567,7 +567,14 @@ object CW1 {
   // Exercise 6: Fibonacci sequence
   // ======================================================================
 
-  def fib: Expr = sys.error("fib: todo")
+  def fib: Expr = parser.parseStr("""
+    let rec fib(n:int):int =
+      if (n == 1) then 1
+      else if (n == 2) then 1
+      else (fib(n - 2) + fib(n - 1))
+    in fib
+  """)
+  // let rec fib(n:int):int = if (n == 1) then 1 else if (n == 2) then 1 else (fib(n - 2) + fib(n - 1)) in fib
 
 
   // ======================================================================
