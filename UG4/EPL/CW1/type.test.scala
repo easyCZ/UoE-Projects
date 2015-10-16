@@ -135,3 +135,14 @@ tyOf(
 ) == BoolTy
 println(">>> Expect errors stop")
 println()
+
+
+// LetPair
+tyOf(
+    env,
+    LetPair(
+        "x", "y",
+        Pair(Num(10), Num(15)),
+        Plus(Var("x"), Var("y"))
+    )
+) == IntTy

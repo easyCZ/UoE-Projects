@@ -484,6 +484,16 @@ object CW1 {
       val e1Type = tyOf(ctx + (x -> xty) + (f -> FunTy(xty, ty)), e1)
       tyOf(ctx + (f -> FunTy(xty, ty)), e2)
     }
+    case LetPair(x, y , e1, e2) => {
+      val e1Type = tyOf(ctx, e1)
+
+      e1Type match {
+        case PairTy(t1, t2) => tyOf(ctx + (x -> t1) + (y -> t2), e2)
+        case _ => sys.error(s"Failed to match LetPair ${e1Type}")
+      }
+    }
+
+    case Pair(e1, e2) => PairTy(tyOf(ctx, e1), tyOf(ctx, e2))
 
 
     case Apply(e1, e2) => {
