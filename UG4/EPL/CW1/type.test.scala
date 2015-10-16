@@ -111,3 +111,27 @@ tyOf(
         )
     )
 ) == StringTy
+
+
+
+println(">>> Expect errors")
+tyOf(
+    env,
+    LetRec(
+        "f", "x", StringTy, StringTy,
+        IfThenElse(
+            Eq(Length(Var("x")), Num(10)),
+            Var("x"),
+            Apply(
+                Var("f"),
+                Concat(Var("x"), Str("aa"))
+            )
+        ),
+        Apply(
+            Var("f"),
+            Str("hello")
+        )
+    )
+) == BoolTy
+println(">>> Expect errors stop")
+println()
