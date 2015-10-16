@@ -146,3 +146,38 @@ tyOf(
         Plus(Var("x"), Var("y"))
     )
 ) == IntTy
+
+// Apply
+tyOf(
+    env,
+    Lambda(
+        "x",
+        IntTy,
+        Plus(Var("x"), Num(1))
+    )
+) == IntTy
+
+tyOf(
+    env,
+    Lambda(
+        "x",
+        StringTy,
+        Length(Var("x"))
+    )
+) == IntTy
+
+// Rec
+tyOf(
+    env,
+    Rec(
+        "f", "x", StringTy, StringTy,
+        IfThenElse(
+            Eq(Length(Var("x")), Num(10)),
+            Var("x"),
+            Apply(
+                Var("f"),
+                Concat(Var("x"), Str("aa"))
+            )
+        )
+    )
+) == StringTy

@@ -494,8 +494,14 @@ object CW1 {
     }
 
     case Pair(e1, e2) => PairTy(tyOf(ctx, e1), tyOf(ctx, e2))
+    case First(f) => tyOf(ctx, f) match {
+      case PairTy(p1, p2) => p1
+    }
+    case Second(f) => tyOf(ctx, f) match {
+      case PairTy(p1, p2) => p2
+    }
 
-
+    case Lambda(x, ty, e) => tyOf(ctx + (x -> ty), e)
     case Apply(e1, e2) => {
       val e2Type = tyOf(ctx, e2)
 
@@ -511,6 +517,8 @@ object CW1 {
         case _ => sys.error("Apply failed to match FunTy, this shouldn't be happening really.")
       }
     }
+
+    case Rec(f, x, tyx, ty, e) => tyOf(ctx + (x -> tyx) + (f -> FunTy(tyx, ty)), e)
 
     case _ => sys.error(s"[tyOf] Failed to match expression ${e} in context ${ctx}")
   }
