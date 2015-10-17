@@ -99,6 +99,11 @@ object CW1 {
         subst(no, e2, x)
       )
 
+      case Str(s) => Str(s)
+      case Length(e) => Length(subst(e, e2, x))
+      case Index(s1, s2) => Index(subst(s1, e2, x), subst(s2, e2, x))
+      case Concat(s1, s2) => Concat(subst(s1, e2, x), subst(s2, e2, x))
+
       case Var(y) =>
         if (x == y) {
           e2
@@ -181,7 +186,7 @@ object CW1 {
           ), e2, x))
       }
 
-      case _ => sys.error("Failed to match an Expr case, forgot to implement a case class?")
+      case _ => sys.error(s"[subst] Failed to match an Expr case for ${e1}, forgot to implement a case class?")
     }
   }
 
