@@ -29,7 +29,7 @@ def aequiv(e1: Expr, e2:Expr): Boolean = {
 
     case (Str(s1), Str(s2)) => s1 == s2
     case (Length(e1), Length(e2)) =>
-      go(l,e1,e2) 
+      go(l,e1,e2)
     case (Index(e11,e12), Index(e21,e22)) =>
       go(l,e11,e21) && go(l,e12,e22)
     case (Concat(e11,e12), Concat(e21,e22)) =>
@@ -52,7 +52,7 @@ def aequiv(e1: Expr, e2:Expr): Boolean = {
       go(l,e1,e2)
     case (Second(e1), Second(e2)) =>
       go(l,e1,e2)
-    
+
     case (Lambda(x1,t1,e1),Lambda(x2,t2,e2)) =>
       t1 == t2 && go((x1,x2)::l,e1,e2)
     case (Apply(e11,e12), Apply(e21,e22)) =>
@@ -79,7 +79,7 @@ val substExp1: Boolean = aequiv(
 val substExp2: Boolean = aequiv(
     subst(
       parser.parseStr("""
-        let y = x in 
+        let y = x in
         x + y
        """), parser.parseStr("(y+y)"),
       "x"),
@@ -110,12 +110,12 @@ val substExp3: Boolean =
 val substExp4: Boolean = aequiv(
   subst(
     parser.parseStr("""
-        let (y,z) = (x,x+1) in 
+        let (y,z) = (x,x+1) in
         x + y + z
        """), parser.parseStr("(y*z)"),
     "x"),
     parser.parseStr("""
-        let (a,b) = ((y*z),(y*z)+1) in 
+        let (a,b) = ((y*z),(y*z)+1) in
         (y*z) + a + b
        """))
 
@@ -133,22 +133,22 @@ val substExp6: Boolean =
   aequiv(
     subst(
       parser.parseStr("""
-        let rec f (y: int): int = 
+        let rec f (y: int): int =
           if (y == 0) then
             y else
-            x + f(y - 1) 
+            x + f(y - 1)
         in f y
        """),
       parser.parseStr("f y"),
       "x"),
     parser.parseStr("""
-        let rec g (z: int): int = 
+        let rec g (z: int): int =
           if (z == 0) then
             z else
-            (f y) + g(z - 1) 
+            (f y) + g(z - 1)
         in g y
        """))
-    
+
 
 
 val substExp7: Boolean =
@@ -166,7 +166,10 @@ val substExp9: Boolean =
 
 val substExp10: Boolean =
   eval(Map(),
-    subst(parser.parseStr("""let (a,b) = (12,13) in (let rec f(x:int):int = x+1 in f a)"""),Num(14),"x")) == NumV(13)
+    subst(parser.parseStr("""
+      let (a,b) = (12,13) in (
+        let rec f(x:int):int = x+1 in f a
+      )"""),Num(14),"x")) == NumV(13)
 
 val substExp11: Boolean =
   eval(Map(),
@@ -176,3 +179,7 @@ val substExp12: Boolean =
   eval(Map(),
     subst(parser.parseStr("""let (a,b) = (12,13) in (let rec f(x:int):int = x+1 in f a)"""),Num(14),"x")) == NumV(13)
 
+
+def main( args:Array[String] ):Unit = {
+
+}
