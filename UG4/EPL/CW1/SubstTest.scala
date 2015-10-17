@@ -179,7 +179,3 @@ val substExp12: Boolean =
   eval(Map(),
     subst(parser.parseStr("""let (a,b) = (12,13) in (let rec f(x:int):int = x+1 in f a)"""),Num(14),"x")) == NumV(13)
 
-
-def main( args:Array[String] ):Unit = {
-
-}

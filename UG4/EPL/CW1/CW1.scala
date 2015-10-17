@@ -105,15 +105,18 @@ object CW1 {
         } else {
           Var(y)
         }
-      case Let(y, t1, t2) =>
+      case Let(y,t1,t2) => {
+
+        // println(s"[subs] Let:\t${e1} \t${e2}\t${x}")
+
         if (x == y) { // we can stop early since x is re-bound here
-          Let(y, subst(t1, e2, x), subst(t2)
+          Let(y,subst(t1,e2,x),t2)
         } else { // otherwise, we freshen y
           val z = Gensym.gensym(y);
-          val fresh_t2 = subst(t2, Var(z), y);
-          val out = Let(z, subst(t1, e2, x), subst(fresh_t2, e2, x))
-          out
+          val fresh_t2 = subst(t2,Var(z),y);
+          Let(z,subst(t1,e2,x),subst(fresh_t2,e2,x))
         }
+      }
       case LetFun(f, arg, ty, exp1, exp2) => {
         val h = Gensym.gensym(f)
         val y = Gensym.gensym(arg)
@@ -124,13 +127,16 @@ object CW1 {
         LetFun(h, y, ty, subst(subExp1, e2, x), subst(subExp2, e2, x))
       }
       case LetRec(f, arg, argty, ty, exp1, exp2) => {
-        val h = Gensym.gensym(f)
+        val g = Gensym.gensym(f)
         val y = Gensym.gensym(arg)
 
-        val subExp1 = subst(exp1, Var(y), arg)
-        val subExp2 = subst(exp2, Var(h), f)
+        val exp1Sub = subst(subst(exp1, Var(g), f), Var(y), arg)
+        val exp2Sub = subst(exp2, Var(g), f)
 
-        LetRec(y, h, argty, ty, subst(subExp1, e2, x), subst(subExp2, e2, x))
+        // val subExp1 = subst(exp1, Var(y), arg)
+        // val subExp2 = subst(exp2, Var(g), f)
+
+        LetRec(g, y, argty, ty, subst(exp1Sub, e2, x), subst(exp2Sub, e2, x))
       }
       case LetPair(var1, var2, exp1, exp2) => {
         val p1 = Gensym.gensym(var1)
@@ -184,50 +190,51 @@ object CW1 {
   // Exercise 2: Desugaring let fun, let rec and let pair
   // ======================================================================
 
-  def desugar(e: Expr): Expr = e match {
-    case Num(n) => Num(n)
-    case Plus(e1,e2) => Plus(desugar(e1),desugar(e2))
-    case Minus(e1,e2) => Minus(desugar(e1),desugar(e2))
-    case Times(e1,e2) => Times(desugar(e1),desugar(e2))
+  def desugar(e: Expr): Expr = {
 
-    case Bool(n) => Bool(n)
-    case Eq(e1, e2) => Eq(desugar(e1), desugar(e2))
-    case IfThenElse(cond, e1, e2) =>
-      IfThenElse(desugar(cond), desugar(e1), desugar(e2))
+    // println()
+    // println(s"[desugar] <<< ${e}")
 
-    case Str(s) => Str(s)
-    case Length(k) => Length(k)
-    case Index(e1, e2) => Index(desugar(e1), desugar(e2))
-    case Concat(e1, e2) => Concat(desugar(e1), desugar(e2))
+    val out = e match {
+      case Num(n) => Num(n)
+      case Plus(e1,e2) => Plus(desugar(e1),desugar(e2))
+      case Minus(e1,e2) => Minus(desugar(e1),desugar(e2))
+      case Times(e1,e2) => Times(desugar(e1),desugar(e2))
 
-    case Var(v) => Var(v)
-    case Let(x, e1, e2) => Let(x, desugar(e1), desugar(e2))
-    case LetFun(f, x, xty, e1, e2) => Let(f, Lambda(x, xty, desugar(e1)), desugar(e2))
-    case LetRec(f, x, xty, ty, e1, e2) =>
-      Let(f, Rec(f, x, xty, ty, desugar(e1)), desugar(e2))
+      case Bool(n) => Bool(n)
+      case Eq(e1, e2) => Eq(desugar(e1), desugar(e2))
+      case IfThenElse(cond, e1, e2) =>
+        IfThenElse(desugar(cond), desugar(e1), desugar(e2))
 
-    case LetPair(x, y, e1, e2) => {
-      val p = Gensym.gensym("p")
-      Let(p, desugar(e1), desugar(subst(
-        subst(
-          e2,
-          First(Var(p)),
-          x
-        ),
-        Second(Var(p)),
-        y
-      )))
+      case Str(s) => Str(s)
+      case Length(k) => Length(k)
+      case Index(e1, e2) => Index(desugar(e1), desugar(e2))
+      case Concat(e1, e2) => Concat(desugar(e1), desugar(e2))
+
+      case Var(v) => Var(v)
+      case Let(x, e1, e2) => Let(x, desugar(e1), desugar(e2))
+      case LetFun(f, x, xty, e1, e2) => desugar(Let(f, Lambda(x, xty, e1), e2))
+      case LetRec(f, x, xty, ty, e1, e2) => desugar(Let(f, Rec(f, x, xty, ty, e1), e2))
+
+      case LetPair(x, y, e1, e2) => {
+        val p = Gensym.gensym("p")
+        desugar(Let(p, e1, subst(subst(e2, First(Var(p)), x), Second(Var(p)), y)))
+      }
+
+      case Pair(e1, e2) => Pair(desugar(e1), desugar(e2))
+      case First(e1) => First(desugar(e1))
+      case Second(e1) => Second(desugar(e1))
+
+      case Lambda(x, ty, e1) => Lambda(x, ty, desugar(e1))
+      case Apply(e1, e2) => Apply(desugar(e1), desugar(e2))
+      case Rec(f, x, tyx, ty, e1) => Rec(f, x, tyx, ty, desugar(e1))
+
+      case _ => sys.error("Failed to match Expr type to desugar.")
     }
 
-    case Pair(e1, e2) => Pair(desugar(e1), desugar(e2))
-    case First(e1) => First(desugar(e1))
-    case Second(e1) => Second(desugar(e1))
+    // println(s"[desugar] >>> ${out}")
+    out
 
-    case Lambda(x, ty, e1) => Lambda(x, ty, desugar(e1))
-    case Apply(e1, e2) => Apply(desugar(e1), desugar(e2))
-    case Rec(f, x, tyx, ty, e1) => Rec(f, x, tyx, ty, desugar(e1))
-
-    case _ => sys.error("Failed to match Expr type to desugar.")
   }
 
   // ======================================================================
@@ -287,8 +294,8 @@ object CW1 {
   // ======================================================================
 
   def eval (env: Env[Value], e: Expr): Value = {
-    println()
-    println(s"[eval] exp:\t${e} in \t${env}")
+    // println()
+    // println(s"[eval] exp:\t${e} in \t${env}")
 
     e match {
       // Arithmetic
@@ -323,10 +330,13 @@ object CW1 {
       }
 
 
-      case Lambda(x, ty, e1) => ClosureV(env, x, e)
+      case Lambda(x, ty, e1) => ClosureV(env, x, e1)
       case Apply(e1, e2) => {
         val v2 = eval(env, e2)
         val v1 = eval(env, e1)
+
+        // println(s"[eval] (Apply) \t${v1}\t\t${v2}")
+
         v1 match {
           case ClosureV(closureEnv, x, expr) =>
             eval(closureEnv + (x -> v2), expr)
@@ -539,7 +549,13 @@ object CW1 {
 
     def parseStr(input: String): Expr = {
       phrase(expression)(new lexical.Scanner(input)) match {
-        case Success(ast, _) => desugar(ast)
+        case Success(ast, _) => {
+          // println(s"PreDesugar:\t${ast}")
+          val desugared = desugar(ast)
+          // println(s"PosDesugar:\t${desugared}")
+          // desugar(ast)
+          desugared
+        }
         case e: NoSuccess => sys.error(e.msg)
       }
     }
