@@ -450,7 +450,9 @@ object CW1 {
     case Apply(e1, e2) => {
       val e2Type = tyOf(ctx, e2)
 
-      tyOf(ctx, e1) match {
+      val e1Type = tyOf(ctx, e1)
+
+      e1Type match {
 
         case FunTy(argType, funcOutType) => {
           if (argType == e2Type) funcOutType
@@ -458,8 +460,9 @@ object CW1 {
             sys.error("Apply requires the argument to match the abstraction function")
           }
         }
-
-        case _ => sys.error("Apply failed to match FunTy, this shouldn't be happening really.")
+        case _ => {
+          e2Type
+        }
       }
     }
 
