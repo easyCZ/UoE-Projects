@@ -1,0 +1,4 @@
+a	[('lamb', 3), ('tiger', 3), ('kitten', 1)]
+had	[('a', 7)]
+lamb	[('mary', 1)]
+mary	[('had', 7)]
