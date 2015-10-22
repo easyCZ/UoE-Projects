@@ -5,7 +5,7 @@ from collections import Counter
 
 last_key = ""
 counter = None
-SPILL_THRESHOLD = 100
+SPILL_THRESHOLD = 1000
 
 def write():
     """
@@ -22,15 +22,10 @@ for line in sys.stdin:
     key, values = line.split('\t', 1)
     values = values.split(',')
 
-    if key != last_key:
+    if key != last_key or counter.most_common(1)[0][1] > SPILL_THRESHOLD:
         write()
         last_key = key
         counter = Counter(values)
-
-    elif counter.most_common(1)[0][1] > SPILL_THRESHOLD:
-        write()
-        counter = Counter(values)
-
     else:
         counter.update(values)
 
