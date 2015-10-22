@@ -5,4 +5,5 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -output /user/$USER/data/output/lower-case-small \
  -mapper mapper.py \
  -file mapper.py \
+ -jobconf mapred.map.tasks=16 \
  -jobconf mapred.job.name="Lower-case Small `echo $USER`"
