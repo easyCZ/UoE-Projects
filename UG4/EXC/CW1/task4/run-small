@@ -7,6 +7,8 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -file mapper.py \
  -reducer reducer.py \
  -file reducer.py \
+ -D mapred.map.tasks=16 \
+ -D mapred.job.reduces=16 \
  -jobconf mapred.job.name="Bigrams Small `echo $USER`"
 
  hdfs dfs -ls /user/$USER/data/output/task4-small
