@@ -5,7 +5,7 @@ from collections import Counter
 
 last_key = ""
 counter = None
-SPILL_THRESHOLD = 1000
+SPILL_THRESHOLD = 100
 
 def write():
     """
