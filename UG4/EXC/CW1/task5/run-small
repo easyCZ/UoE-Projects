@@ -13,4 +13,8 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -jobconf mapred.job.reduces=32 \
  -jobconf mapred.job.name="Bigrams Combiner Small `echo $USER`"
 
- hdfs dfs -ls /user/$USER/data/output/task5-small
+hdfs dfs -ls /user/$USER/data/output/task5-small
+
+echo "Expected WC: `hdfs dfs -cat /data/assignments/samples/task_5.out/part-00000 | wc -l`"
+echo "Produced WC: `hdfs dfs -cat /user/$USER/data/output/task5-small/part-* | wc -l`"
+
