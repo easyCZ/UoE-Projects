@@ -15,7 +15,8 @@ def write(key, counter):
     Write data into stdout if we have iterated something
     """
     if not last_key: return
-    print("{0}\t{1}".format(key, list(counter.items())))
+    for (second, value) in counter.iteritems():
+        print("{0}\t{1} {2}".format(value, key, second))
 
 
 # Reduce
