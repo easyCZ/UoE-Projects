@@ -13,6 +13,11 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
 
 hdfs dfs -ls /user/$USER/data/output/task6-small
 
+echo "Expected:"
+echo "________________________________"
 hdfs dfs -cat /data/assignments/samples/task_6.out/part-*
+
+echo "Computed:"
+echo "________________________________"
 hdfs dfs -cat /user/$USER/data/output/task6-small/part-*
 
