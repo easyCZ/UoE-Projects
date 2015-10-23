@@ -31,7 +31,7 @@ for line in sys.stdin:
 
     key, values = line.split('\t', 1)
     values = dict(literal_eval(values))
-    counter_size += sum(values.values())
+    # counter_size += sum(values.values())
 
     if key != last_key:
         spill(last_key, counter)
@@ -40,8 +40,8 @@ for line in sys.stdin:
 
     else:
         # Spill records before we run out of memory
-        if sum(counter.values())  > MAX_COUNTER_SIZE:
-            spill(last_key, counter)
+        # if sum(counter.values())  > MAX_COUNTER_SIZE:
+        #     spill(last_key, counter)
         counter.update(values)
 
 # Dump data
