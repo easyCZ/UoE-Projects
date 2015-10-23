@@ -9,8 +9,8 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -file reducer.py \
   -combiner combiner.py \
  -file combiner.py \
- -jobconf mapred.map.tasks=32 \
- -jobconf mapred.job.reduces=32 \
+ -jobconf mapred.map.tasks=64 \
+ -jobconf mapred.job.reduces=64 \
  -jobconf mapred.job.name="Bigrams Large Combiner `echo $USER`"
 
  hdfs dfs -ls /user/$USER/data/output/task5
