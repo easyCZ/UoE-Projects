@@ -1,0 +1,14 @@
+1	a lamb
+1	a tiger
+2	a rat
+1	a car
+1	a spouse
+1	a husband
+1	advanced sharpie
+1	advanced motor
+1	an animal
+2	an advanced
+1	an elephant
+7	had a
+4	had an
+11	mary had
