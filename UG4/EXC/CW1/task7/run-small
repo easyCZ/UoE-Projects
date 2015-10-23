@@ -12,7 +12,6 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -reducer reducer.py \
  -file reducer.py \
  -partitioner org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner \
- -jobconf mapred.map.tasks=32 \
  -jobconf mapred.job.reduces=8 \
  -jobconf mapred.job.name="Matrix Transpose Small `echo $USER`"
 
