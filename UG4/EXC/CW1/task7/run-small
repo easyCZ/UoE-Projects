@@ -1,6 +1,8 @@
 #!/usr/bin/bash
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+ -D stream.num.map.output.key.fields=2 \
+ -D mapreduce.partition.keycomparator.options="-k1,1n -k2,2n" \
  -input /data/assignments/ex1/matrixSmall.txt \
  -output /user/$USER/data/output/task7-small \
  -mapper mapper.py \
@@ -9,7 +11,6 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -file reducer.py \
  -jobconf mapred.map.tasks=32 \
  -jobconf mapred.job.reduces=8 \
- -jobconf mapred.text.key.comparator.options="-k1,2n -k2,3n" \
  -jobconf mapred.job.name="Matrix Transpose Small `echo $USER`"
 
 hdfs dfs -ls /user/$USER/data/output/task7-small
