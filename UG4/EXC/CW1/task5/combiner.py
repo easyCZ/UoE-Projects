@@ -4,13 +4,12 @@ from collections import Counter
 from ast import literal_eval
 
 
-MAX_COUNTER_SIZE = 100
+MAX_COUNTER_SIZE = 3
 
 counter = Counter()
 counter_size = 0
 
 last_key = ""
-counter = None
 
 def write(key, counter):
     """
@@ -20,9 +19,10 @@ def write(key, counter):
     print("{0}\t{1}".format(key, list(counter.items())))
 
 
-def spill(key, counter):
-    write(key, counter)
-    counter = Counter()
+def spill(key, counts):
+    # print "Spill"
+    write(key, counts)
+    return (Counter(), 0)
 
 
 # Reduce
@@ -31,17 +31,19 @@ for line in sys.stdin:
 
     key, values = line.split('\t', 1)
     values = dict(literal_eval(values))
-    # counter_size += sum(values.values())
+    counter_size += sum(values.values())
+
+    # print ">>> Counter Size: %d" % counter_size
 
     if key != last_key:
-        spill(last_key, counter)
+        counter, counter_size = spill(last_key, counter)
         last_key = key
-        counter = Counter(values)
+        counter.update(values)
 
     else:
         # Spill records before we run out of memory
-        # if sum(counter.values())  > MAX_COUNTER_SIZE:
-        #     spill(last_key, counter)
+        if counter_size  > MAX_COUNTER_SIZE:
+            counter, counter_size = spill(last_key, counter)
         counter.update(values)
 
 # Dump data
