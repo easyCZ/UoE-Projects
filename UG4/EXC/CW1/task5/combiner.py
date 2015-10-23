@@ -4,7 +4,7 @@ from collections import Counter
 from ast import literal_eval
 
 
-MAX_COUNTER_SIZE = 3
+MAX_COUNTER_SIZE = 250
 
 counter = Counter()
 counter_size = 0
