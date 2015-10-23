@@ -9,6 +9,8 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -output /user/$USER/data/output/task7-small \
  -mapper mapper.py \
  -file mapper.py \
+ -reducer reducer.py \
+ -file reducer.py \
  -partitioner org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner \
  -jobconf mapred.map.tasks=32 \
  -jobconf mapred.job.reduces=8 \
