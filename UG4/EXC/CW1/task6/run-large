@@ -1,17 +1,18 @@
 #!/usr/bin/bash
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
- -input /user/$USER/data/output/deduplicated \
- -output /user/$USER/data/output/task5 \
- -mapper mapper.py \
- -file mapper.py \
- -reducer reducer.py \
- -file reducer.py \
- -jobconf mapred.map.tasks=64 \
- -jobconf mapred.job.reduces=64 \
- -jobconf mapred.job.name="Bigrams Large Combiner `echo $USER`"
+ -input /user/$USER/data/output/task5 \
+ -output /user/$USER/data/output/task6 \
+ -mapper most_common.py \
+ -file most_common.py \
+ -reducer most_common.py \
+ -jobconf mapred.map.tasks=32 \
+ -jobconf mapred.job.reduces=1 \
+ -jobconf mapred.job.name="Most Common Large `echo $USER`"
 
- hdfs dfs -ls /user/$USER/data/output/task5
+hdfs dfs -ls /user/$USER/data/output/task6
 
-echo "Expected WC: `hdfs dfs -cat /user/$USER/data/output/task4/part-* | wc -l`"
-echo "Produced WC: `hdfs dfs -cat /user/$USER/data/output/task5/part-* | wc -l`"
+echo "Most Common:"
+echo "________________________________"
+hdfs dfs -cat /user/$USER/data/output/task6/part-*
+
