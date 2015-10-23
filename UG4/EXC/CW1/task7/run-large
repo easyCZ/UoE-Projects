@@ -13,6 +13,7 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -file reducer.py \
  -partitioner org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner \
  -jobconf mapred.job.reduces=20 \
+ -jobconf mapred.map.tasks=32 \
  -jobconf mapred.job.name="Matrix Transpose Large `echo $USER`"
 
 hdfs dfs -ls /user/$USER/data/output/task7
