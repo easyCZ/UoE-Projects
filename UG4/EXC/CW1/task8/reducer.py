@@ -14,7 +14,8 @@ def write(name, course_grades):
     """
     Writes the student's name and the grades formated as per spec
     """
-    print_grades = " ".join(["({0}, {1})".format(course, grade) for (course, grade) in course_grades])
+    if not marks: return
+    print_grades = " ".join(["({0},{1})".format(course, grade) for (course, grade) in course_grades])
     print("{0} --> {1}".format(student_name, print_grades))
 
 # The input is expected to be sorted primarily on ID

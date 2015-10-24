@@ -20,7 +20,8 @@ for line in sys.stdin:
     sid, relation, data = line.strip().split('\t', 2)
 
     if last_sid and last_sid != sid:
-        print("{0}\t{1}\t{2}".format(last_sid, MARK_SHORT, str(marks)))
+        if marks:
+            print("{0}\t{1}\t{2}".format(last_sid, MARK_SHORT, str(marks)))
         marks = []
         last_sid = sid
 
@@ -33,7 +34,8 @@ for line in sys.stdin:
     else:
         print(line.strip())
 
-print("{0}\t{1}\t{2}".format(sid, MARK_SHORT, str(marks)))
+if marks:
+    print("{0}\t{1}\t{2}".format(sid, MARK_SHORT, str(marks)))
 
 # Expected output:
 # 1   S   George
