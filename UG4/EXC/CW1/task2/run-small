@@ -1,4 +1,5 @@
 #!/usr/bin/bash
+hdfs dfs -rm -r /user/$USER/data/output/task2-small/
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
  -input /user/$USER/data/output/lower-case-small \

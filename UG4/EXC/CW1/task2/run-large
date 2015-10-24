@@ -11,4 +11,4 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
 
 echo "---------------------"
 
-hdfs dfs -cat /user/s1115104/data/output/exc-cw1/s1115104_task_2.out/part-* | head -20
+hdfs dfs -cat /user/s1115104/data/output/exc-cw1/s1115104_task_2.out/part-* | head -20 > head20.out
