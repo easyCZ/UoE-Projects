@@ -20,6 +20,6 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
 
 hdfs dfs -ls /user/$USER/data/output/task8-small
 
-echo "Expected WC: `hdfs dfs -cat /data/assignments/samples/task_8.out/part-00000 | wc -l`"
+echo "Expected WC: `hdfs dfs -cat /data/assignments/samples/task_8.out/part-* | wc -l`"
 echo "Produced WC: `hdfs dfs -cat /user/$USER/data/output/task8-small/part-* | wc -l`"
 
