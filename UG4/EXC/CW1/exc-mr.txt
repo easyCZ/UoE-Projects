@@ -126,10 +126,74 @@ through a combiner of each map.
 
 Task 3 code begin
 Run:
+hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+ -D mapred.reduce.tasks=1 \
+ -input /user/s1115104/data/output/exc-cw1/s1115104_task_2.out \
+ -output /user/s1115104/data/output/exc-cw1/s1115104_task_3.out \
+ -mapper mapper.py \
+ -file mapper.py \
+ -reducer reducer.py \
+ -file reducer.py \
+ -combiner combiner.py \
+ -file combiner.py \
+ -jobconf mapred.job.name="Word Count Large s1115104"
 
+hdfs dfs -copyToLocal /user/s1115104/data/output/exc-cw1/s1115104_task_3.out/part-00000 wc.txt
+
+
+#!/usr/bin/python
+# mapper.py
+
+import sys
+
+word_count = 0
+line_count = 0
+
+for line in sys.stdin:
+    line = line.strip()
+    words = line.split()
+    word_count += int(len(words))
+    line_count += 1
+
+print("{0}\t{1}".format(word_count, line_count))
+
+
+#!/usr/bin/python
+# combiner.py
+
+import sys
+
+word_count = 0
+line_count = 0
+
+for line in sys.stdin:
+    words, lines = line.strip().split('\t')
+    word_count += int(words)
+    line_count += int(lines)
+
+print("{0}\t{1}".format(word_count, line_count))
+
+
+#!/usr/bin/python
+# reducer.py
+import sys
+
+word_count = 0
+line_count = 0
+
+for line in sys.stdin:
+    sentence = line.strip()
+    words, lines = sentence.split('\t', 1)
+    word_count += int(words)
+    line_count += int(lines)
+
+print("{0} {1}".format(word_count, line_count))
 Task 3 code end
 
 Task 3 results begin
+
+TODO
+
 Task 3 results end
 
 
