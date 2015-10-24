@@ -10,15 +10,6 @@ Output directory: /user/s1115104/data/output/exc-cw1/
 Mapping to lowercase requires no reducers.
 
 Task 1 code begin
-
-#!/usr/bin/python
-# mapper.py
-import sys
-
-for line in sys.stdin:
-    print(line.strip().lower())
-
-
 Run:
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
  -D mapred.reduce.tasks=0 \
@@ -27,6 +18,14 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -mapper mapper.py \
  -file mapper.py \
  -jobconf mapred.job.name="Lower-case Large s1115104"
+
+
+#!/usr/bin/python
+# mapper.py
+import sys
+
+for line in sys.stdin:
+    print(line.strip().lower())
 
 Task 1 code end
 

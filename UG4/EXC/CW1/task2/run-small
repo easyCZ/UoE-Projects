@@ -3,7 +3,7 @@ hdfs dfs -rm -r /user/$USER/data/output/task2-small/
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
  -input /user/$USER/data/output/lower-case-small \
- -output /user/$USER/data/output/deduplicated-small \
+ -output /user/$USER/data/output/task2-small \
  -mapper mapper.py \
  -file mapper.py \
  -reducer reducer.py \
@@ -14,8 +14,11 @@ echo "---------------------"
 hdfs dfs -ls /user/$USER/data/output/deduplicated-small
 
 echo "---------------------"
-echo "Expected WC: `hdfs dfs -cat /data/assignments/samples/task_2.out/part-* | wc`"
-echo "Produced WC: `hdfs dfs -cat /user/$USER/data/output/task2-small/part-* | wc`"
+echo "Expected WC: \n"
+hdfs dfs -cat /data/assignments/samples/task_2.out/part-* | wc
+
+echo "Produced WC: \n"
+hdfs dfs -cat /user/$USER/data/output/task2-small/part-* | wc
 
 echo "---------------------"
 
