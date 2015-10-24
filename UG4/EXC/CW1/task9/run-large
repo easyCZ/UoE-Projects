@@ -1,0 +1,19 @@
+#!/usr/bin/bash
+
+hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+ -input /user/$USER/data/output/deduplicated \
+ -output /user/$USER/data/output/task5 \
+ -mapper mapper.py \
+ -file mapper.py \
+ -reducer reducer.py \
+ -file reducer.py \
+  -combiner combiner.py \
+ -file combiner.py \
+ -jobconf mapred.map.tasks=64 \
+ -jobconf mapred.job.reduces=64 \
+ -jobconf mapred.job.name="Bigrams Large Combiner `echo $USER`"
+
+ hdfs dfs -ls /user/$USER/data/output/task5
+
+echo "Expected WC: `hdfs dfs -cat /user/$USER/data/output/task4/part-* | wc -l`"
+echo "Produced WC: `hdfs dfs -cat /user/$USER/data/output/task5/part-* | wc -l`"
