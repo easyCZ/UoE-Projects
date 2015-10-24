@@ -10,7 +10,7 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
 echo "---------------------"
 
 echo "Expected WC: `hdfs dfs -cat /data/assignments/samples/task_1.out/part-* | wc`"
-echo "Produced WC: `hdfs dfs -cat /user/$USER/data/output/task1-small/part-* | wc`"
+echo "Produced WC: `hdfs dfs -cat /user/$USER/data/output/lower-case-small/part-* | wc`"
 
 echo "---------------------"
 

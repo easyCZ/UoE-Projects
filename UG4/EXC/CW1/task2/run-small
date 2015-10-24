@@ -9,4 +9,13 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -file reducer.py \
  -jobconf mapred.job.name="Deduplicated Small `echo $USER`"
 
- hdfs dfs -ls /user/$USER/data/output/deduplicated-small
+echo "---------------------"
+hdfs dfs -ls /user/$USER/data/output/deduplicated-small
+
+echo "---------------------"
+echo "Expected WC: `hdfs dfs -cat /data/assignments/samples/task_2.out/part-* | wc`"
+echo "Produced WC: `hdfs dfs -cat /user/$USER/data/output/task2-small/part-* | wc`"
+
+echo "---------------------"
+
+hdfs dfs -cat /user/$USER/data/output/deduplicated-small/part-* | head -20
