@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
- -D mapred.reduce.tasks=1
+ -D mapred.reduce.tasks=1 \
  -input /user/$USER/data/output/task8-small/ \
  -output /user/$USER/data/output/task9-small \
  -mapper mapper.py \
