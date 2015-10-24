@@ -211,9 +211,7 @@ print("{0} {1}".format(word_count, line_count))
 Task 3 code end
 
 Task 3 results begin
-
-TODO
-
+123513449 1865581
 Task 3 results end
 
 
@@ -221,7 +219,73 @@ Task 3 results end
 # Task 4
 ###########################################################
 
+Use the first word of the pair as the key for reducers.
+Reducers aggregate results.
+
 Task 4 code begin
+Run:
+hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+ -D mapred.reduce.tasks=32 \
+ -input /user/s1115104/data/output/exc-cw1/s1115104_task_2.out \
+ -output /user/s1115104/data/output/exc-cw1/s1115104_task_4.out \
+ -mapper mapper.py \
+ -file mapper.py \
+ -reducer reducer.py \
+ -file reducer.py \
+ -jobconf mapred.job.name="Tuples Large s1115104"
+
+
+
+#!/usr/bin/python
+# mapper.py
+import sys
+from collections import defaultdict
+
+for line in sys.stdin:
+    tokens = line.strip().split()
+    mapping = defaultdict(list)
+    pairs = zip(tokens[:-1], tokens[1:])
+
+    for a, b in pairs:
+        mapping[a].append(b)
+
+    for (key, values) in mapping.iteritems():
+        print("{0}\t{1}".format(key, ",".join(values)))
+
+
+#!/usr/bin/python
+# reducer.py
+import sys
+from collections import Counter
+
+last_key = ""
+counter = None
+
+def write():
+    """
+    Write data into stdout if we have iterated something
+    """
+    if not last_key: return
+    for second, count in counter.iteritems():
+        print("{0}\t{1} {2}".format(count, key, second))
+
+
+for line in sys.stdin:
+    line = line.strip()
+
+    key, values = line.split('\t', 1)
+    values = values.split(',')
+
+    if key != last_key:
+        write()
+        last_key = key
+        counter = Counter(values)
+
+    else:
+        counter.update(values)
+
+write()
+
 Task 4 code end
 
 Task 4 results begin

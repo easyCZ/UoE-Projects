@@ -1,14 +1,22 @@
 #!/usr/bin/bash
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+ -D mapred.reduce.tasks=32 \
  -input /user/$USER/data/output/deduplicated-small \
  -output /user/$USER/data/output/task4-small \
  -mapper mapper.py \
  -file mapper.py \
  -reducer reducer.py \
  -file reducer.py \
- -D mapred.map.tasks=16 \
- -D mapred.job.reduces=16 \
- -jobconf mapred.job.name="Bigrams Small `echo $USER`"
+ -jobconf mapred.job.name="Tuples Small s1115104"
 
- hdfs dfs -ls /user/$USER/data/output/task4-small
+
+echo "---------------------"
+hdfs dfs -ls /user/$USER/data/output/task4-small
+
+echo "---------------------"
+echo "Expected WC:"
+hdfs dfs -cat /data/assignments/samples/task_4.out/part-* | wc
+
+echo "Produced WC:"
+hdfs dfs -cat /user/$USER/data/output/task4-small/part-* | wc

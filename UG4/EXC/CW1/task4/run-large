@@ -1,12 +1,13 @@
 #!/usr/bin/bash
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
- -input /user/$USER/data/output/deduplicated \
- -output /user/$USER/data/output/task4 \
+ -D mapred.reduce.tasks=32 \
+ -input /user/s1115104/data/output/exc-cw1/s1115104_task_2.out \
+ -output /user/s1115104/data/output/exc-cw1/s1115104_task_4.out \
  -mapper mapper.py \
  -file mapper.py \
  -reducer reducer.py \
  -file reducer.py \
- -jobconf mapred.job.name="Bigrams `echo $USER`"
+ -jobconf mapred.job.name="Tuples Large s1115104"
 
- hdfs dfs -ls /user/$USER/data/output/task4
+hdfs dfs -cat /user/s1115104/data/output/exc-cw1/s1115104_task_4.out/part-* | head -n 20
