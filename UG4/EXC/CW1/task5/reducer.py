@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# reducer.py
 import sys
 from collections import Counter
 from ast import literal_eval
@@ -19,7 +20,6 @@ def write(key, counter):
         print("{0}\t{1} {2}".format(value, key, second))
 
 
-# Reduce
 for line in sys.stdin:
     line = line.strip()
 
@@ -34,5 +34,4 @@ for line in sys.stdin:
     else:
         counter.update(values)
 
-# Dump data
 write(last_key, counter)

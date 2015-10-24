@@ -10,4 +10,4 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -file reducer.py \
  -jobconf mapred.job.name="Tuples Large s1115104"
 
-hdfs dfs -cat /user/s1115104/data/output/exc-cw1/s1115104_task_4.out/part-* | head -n 20
+hdfs dfs -cat /user/s1115104/data/output/exc-cw1/s1115104_task_4.out/part-* | head -n 20 > head20.out

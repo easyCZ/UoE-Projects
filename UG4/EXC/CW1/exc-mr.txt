@@ -19,7 +19,7 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -file mapper.py \
  -jobconf mapred.job.name="Lower-case Large s1115104"
 
-
+########################################################
 #!/usr/bin/python
 # mapper.py
 import sys
@@ -73,6 +73,7 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -file reducer.py \
  -jobconf mapred.job.name="Deduplicated Large s1115104"
 
+########################################################
 #!/usr/bin/python
 # mapper.py
 import sys
@@ -84,7 +85,7 @@ for line in sys.stdin:
     key = hashlib.md5(line).hexdigest()
     print("{0}\t{1}".format(key, line))
 
-
+########################################################
 #!/usr/bin/python
 # reducer.py
 import sys
@@ -160,7 +161,7 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
 
 hdfs dfs -copyToLocal /user/s1115104/data/output/exc-cw1/s1115104_task_3.out/part-00000 wc.txt
 
-
+########################################################
 #!/usr/bin/python
 # mapper.py
 
@@ -177,7 +178,7 @@ for line in sys.stdin:
 
 print("{0}\t{1}".format(word_count, line_count))
 
-
+########################################################
 #!/usr/bin/python
 # combiner.py
 
@@ -193,7 +194,7 @@ for line in sys.stdin:
 
 print("{0}\t{1}".format(word_count, line_count))
 
-
+########################################################
 #!/usr/bin/python
 # reducer.py
 import sys
@@ -234,8 +235,7 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -file reducer.py \
  -jobconf mapred.job.name="Tuples Large s1115104"
 
-
-
+########################################################
 #!/usr/bin/python
 # mapper.py
 import sys
@@ -252,7 +252,7 @@ for line in sys.stdin:
     for (key, values) in mapping.iteritems():
         print("{0}\t{1}".format(key, ",".join(values)))
 
-
+########################################################
 #!/usr/bin/python
 # reducer.py
 import sys
@@ -289,6 +289,26 @@ write()
 Task 4 code end
 
 Task 4 results begin
+1   0000000000000010 0000000000000000000000000000000011
+1   0000000000000021 0000000000000000
+1   00000000000003fb w
+1   00000000000003fb g
+1   0000000000001000 g
+1   0000000000012000 1024
+1   0000000000012000 144
+3   0000000000012000 12
+1   0000000000012000 20
+1   0000000000012000 0000000000000000
+3   0000000000012000 4
+1   0000000000012000 176
+6   0000000000012000 8
+1   0000000000023000 8
+1   0000000000023000 12
+1   0000000000034000 132
+2   0000000000034000 4
+1   000000000012f7c0 8
+1   000000000012f8d0 addrreturn
+1   000000000012f9e0 addrreturn
 Task 4 results end
 
 
@@ -297,6 +317,126 @@ Task 4 results end
 ###########################################################
 
 Task 5 code begin
+Run:
+hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+ -D mapred.reduce.tasks=32 \
+ -input /user/s1115104/data/output/exc-cw1/s1115104_task_2.out \
+ -output /user/s1115104/data/output/exc-cw1/s1115104_task_5.out \
+ -mapper mapper.py \
+ -file mapper.py \
+ -reducer reducer.py \
+ -file reducer.py \
+  -combiner combiner.py \
+ -file combiner.py \
+ -jobconf mapred.job.name="Tuples Combiner Large s1115104"
+
+########################################################
+#!/usr/bin/python
+# mapper.py
+import sys
+from collections import Counter, defaultdict
+
+
+for line in sys.stdin:
+    tokens = line.strip().split()
+    mapping = defaultdict(Counter)
+    pairs = zip(tokens[:-1], tokens[1:])
+
+    for a, b in pairs:
+        mapping[a].update([b])
+
+    for (key, counter) in mapping.iteritems():
+        # prints "mary  [('had', 1)]"
+        print("{0}\t{1}".format(key, list(counter.items())))
+
+########################################################
+#!/usr/bin/python
+# combiner.py
+import sys
+from collections import Counter
+from ast import literal_eval
+
+
+MAX_COUNTER_SIZE = 250
+
+counter = Counter()
+counter_size = 0
+last_key = ""
+
+def write(key, counter):
+    """
+    Write data into stdout if we have iterated something
+    """
+    if not last_key: return
+    print("{0}\t{1}".format(key, list(counter.items())))
+
+
+def spill(key, counts):
+    """
+    Write data to prevent exceeding memory
+    """
+    write(key, counts)
+    return (Counter(), 0)
+
+
+for line in sys.stdin:
+    line = line.strip()
+
+    key, values = line.split('\t', 1)
+    values = dict(literal_eval(values))
+    counter_size += sum(values.values())
+
+    if key != last_key:
+        counter, counter_size = spill(last_key, counter)
+        last_key = key
+        counter.update(values)
+
+    else:
+        # Spill records before we run out of memory
+        if counter_size  > MAX_COUNTER_SIZE:
+            counter, counter_size = spill(last_key, counter)
+        counter.update(values)
+
+write(last_key, counter)
+########################################################
+#!/usr/bin/python
+# reducer.py
+import sys
+from collections import Counter
+from ast import literal_eval
+
+
+counter = Counter()
+counter_size = 0
+
+last_key = ""
+counter = None
+
+def write(key, counter):
+    """
+    Write data into stdout if we have iterated something
+    """
+    if not last_key: return
+    for (second, value) in counter.iteritems():
+        print("{0}\t{1} {2}".format(value, key, second))
+
+
+for line in sys.stdin:
+    line = line.strip()
+
+    key, values = line.split('\t', 1)
+    values = dict(literal_eval(values))
+
+    if key != last_key:
+        write(last_key, counter)
+        last_key = key
+        counter = Counter(values)
+
+    else:
+        counter.update(values)
+
+write(last_key, counter)
+
 Task 5 code end
 
 Task 5 results begin

@@ -1,6 +1,7 @@
 #!/usr/bin/bash
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+ -D mapred.reduce.tasks=32 \
  -input /user/$USER/data/output/deduplicated-small \
  -output /user/$USER/data/output/task5-small \
  -mapper mapper.py \
@@ -9,9 +10,7 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -file reducer.py \
  -combiner combiner.py \
  -file combiner.py \
- -jobconf mapred.map.tasks=32 \
- -jobconf mapred.job.reduces=32 \
- -jobconf mapred.job.name="Bigrams Combiner Small `echo $USER`"
+ -jobconf mapred.job.name="Tuples Small Combiner `echo $USER`"
 
 hdfs dfs -ls /user/$USER/data/output/task5-small
 

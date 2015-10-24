@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# combiner.py
 import sys
 from collections import Counter
 from ast import literal_eval
@@ -8,7 +9,6 @@ MAX_COUNTER_SIZE = 250
 
 counter = Counter()
 counter_size = 0
-
 last_key = ""
 
 def write(key, counter):
@@ -20,20 +20,19 @@ def write(key, counter):
 
 
 def spill(key, counts):
-    # print "Spill"
+    """
+    Write data to prevent exceeding memory
+    """
     write(key, counts)
     return (Counter(), 0)
 
 
-# Reduce
 for line in sys.stdin:
     line = line.strip()
 
     key, values = line.split('\t', 1)
     values = dict(literal_eval(values))
     counter_size += sum(values.values())
-
-    # print ">>> Counter Size: %d" % counter_size
 
     if key != last_key:
         counter, counter_size = spill(last_key, counter)
@@ -46,5 +45,4 @@ for line in sys.stdin:
             counter, counter_size = spill(last_key, counter)
         counter.update(values)
 
-# Dump data
 write(last_key, counter)
