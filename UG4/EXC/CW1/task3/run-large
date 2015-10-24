@@ -1,12 +1,16 @@
 #!/usr/bin/bash
-
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
- -input /user/$USER/data/output/deduplicated \
- -output /user/$USER/data/output/wc \
+ -D mapred.reduce.tasks=1 \
+ -input /user/s1115104/data/output/exc-cw1/s1115104_task_2.out \
+ -output /user/s1115104/data/output/exc-cw1/s1115104_task_3.out \
  -mapper mapper.py \
  -file mapper.py \
  -reducer reducer.py \
  -file reducer.py \
+ -combiner combiner.py \
+ -file combiner.py \
  -jobconf mapred.job.name="Word Count Large `echo $USER`"
 
-# TODO: Copy output to unix
+hdfs dfs -copyToLocal /user/s1115104/data/output/exc-cw1/s1115104_task_3.out/part-00000 wc.txt
+
+hdfs dfs -cat /user/s1115104/data/output/exc-cw1/s1115104_task_3.out/part-* | head -n 20 > head20.out
