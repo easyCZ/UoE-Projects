@@ -118,6 +118,12 @@ Task 2 results end
 # Task 3
 ###########################################################
 
+Use only 1 reducer to be able to aggregate results. Reducer
+requires a constant amount of memory to keep track of results
+and therefore should be able to handle a possibly large
+number of results. Additionally, results are also aggregated
+through a combiner of each map.
+
 Task 3 code begin
 Task 3 code end
 

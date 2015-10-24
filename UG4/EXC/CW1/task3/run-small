@@ -1,12 +1,16 @@
 #!/usr/bin/bash
+hdfs dfs -rm -r /user/$USER/data/output/wc-small
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+ -D mapred.reduce.tasks=1 \
  -input /user/$USER/data/output/deduplicated-small \
  -output /user/$USER/data/output/wc-small \
  -mapper mapper.py \
  -file mapper.py \
  -reducer reducer.py \
  -file reducer.py \
+ -combiner combiner.py \
+ -file combiner.py \
  -jobconf mapred.job.name="Word Count Small `echo $USER`"
 
 echo "Expected Values: "
@@ -14,3 +18,6 @@ hdfs dfs -cat /data/assignments/samples/task_3.out/part-00000
 
 echo "Produced Values: "
 hdfs dfs -cat /user/$USER/data/output/wc-small/part-00000
+
+echo "Copy to wc.txt:"
+hdfs dfs -copyToLocal /user/s1115104/data/output/exc-cw1/s1115104_task_3.out/part-00000 wc.txt

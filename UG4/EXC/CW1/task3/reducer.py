@@ -7,7 +7,7 @@ line_count = 0
 
 for line in sys.stdin:
     sentence = line.strip()
-    _, words, lines = sentence.split('\t')
+    words, lines = sentence.split('\t', 1)
     word_count += int(words)
     line_count += int(lines)
 
