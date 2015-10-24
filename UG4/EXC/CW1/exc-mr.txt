@@ -1,0 +1,30 @@
+###########################################################
+# Task 1
+###########################################################
+
+
+
+
+Task 1 code begin
+...
+code for task 1
+5
+...
+Task 1 code end
+Task 1 results begin
+...
+first 20 lines of the result of task 1
+...
+Task 1 results end
+Task 2 code begin
+...
+code for task 2
+...
+Task 2 code end
+Task 2 results begin
+...
+first 20 lines of the result of task 2
+...
+Task 2 results end
+...
+code and results for Tasks 3-8

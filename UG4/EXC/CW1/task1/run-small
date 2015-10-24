@@ -1,9 +1,17 @@
 #!/usr/bin/bash
-
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+ -D mapred.reduce.tasks=0 \
  -input /data/assignments/ex1/webSmall.txt \
  -output /user/$USER/data/output/lower-case-small \
  -mapper mapper.py \
  -file mapper.py \
- -jobconf mapred.map.tasks=16 \
- -jobconf mapred.job.name="Lower-case Small `echo $USER`"
+ -jobconf mapred.job.name="Lower-case Small s1115104"
+
+echo "---------------------"
+
+echo "Expected WC: `hdfs dfs -cat /data/assignments/samples/task_1.out/part-* | wc`"
+echo "Produced WC: `hdfs dfs -cat /user/$USER/data/output/task1-small/part-* | wc`"
+
+echo "---------------------"
+
+hdfs dfs -cat /user/s1115104/data/output/exc-cw1/s1115104_task_1.out/part-* | head -20
