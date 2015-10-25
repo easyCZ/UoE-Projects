@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# mapper.py
 import sys
 
 STUDENT = 'student'
@@ -21,6 +22,3 @@ for line in sys.stdin:
 
         # print "1  M   [(ADBS, 80)]"
         print("{0}\t{1}\t{2}".format(sid, MARK_SHORT, str(course_grade)))
-
-    else:
-        print "Shit happened"

@@ -17,4 +17,4 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -partitioner org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner \
  -jobconf mapred.job.name="Students Join Large `echo $USER`"
 
-hdfs dfs -cat /user/s1115104/data/output/exc-cw1/s1115104_task_8.out > head20.out
+hdfs dfs -cat /user/s1115104/data/output/exc-cw1/s1115104_task_8.out/part-* | head -n 20 > head20.out

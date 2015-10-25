@@ -550,10 +550,173 @@ Task 7 results end
 # Task 8
 ###########################################################
 
+Sorts output by student ID and relation type, aggregating records in a combiner and merging all in the reducer.
+
 Task 8 code begin
+Run:
+hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+ -D mapred.reduce.tasks=64 \
+ -D mapreduce.job.output.key.comparator.class=org.apache.hadoop.mapreduce.lib.partition.KeyFieldBasedComparator \
+ -D stream.num.map.output.key.fields=2 \
+ -D num.key.fields.for.partition=1 \
+ -D mapreduce.partition.keycomparator.options="-k1n -k2r" \
+ -input /data/assignments/ex1/uniLarge.txt \
+ -output /user/s1115104/data/output/exc-cw1/s1115104_task_8.out \
+ -mapper mapper.py \
+ -file mapper.py \
+ -reducer reducer.py \
+ -file reducer.py \
+ -combiner combiner.py \
+ -file combiner.py \
+ -partitioner org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner \
+ -jobconf mapred.job.name="Students Join Large `echo $USER`"
+
+########################################################
+#!/usr/bin/python
+# mapper.py
+import sys
+
+STUDENT = 'student'
+STUDENT_SHORT = 'S'
+MARK = 'mark'
+MARK_SHORT = 'M'
+
+
+for line in sys.stdin:
+    line = line.strip()
+
+    if line.startswith(STUDENT):
+        relation, sid, name = line.split('   ', 2)
+        # print "1   S   George"
+        print("{0}\t{1}\t{2}".format(sid, STUDENT_SHORT, name))
+
+    elif line.startswith(MARK):
+        relation, course, sid, mark = line.split('   ', 3)
+        course_grade = (course, int(mark))
+
+        # print "1  M   [(ADBS, 80)]"
+        print("{0}\t{1}\t{2}".format(sid, MARK_SHORT, str(course_grade)))
+
+########################################################
+#!/usr/bin/python
+# combiner.py
+import sys
+from ast import literal_eval
+
+MARK_SHORT = 'M'
+
+last_sid = None
+marks = []
+
+# Input is sorted by <id> and secondarily by S|M in reverse
+# so that Student name comes before the marks fot that student
+# Expected input:
+#   <id_1>  S   <student name>
+#   <id_1>  M   (<course name>, <grade>)
+#   <id_1>  M   (<course name>, <grade>)
+#   <id_1>  M   (<course name>, <grade>)
+#   <id_2>  S   <student name>
+#   <id_2>  M   (<course name>, <grade>)
+for line in sys.stdin:
+    sid, relation, data = line.strip().split('\t', 2)
+
+    if last_sid and last_sid != sid:
+        print("{0}\t{1}\t{2}".format(last_sid, MARK_SHORT, str(marks)))
+        marks = []
+        last_sid = sid
+
+    if relation == MARK_SHORT:
+        # Aggregate marks
+        course_grade = literal_eval(data)
+        marks.append(course_grade)
+        last_sid = sid
+
+    else:
+        print(line.strip())
+
+
+print("{0}\t{1}\t{2}".format(sid, MARK_SHORT, str(marks)))
+
+# Expected output:
+# 1   S   George
+# 1   M   [('TTS', 80), ('EXC', 70), ('ADBS', 80)]
+# 2   S   Anna
+# 2   M   [('EXC', 65)]
+
+########################################################
+#!/usr/bin/python
+# reducer.py
+import sys
+from ast import literal_eval
+
+MARK_SHORT = 'M'
+STUDENT_SHORT = 'S'
+
+last_sid = None
+student_name = None
+marks = []
+
+
+def write(name, course_grades):
+    """
+    Writes the student's name and the grades formated as per spec
+    """
+    if not marks: return
+    print_grades = " ".join(["({0},{1})".format(course, grade) for (course, grade) in course_grades])
+    print("{0} --> {1}".format(student_name, print_grades))
+
+# The input is expected to be sorted primarily on ID
+# and secondarily on S or M in reverse to receive
+# the student name before the marks
+
+# Expected input:
+#   <id_1>    <S> <student name>
+#   <id_1>    <M> <list of marks>
+#   <id_1>    <M> <list of marks>
+#   <id_2>    <S> <student name>
+#   <id_2>    <M> <list of marks>
+
+for line in sys.stdin:
+    sid, relation, data = line.strip().split('\t', 2)
+
+    if last_sid and last_sid != sid:
+        write(student_name, marks)
+        marks = []
+
+    last_sid = sid
+
+    if relation == STUDENT_SHORT:
+        student_name = data
+    else:
+        # Aggregate marks
+        marks = marks + literal_eval(data)
+
+# Write last set of records
+write(student_name, marks)
+
 Task 8 code end
 
 Task 8 results begin
+Angel --> (EXC,53) (ES,83) (RTN,59) (AGTA,80) (ADS,76) (SLIP,98) (PPLS,95) (HCI,99) (AR,61)
+Archey --> (DMR,86) (ADS,88) (DISS,76) (NIP,98) (ANLP,99) (ABS,82) (BIO2,75) (IRR,40) (BIO1,65) (IAML,70) (EXC,79) (CT,66) (COPT,62) (IJP,69)
+Joseph --> (AR,50) (IJP,43) (SLIP,76) (TTS,75) (IRP,83) (BIO2,98) (ADBS,50) (COC,83)
+Albro --> (CCN,40) (CT,46) (IRR,74) (BIO2,80) (ADS,75) (EXC,97) (INF2D,41) (DMR,44) (TTS,44)
+Amesbury --> (DAPA,43) (ES,42) (ADS,73) (CCN,78) (IRP,95) (ANLP,82) (TDD,86)
+Antcliff --> (AGTA,90) (INF2D,49) (ABS,53) (RTN,52) (COC,40) (IAML,69) (TDD,78) (ES,42) (TTS,45)
+Alison --> (AGTA,98) (DAPA,63) (DISS,89) (TTS,80) (DMR,96) (SLIP,82) (ABS,59) (BIO2,63) (COPT,78)
+Sebastian --> (IRR,100)
+Allford --> (AR,75) (COPT,73)
+Abney --> (ES,79) (PM,81) (RTN,73) (HCI,65) (COC,72) (AV,70) (AGTA,84) (EXC,42)
+Angevine --> (SLIP,82) (IRP,56) (ABS,48) (AR,41) (ES,48)
+Louis --> (AV,77) (EXC,98) (IAML,92) (DMR,98) (IJP,79)
+Allsbrook --> (TDD,63) (COPT,41) (IRP,64) (PM,64) (COC,94) (AR,67) (INF2D,73) (AV,45)
+Alford --> (NIP,45) (BIO2,89) (EXC,62) (DISS,69) (ANLP,98) (INF2D,45)
+Archey --> (TDD,48) (AR,71) (IAML,62) (TTS,61)
+Alleyne --> (INF1-CG,67) (TTS,56) (COPT,55)
+Alsbury --> (DISS,52) (DMR,83) (EXC,89) (PPLS,51) (TTS,64) (SLIP,48) (HCI,46) (ADS,70) (IRR,67) (ADBS,71) (CT,88) (INF2D,50)
+Alban --> (ES,54) (IRR,73) (PPLS,41) (CT,44)
+Akerley --> (ANLP,84) (NIP,46) (EXC,97) (RTN,60) (TTS,60) (ASR,97) (ADS,88) (IRR,41) (TDD,78)
+Allford --> (ES,44) (RTN,99)
 Task 8 results end
 
 
