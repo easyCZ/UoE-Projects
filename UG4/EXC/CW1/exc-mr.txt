@@ -724,8 +724,87 @@ Task 8 results end
 # Task 9
 ###########################################################
 
+
 Task 9 code begin
+Run:
+hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+ -D mapred.reduce.tasks=1 \
+ -input /user/s1115104/data/output/exc-cw1/s1115104_task_8.out \
+ -output /user/s1115104/data/output/exc-cw1/s1115104_task_9.out \
+ -mapper mapper.py \
+ -file mapper.py \
+ -reducer reducer.py \
+ -file reducer.py \
+ -jobconf mapred.job.name="Lowest Average Large s1115104"
+
+########################################################
+#!/usr/bin/python
+# mapper.py
+import sys
+from collections import Counter, defaultdict
+
+ARROW = ' --> '
+MARK_SIZE_MIN = 4
+
+min_average = None
+student_names = []
+
+for line in sys.stdin:
+    name, marks = line.strip().split(ARROW)
+
+    tuples = marks.split(' ')
+    pairs = [ p[1:-1].split(',', 1) for p in tuples]
+
+    if len(pairs) > MARK_SIZE_MIN:
+        marks = [(course, int(grade)) for (course, grade) in pairs]
+        average = sum([grade for (course, grade) in marks]) / len(marks)
+
+        if not min_average:
+            min_average = average
+            student_names = [name]
+
+        if average < min_average:
+            # We've got a new winner
+            min_average = average
+            student_names = [name]
+
+        elif average == min_average:
+            student_names.append(name)
+
+for name in student_names:
+    print("{0}\t{1}".format(name, min_average))
+
+########################################################
+#!/usr/bin/python
+import sys
+from collections import Counter
+from ast import literal_eval
+
+
+min_average = None
+student_names = []
+
+# Reduce
+for line in sys.stdin:
+    name, average = line.strip().split('\t', 1)
+    average = float(average)
+
+    if not min_average:
+        min_average = average
+        student_names = []
+
+    if average < min_average:
+        # We've got a new winner
+        min_average = average
+        student_names = [name]
+
+    elif average == min_average:
+        student_names.append(name)
+
+for name in student_names:
+    print("{0} with {1}".format(name, "%.1f" % min_average))
 Task 9 code end
 
 Task 9 results begin
+Allsopp with 42.0
 Task 9 results end
