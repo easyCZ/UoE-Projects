@@ -316,6 +316,13 @@ Task 4 results end
 # Task 5
 ###########################################################
 
+Task 5 appears to run slower than task 4. I would attribute
+this slowness to Zipf's Law where most words will be very
+infrequent while only a small number of words will be
+very frequent. The overhead of running a combiner on each
+instance of infrequent word causes the overall performance
+to be worse than in task 4 without the combiner.
+
 Task 5 code begin
 Run:
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
@@ -440,6 +447,26 @@ write(last_key, counter)
 Task 5 code end
 
 Task 5 results begin
+1   0000000000000000000000000000000010 0000000000000000000000000000000011
+1   0000000000000010 0000000000000000
+1   0000000000000021 w
+1   0000000000000021 g
+1   00000000000003fb g
+1   0000000000001000 1024
+1   0000000000001000 144
+3   0000000000001000 12
+1   0000000000001000 20
+1   0000000000001000 0000000000000000
+3   0000000000001000 4
+1   0000000000001000 176
+6   0000000000001000 8
+1   0000000000012000 8
+1   0000000000012000 12
+1   0000000000023000 132
+2   0000000000023000 4
+1   0000000000034000 8
+1   000000000012f7c0 addrreturn
+1   000000000012f8d0 addrreturn
 Task 5 results end
 
 
