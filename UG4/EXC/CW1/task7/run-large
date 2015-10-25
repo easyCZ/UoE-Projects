@@ -1,13 +1,13 @@
 #!/usr/bin/bash
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
- -D mapred.reduce.tasks=50 \
+ -D mapred.reduce.tasks=1 \
  -D mapreduce.job.output.key.comparator.class=org.apache.hadoop.mapreduce.lib.partition.KeyFieldBasedComparator \
  -D stream.num.map.output.key.fields=2 \
  -D num.key.fields.for.partition=1 \
  -D mapreduce.partition.keycomparator.options="-k1n -k2n" \
  -input /data/assignments/ex1/matrixLarge.txt \
- -output /user/$USER/data/output/task7 \
+ -output /user/s1115104/data/output/exc-cw1/s1115104_task_7.out \
  -mapper mapper.py \
  -file mapper.py \
  -reducer reducer.py \
@@ -15,4 +15,4 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -partitioner org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner \
  -jobconf mapred.job.name="Matrix Transpose Large `echo $USER`"
 
-hdfs dfs -ls /user/$USER/data/output/task7
+hdfs dfs -cat /user/s1115104/data/output/exc-cw1/s1115104_task_7.out/part-* | head -n 20 > head20.out

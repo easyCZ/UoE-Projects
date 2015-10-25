@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
- -D mapred.reduce.tasks=50 \
+ -D mapred.reduce.tasks=1 \
  -D mapreduce.job.output.key.comparator.class=org.apache.hadoop.mapreduce.lib.partition.KeyFieldBasedComparator \
  -D stream.num.map.output.key.fields=2 \
  -D num.key.fields.for.partition=1 \
