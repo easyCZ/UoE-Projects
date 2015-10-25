@@ -512,6 +512,26 @@ for (count, word_pair) in heapq.nlargest(MOST_COMMON_THRESHOLD, most_common):
 Task 6 code end
 
 Task 6 results begin
+596093  ofater the
+546463  inactivateddatetime the
+412116  toasting the
+336382  youll can
+287796  onactivateglow the
+279256  wantedseperator to
+260671  toasting be
+258828  neededmethod to
+251729  ifdiscountcontrol you
+247512  is64bitprocess a
+213652  toasting do
+212891  inactivateddatetime a
+208764  havenots a
+204930  is64bitprocess the
+200810  forards the
+187689  iteamreander is
+184438  withapply the
+184399  toasting use
+183069  theappts same
+171873  i0 have
 Task 6 results end
 
 
