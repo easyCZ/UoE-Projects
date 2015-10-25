@@ -13,6 +13,6 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -reducer reducer.py \
  -file reducer.py \
  -partitioner org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner \
- -jobconf mapred.job.name="Matrix Transpose Large `echo $USER`"
+ -jobconf mapred.job.name="Matrix Transpose Large s1115104"
 
 hdfs dfs -cat /user/s1115104/data/output/exc-cw1/s1115104_task_7.out/part-* | head -n 20 > head20.out
