@@ -1,13 +1,12 @@
 #!/usr/bin/bash
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
- -input /user/$USER/data/output/task5-small \
+ -D mapred.reduce.tasks=1 \
+ -input /user/$USER/data/output/task4-small \
  -output /user/$USER/data/output/task6-small \
  -mapper most_common.py \
  -file most_common.py \
  -reducer most_common.py \
- -jobconf mapred.map.tasks=32 \
- -jobconf mapred.job.reduces=1 \
  -jobconf mapred.job.name="Most Common Small `echo $USER`"
 
 hdfs dfs -ls /user/$USER/data/output/task6-small

@@ -1,18 +1,13 @@
 #!/usr/bin/bash
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
- -input /user/$USER/data/output/task5 \
- -output /user/$USER/data/output/task6 \
+ -D mapred.reduce.tasks=1 \
+ -input /user/s1115104/data/output/exc-cw1/s1115104_task_4.out \
+ -output /user/s1115104/data/output/exc-cw1/s1115104_task_6.out \
  -mapper most_common.py \
  -file most_common.py \
  -reducer most_common.py \
- -jobconf mapred.map.tasks=32 \
- -jobconf mapred.job.reduces=1 \
- -jobconf mapred.job.name="Most Common Large `echo $USER`"
+ -jobconf mapred.job.name="Most Common Large s1115104"
 
-hdfs dfs -ls /user/$USER/data/output/task6
-
-echo "Most Common:"
-echo "________________________________"
-hdfs dfs -cat /user/$USER/data/output/task6/part-*
+hdfs dfs -cat /user/s1115104/data/output/exc-cw1/s1115104_task_6.out/part-* > head20.out
 

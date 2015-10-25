@@ -475,7 +475,40 @@ Task 5 results end
 # Task 6
 ###########################################################
 
+Pick the most common 20 pairs at each map, keeping track of only the most common in constant memory. Maps produce k
+buckets of 20, reducer picks 20 most common out of 20 * k
+buckets in constant memory in terms of input size.
+
+Uses the same code for mappers and reducers.
+Runs only a single reducer to aggregate results.
+
 Task 6 code begin
+Run:
+
+########################################################
+#!/usr/bin/python
+# most_common.py
+import sys
+import heapq
+
+most_common = []
+MOST_COMMON_THRESHOLD = 20
+heapq.heapify(most_common)
+
+for line in sys.stdin:
+    count, word_pair = line.strip().split('\t', 1)
+    count = int(count)
+
+    if len(most_common) >= MOST_COMMON_THRESHOLD:
+        heapq.heappushpop(most_common, (count, word_pair))
+    else:
+        heapq.heappush(most_common, (count, word_pair))
+
+
+for (count, word_pair) in heapq.nlargest(MOST_COMMON_THRESHOLD, most_common):
+    print("{0}\t{1}".format(count, word_pair))
+
+
 Task 6 code end
 
 Task 6 results begin
