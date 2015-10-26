@@ -6,7 +6,8 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -input /data/assignments/ex2/task1/small/ \
  -output /user/s1115104/data/output/exc-cw2/s1115104_task_6_small.out \
  -mapper mapper.py \
+ -file mapper.py \
  -combiner combiner.py \
- -files mapper.py,combiner.py \
+ -file combiner.py \
  -jobconf mapred.job.name="Inverted Index S"
 
