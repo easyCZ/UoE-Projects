@@ -1,4 +1,6 @@
 #!/usr/bin/bash
+hdfs dfs -rm -r /user/s1115104/data/output/exc-cw2/s1115104_task_6_small.out
+
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
  -D mapred.reduce.tasks=0 \
  -input /data/assignments/ex2/task1/small/ \
