@@ -2,9 +2,14 @@
 import os
 import sys
 
+
+filename = 'failed'
 try:
-    filename = os.environ['map_input_file']
+    filename = os.environ['mapreduce_map_input_file']
 except:
-    filename = 'failed'
+    pass
+
+for line in sys.stdin:
+    pass
 
 print filename
