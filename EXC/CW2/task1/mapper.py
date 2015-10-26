@@ -2,6 +2,9 @@
 import os
 import sys
 
-filename = os.environ['mapreduce_map_input_file']
+try:
+    filename = os.environ['map_input_file']
+except:
+    filename = 'failed'
 
 print filename
