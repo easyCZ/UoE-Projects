@@ -19,4 +19,4 @@ for line in sys.stdin:
     last_word = word
     accumulator =+ int(count)
 
-print("{0}\t{1}\t{2}".format(last_word, accumulator, filename))
+print("{0}\t{1}\t{2}".format(last_word, filename, accumulator))
