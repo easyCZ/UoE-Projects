@@ -3,6 +3,7 @@ import os
 import sys
 from collections import Counter
 
+
 filename = os.environ['mapreduce_map_input_file'].split('/')[-1]
 
 last_word = None
