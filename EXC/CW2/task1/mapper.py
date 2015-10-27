@@ -5,7 +5,7 @@ import string
 from collections import Counter
 
 # TODO: REMOVE!
-# os.environ['mapreduce_map_input_file'] = 'hdfs://macallan.inf.ed.ac.uk:8020/data/assignments/ex2/task1/small/d5.txt'
+os.environ['mapreduce_map_input_file'] = 'hdfs://macallan.inf.ed.ac.uk:8020/data/assignments/ex2/task1/small/d5.txt'
 
 filename = os.environ['mapreduce_map_input_file'].split('/')[-1]
 
@@ -16,7 +16,8 @@ for line in sys.stdin:
     # Remove punctuation
     line = line.translate(trans, string.punctuation)
     words = line.split()
-    counter = Counter(words)
+    if words:
+        counter = Counter(words)
 
-    for (word, count) in counter.iteritems():
-        print("{0}\t{1}".format(word, count))
+        for (word, count) in counter.iteritems():
+            print("{0}\t{1}".format(word, count))
