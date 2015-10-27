@@ -17,4 +17,4 @@ for line in sys.stdin:
         counter = Counter(words)
 
         for (word, count) in counter.iteritems():
-            print("{0}\t{1}".format(word, count))
+            print("{0}\t{1}\t{2}".format(word, filename, count))
