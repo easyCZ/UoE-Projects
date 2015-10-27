@@ -19,4 +19,4 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -file reducer.py \
  -jobconf mapred.job.name="Inverted Index S"
 
-dfs dfs -cat /user/s1115104/data/output/exc-cw2/s1115104_task_6_small.out/part-00001 | head -n 100
+hdfs dfs -cat /user/s1115104/data/output/exc-cw2/s1115104_task_6_small.out/part-00001 | head -n 100
