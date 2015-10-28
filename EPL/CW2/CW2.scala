@@ -1,7 +1,6 @@
 
 import scala.util.parsing.combinator.RegexParsers
 import scala.util.parsing.combinator.syntactical.StandardTokenParsers
-import scala.collection.immutable.ListMap
 
 object CW2 {
 
@@ -140,9 +139,15 @@ object CW2 {
     def wrapHtml(
         tag: String,
         doc: Doc,
-        attrs: Map[String, String] = ListMap[String, String]()
+        attrs: Map[String, String] = Map[String, String]()
     ) = {
-      if (attrs.size() > 0)
+      if (attrs.size > 0) {
+        val attributes = attrs map {
+          case (key, value) => key + "=\"" + value + "\""
+        } mkString " "
+
+        text(s"<${tag} ${attributes}>") <> doc <> text(s"</${tag}>")
+      }
       else text(s"<${tag}>") <> doc <> text(s"</${tag}>")
     }
 
@@ -256,7 +261,8 @@ object CW2 {
       case MDSectionHeader(header) => wrapHtml("h1", text(header))
       case MDSubsectionHeader(header) => wrapHtml("h2", text(header))
       case MDVerbatim(content) => wrapHtml("pre", unnest(text(content)))
-      case MDLink(label, url) => sys.error("Latex Formatter: MDLink")
+      case MDLink(label, url) =>
+        wrapHtml("a", text(label), Map("href" -> url))
     }
 
   }

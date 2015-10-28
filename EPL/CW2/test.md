@@ -38,3 +38,6 @@ are ignored.
 
 1. and so on.
 }}}
+
+(Link)[http://google.com]
+
