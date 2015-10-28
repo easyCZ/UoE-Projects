@@ -151,6 +151,17 @@ object CW2 {
       else text(s"<${tag}>") <> doc <> text(s"</${tag}>")
     }
 
+    def wrapBegin(t: String, doc: Doc) =
+      text(s"\\begin{${t}}") <> line <> doc <> text(s"\\end{${t}}")
+
+    def wrapEnv(
+      env: String,
+      doc: Doc,
+      args: List[String] = List[String]()
+    ) = {
+      text(s"\\${env}{") <> doc <> text("}" + args.map((a) => s"{${a}}").mkString(""))
+    }
+
   }
 
   // Import it for use in the rest of the program
@@ -216,18 +227,27 @@ object CW2 {
 
     def format(e: MiniMDExpr) = e match {
       case MDDoc(contents) => formatList(line, contents) <> line
-      case MDPar(contents) => formatList(contents)
+      case MDPar(contents) => formatList(contents) <> line
       case MDFreeText(t) => text(t)
-      case MDBold(t) => anglebrackets(text("p")) <> text(t) <> anglebrackets(text("/p"))
-      case MDItalic(t) => anglebrackets(text("i")) <> text(t) <> anglebrackets(text("/i"))
-      case MDUnderlined(t) => anglebrackets(text("u")) <> text(t) <> anglebrackets(text("/u"))
-      case MDBulletedList(items) => sys.error("Latex Formatter: MDBulletedList")
-      case MDListItem(items) => sys.error("Latex Formatter: MDListItem")
-      case MDNumberedList(items) => sys.error("Latex Formatter: MDNumberedList")
-      case MDSectionHeader(header) => sys.error("Latex Formatter: MDSectionHeader")
-      case MDSubsectionHeader(header) => sys.error("Latex Formatter: MDSubsectionHeader")
-      case MDVerbatim(content) => sys.error("Latex Formatter: MDVerbatim")
-      case MDLink(label, url) => sys.error("Latex Formatter: MDLink")
+      case MDBold(t) => wrapEnv("textbf", text(t))
+      case MDItalic(t) => wrapEnv("textit", text(t))
+      case MDUnderlined(t) => wrapEnv("underline", text(t))
+
+      case MDListItem(items) => text("\\item ") <> formatList(items)
+
+      case MDBulletedList(items) => wrapBegin("itemize", sep(
+        line,
+        items.map((i) => format(i))
+      ) <> line) <> line
+
+      case MDNumberedList(items) => wrapBegin("enumerate", sep(
+        line,
+        items.map((i) => format(i))
+      ) <> line) <> line <> line
+      case MDSectionHeader(header) => wrapEnv("section", text(header))
+      case MDSubsectionHeader(header) => wrapEnv("subsection", text(header))
+      case MDVerbatim(content) => wrapBegin("verbatim", text(content)) <> line
+      case MDLink(label, url) => wrapEnv("href", text(url), List(label))
     }
 
   }
