@@ -123,16 +123,13 @@ object CW2 {
 
     val nil = (_: Int, _: Boolean) => ""
     val line = (_: Int, _: Boolean) => "\n"
+    val tab = "\t"
 
     def text(s: String) = (_: Int, _: Boolean) => s
     def append(x: Doc, y: Doc) = {
-      println("x: " + x)
-      println("y: " + y)
-
-      // sys.error("TODO Append")
       text(x(0, false) + y(0, false))
     }
-    def nest(i: Int, doc: Doc) = sys.error("TODO Nest")
+    def nest(i: Int, doc: Doc) = text(tab * i) <> doc
     def unnest(doc: Doc) = sys.error("TODO unnest")
     def print(doc: Doc) = doc(0, false)
 
@@ -149,6 +146,7 @@ object CW2 {
     // The method formatList applies format to each element of a list, concatenating the results
     // It can be called from format().
     def formatList(xs: List[T]): Doc = sep(nil,xs.map{x: T => format(x)})
+    def formatList(separator: Doc, xs: List[T]): Doc = sep(separator, xs.map{x: T => format(x)})
   }
 
   // ======================================================================
@@ -159,11 +157,23 @@ object CW2 {
 
     def format(e: MiniMDExpr) = e match {
 
-      case MDDoc(contents) => formatList(contents)
-      case MDPar(contents) => formatList(contents)
+      case MDDoc(contents) => formatList(line, contents)
+      case MDPar(contents) => formatList(contents) <> line
       case MDFreeText(t) => text(t)
-      case MDBold(t) => text("*" + t + "*")
-      // case _ => sys.error("TODO")
+      case MDBold(t) => text("*") <> text(t) <> text("*")
+      case MDUnderlined(t) => text("_") <> text(t) <> text("_")
+      case MDBulletedList(items) => sep(
+        line,
+        items.map( (x) => append(text("* "), format(x)) )
+      ) <> line
+      case MDListItem(items) => formatList(items)
+
+      case MDNumberedList(items) => sep(
+        line,
+        items.zipWithIndex.map{ case (item, index) =>
+          append(text((index + 1) + ". "), format(item))
+        }
+      ) <> line
 
     }
 
