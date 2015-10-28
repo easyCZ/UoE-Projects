@@ -1,0 +1,74 @@
+MDDoc(
+    List(
+        MDPar(
+            List(
+                MDFreeText(Some text.   ),
+                MDBold(Bold),
+                MDFreeText(, 'italic'  and ),
+                MDUnderlined(underlined),
+                MDFreeText( )
+            )
+        ),
+
+        MDPar(
+            List(
+                MDFreeText(Shopping list: )
+            )
+        ),
+
+        MDBulletedList(
+            List(
+                MDListItem(
+                    List(
+                        MDFreeText(Apples)
+                    )
+                ),
+                MDListItem(
+                    List(
+                        MDFreeText(Oranges)
+                    )
+                )
+            )
+        ),
+        MDPar(
+            List(
+                MDFreeText(To-do list: )
+            )
+        ),
+
+        MDNumberedList(
+            List(
+                MDListItem(
+                    List(MDFreeText(Wash dishes))
+                ),
+                MDListItem(
+                    List(MDFreeText(Brush teeth))
+                )
+            )
+        ),
+
+        MDSectionHeader(Section),
+        MDPar(
+            List(
+                MDFreeText(Roses are red. )
+            )
+        ),
+
+        MDSubsectionHeader(Subsection),
+        MDPar(
+            List(
+                MDFreeText(Violets are blue. )
+            )
+        ),
+        MDVerbatim(*Bold*, 'italic' and _underlined_ markup symbols are ignored. * So are lists 1. and so on.),
+        MDPar(
+            List(
+                MDLink(
+                    Link,
+                    http://google.com
+                ),
+                MDFreeText( )
+            )
+        )
+    )
+)

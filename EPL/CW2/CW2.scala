@@ -26,7 +26,7 @@ object CW2 {
   case class MDBulletedList(listItems: List[MDListItem]) extends MiniMDExpr
   case class MDNumberedList(listItems: List[MDListItem]) extends MiniMDExpr
 
-  // Sections; `text` is the section header name. 
+  // Sections; `text` is the section header name.
   case class MDSectionHeader(text: String) extends MiniMDExpr
   case class MDSubsectionHeader(text: String) extends MiniMDExpr
 
@@ -77,20 +77,23 @@ object CW2 {
 
 
     // ======================================================================
-    //  Exercise 1             
-    // ====================================================================== 
+    //  Exercise 1
+    // ======================================================================
 
-    def quote(d1: Doc): Doc = sys.error("TODO")
+    def quote(d1: Doc): Doc = text("\"" + print(d1)+ "\"")
 
-    def braces(d1: Doc): Doc = sys.error("TODO")
+    def braces(d1: Doc): Doc = text("{" + print(d1)+ "}")
 
-    def anglebrackets(d1: Doc): Doc = sys.error("TODO")
+    def anglebrackets(d1: Doc): Doc = text("<" + print(d1)+ ">")
 
     /* ======================================================================
      *  Exercise 2
      * ====================================================================== */
-  
-    def sep(d: Doc, ds: List[Doc]): Doc = sys.error("TODO")
+
+    def sep(d: Doc, ds: List[Doc]): Doc = ds match {
+      case Nil => nil
+      case li :: lis => lis.foldLeft(li)((a: Doc, b: Doc) => append(append(a, d), b))
+    }
 
   }
 
@@ -113,8 +116,31 @@ object CW2 {
     def print(doc: Doc) = sys.error("TODO")
   }
 
+  object PurePrinter extends Printer {
+
+    type FDoc = (Int, Boolean) => String
+    type Doc = FDoc
+
+    val nil = (_: Int, _: Boolean) => ""
+    val line = (_: Int, _: Boolean) => "\n"
+
+    def text(s: String) = (_: Int, _: Boolean) => s
+    def append(x: Doc, y: Doc) = {
+      println("x: " + x)
+      println("y: " + y)
+
+      // sys.error("TODO Append")
+      text(x(0, false) + y(0, false))
+    }
+    def nest(i: Int, doc: Doc) = sys.error("TODO Nest")
+    def unnest(doc: Doc) = sys.error("TODO unnest")
+    def print(doc: Doc) = doc(0, false)
+
+  }
+
   // Import it for use in the rest of the program
-  import MyPrinter._
+  // import MyPrinter._
+  import PurePrinter._
 
   // A Formatter[T] knows how to turn T into a Doc.
   trait Formatter[T] {
@@ -131,7 +157,15 @@ object CW2 {
 
   object MarkdownFormatter extends Formatter[MiniMDExpr] {
 
-    def format(e: MiniMDExpr) = sys.error("MarkdownFormatter: TODO")
+    def format(e: MiniMDExpr) = e match {
+
+      case MDDoc(contents) => formatList(contents)
+      case MDPar(contents) => formatList(contents)
+      case MDFreeText(t) => text(t)
+      case MDBold(t) => text("*" + t + "*")
+      // case _ => sys.error("TODO")
+
+    }
 
   }
 
@@ -147,13 +181,13 @@ object CW2 {
 
   // ======================================================================
   //  Exercise 6
-  // ====================================================================== 
+  // ======================================================================
 
 
   object HTMLFormatter extends Formatter[MiniMDExpr] {
 
     def format(e: MiniMDExpr) = sys.error("HTMLFormatter: TODO")
-    
+
   }
 
   // ======================================================================
@@ -164,7 +198,7 @@ object CW2 {
 
 
     // A Gen[T] has a method called get that generates a random T.
-    trait Gen[+A] { 
+    trait Gen[+A] {
       val rng = scala.util.Random
 
       def get(): A // abstract
@@ -175,7 +209,7 @@ object CW2 {
       {
         val self = this
         new Gen[B] { def get() = f(self.get()) }
-      } 
+      }
 
       // **********************************************************************
       // Exercise 7
@@ -511,7 +545,7 @@ object CW2 {
 
   }
 
-  
+
   object Main {
     def usage() {
       println("Usage: scala CW2Solution.jar <infile> <mode> <outfile>")
@@ -574,6 +608,8 @@ object CW2 {
       if (mode == "html" || mode == "md" || mode == "latex") {
 
         val parsed = Main.getInput(infile)
+
+        println(parsed)
 
         mode match {
           case "html" => {
