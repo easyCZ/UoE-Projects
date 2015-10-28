@@ -129,7 +129,7 @@ object CW2 {
     def append(x: Doc, y: Doc) = {
       text(x(0, false) + y(0, false))
     }
-    def nest(i: Int, doc: Doc) = text(tab * i) <> doc
+    def nest(i: Int, doc: Doc) = sys.error("TODO nest")
     def unnest(doc: Doc) = sys.error("TODO unnest")
     def print(doc: Doc) = doc(0, false)
 
