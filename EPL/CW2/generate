@@ -1,0 +1,33 @@
+#!/bin/bash
+
+echo "Generating solutions..."
+scala CW2Solution.jar example1.md md md/solution1.md
+scala CW2Solution.jar example2.md md md/solution2.md
+scala CW2Solution.jar example3.md md md/solution3.md
+scala CW2Solution.jar example4.md md md/solution4.md
+
+scala CW2Solution.jar example1.md latex latex/solution1.latex
+scala CW2Solution.jar example2.md latex latex/solution2.latex
+scala CW2Solution.jar example3.md latex latex/solution3.latex
+scala CW2Solution.jar example4.md latex latex/solution4.latex
+
+scala CW2Solution.jar example1.md html html/solution1.html
+scala CW2Solution.jar example2.md html html/solution2.html
+scala CW2Solution.jar example3.md html html/solution3.html
+scala CW2Solution.jar example4.md html html/solution4.html
+
+echo "Generating form implementation"
+scala CW2.scala example1.md md md/example1.md
+scala CW2.scala example2.md md md/example2.md
+scala CW2.scala example3.md md md/example3.md
+scala CW2.scala example4.md md md/example4.md
+
+scala CW2.scala example1.md latex latex/example1.latex
+scala CW2.scala example2.md latex latex/example2.latex
+scala CW2.scala example3.md latex latex/example3.latex
+scala CW2.scala example4.md latex latex/example4.latex
+
+scala CW2.scala example1.md html html/example1.html
+scala CW2.scala example2.md html html/example2.html
+scala CW2.scala example3.md html html/example3.html
+scala CW2.scala example4.md html html/example4.html
