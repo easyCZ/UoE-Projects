@@ -1,0 +1,42 @@
+\documentclass{article}
+\usepackage[colorlinks=true]{hyperref}
+\begin{document}
+%%% Beginning of MiniMD content
+Some text.   \textbf{Bold}, 'italic'  and \underline{underlined} 
+
+Shopping list: 
+
+\begin{itemize}
+\item Apples
+\item Oranges
+\end{itemize}
+
+To-do list: 
+
+\begin{enumerate}
+\item Wash dishes
+\item Brush teeth
+\end{enumerate}
+
+
+\section{Section}
+Roses are red. 
+
+\subsection{Subsection}
+Violets are blue. 
+
+\begin{verbatim}
+*Bold*, 'italic' 
+and _underlined_ 
+markup symbols 
+are ignored.
+
+* So are lists
+
+1. and so on.
+\end{verbatim}
+
+\href{http://google.com}{Link} 
+
+%%% End of MiniMD content
+\end{document}
