@@ -1,0 +1,9 @@
+#!/bin/bash
+
+echo "No output means all good."
+echo "#########################"
+
+diff md/example1.md md/solution1.md
+diff md/example2.md md/solution2.md
+diff md/example3.md md/solution3.md
+diff md/example4.md md/solution4.md
