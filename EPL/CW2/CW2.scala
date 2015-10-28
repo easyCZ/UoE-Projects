@@ -1,6 +1,7 @@
 
 import scala.util.parsing.combinator.RegexParsers
 import scala.util.parsing.combinator.syntactical.StandardTokenParsers
+import scala.collection.immutable.ListMap
 
 object CW2 {
 
@@ -123,15 +124,27 @@ object CW2 {
 
     val nil = (_: Int, _: Boolean) => ""
     val line = (_: Int, _: Boolean) => "\n"
-    val tab = "\t"
+    val tab = "  "
 
-    def text(s: String) = (_: Int, _: Boolean) => s
+    def text(s: String) = (tabs: Int, suspended: Boolean) => {
+      if (!suspended) tab * tabs + s
+      else s
+    }
     def append(x: Doc, y: Doc) = {
       text(x(0, false) + y(0, false))
     }
-    def nest(i: Int, doc: Doc) = sys.error("TODO nest")
-    def unnest(doc: Doc) = sys.error("TODO unnest")
+    def nest(i: Int, doc: Doc) = text(doc(i, false))
+    def unnest(doc: Doc) = text(doc(0, true))
     def print(doc: Doc) = doc(0, false)
+
+    def wrapHtml(
+        tag: String,
+        doc: Doc,
+        attrs: Map[String, String] = ListMap[String, String]()
+    ) = {
+      if (attrs.size() > 0)
+      else text(s"<${tag}>") <> doc <> text(s"</${tag}>")
+    }
 
   }
 
@@ -147,6 +160,7 @@ object CW2 {
     // It can be called from format().
     def formatList(xs: List[T]): Doc = sep(nil,xs.map{x: T => format(x)})
     def formatList(separator: Doc, xs: List[T]): Doc = sep(separator, xs.map{x: T => format(x)})
+
   }
 
   // ======================================================================
@@ -195,7 +209,21 @@ object CW2 {
 
   object LatexFormatter extends Formatter[MiniMDExpr] {
 
-    def format(e: MiniMDExpr) = sys.error("LatexFormatter: TODO")
+    def format(e: MiniMDExpr) = e match {
+      case MDDoc(contents) => formatList(line, contents) <> line
+      case MDPar(contents) => formatList(contents)
+      case MDFreeText(t) => text(t)
+      case MDBold(t) => anglebrackets(text("p")) <> text(t) <> anglebrackets(text("/p"))
+      case MDItalic(t) => anglebrackets(text("i")) <> text(t) <> anglebrackets(text("/i"))
+      case MDUnderlined(t) => anglebrackets(text("u")) <> text(t) <> anglebrackets(text("/u"))
+      case MDBulletedList(items) => sys.error("Latex Formatter: MDBulletedList")
+      case MDListItem(items) => sys.error("Latex Formatter: MDListItem")
+      case MDNumberedList(items) => sys.error("Latex Formatter: MDNumberedList")
+      case MDSectionHeader(header) => sys.error("Latex Formatter: MDSectionHeader")
+      case MDSubsectionHeader(header) => sys.error("Latex Formatter: MDSubsectionHeader")
+      case MDVerbatim(content) => sys.error("Latex Formatter: MDVerbatim")
+      case MDLink(label, url) => sys.error("Latex Formatter: MDLink")
+    }
 
   }
 
@@ -206,7 +234,30 @@ object CW2 {
 
   object HTMLFormatter extends Formatter[MiniMDExpr] {
 
-    def format(e: MiniMDExpr) = sys.error("HTMLFormatter: TODO")
+    def format(e: MiniMDExpr) = e match {
+      case MDDoc(contents) => formatList(line, contents) <> line
+      case MDPar(contents) => wrapHtml("p", formatList(contents)) <> line
+
+      case MDFreeText(t) => text(t)
+      case MDBold(t) => wrapHtml("b", text(t))
+      case MDItalic(t) => wrapHtml("i", text(t))
+      case MDUnderlined(t) => wrapHtml("u", text(t))
+
+      case MDListItem(items) => wrapHtml("li", formatList(items))
+
+      case MDBulletedList(items) => wrapHtml("ul", line <> sep(
+        line,
+        items.map((i) => nest(1, format(i)))
+      ) <> line)
+      case MDNumberedList(items) => wrapHtml("ol", line <> sep(
+        line,
+        items.map((i) => nest(1, format(i)))
+      ) <> line)
+      case MDSectionHeader(header) => wrapHtml("h1", text(header))
+      case MDSubsectionHeader(header) => wrapHtml("h2", text(header))
+      case MDVerbatim(content) => wrapHtml("pre", unnest(text(content)))
+      case MDLink(label, url) => sys.error("Latex Formatter: MDLink")
+    }
 
   }
 
