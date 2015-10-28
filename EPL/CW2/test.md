@@ -17,3 +17,24 @@ To-do list:
 1. Brush teeth
 
 
+
+== Section ==
+
+
+Roses are red.
+
+=== Subsection ===
+
+Violets are blue.
+
+
+{{{
+*Bold*, 'italic'
+and _underlined_
+markup symbols
+are ignored.
+
+* So are lists
+
+1. and so on.
+}}}

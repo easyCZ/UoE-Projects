@@ -157,10 +157,12 @@ object CW2 {
 
     def format(e: MiniMDExpr) = e match {
 
-      case MDDoc(contents) => formatList(line, contents)
+      case MDDoc(contents) => formatList(line, contents) <> line
       case MDPar(contents) => formatList(contents) <> line
       case MDFreeText(t) => text(t)
       case MDBold(t) => text("*") <> text(t) <> text("*")
+      case MDItalic(t) => text("`") <> text(t) <> text("`")
+
       case MDUnderlined(t) => text("_") <> text(t) <> text("_")
       case MDBulletedList(items) => sep(
         line,
@@ -174,6 +176,14 @@ object CW2 {
           append(text((index + 1) + ". "), format(item))
         }
       ) <> line
+
+      case MDSectionHeader(header) => text("== ") <> text(header) <> text(" ==")
+
+      case MDSubsectionHeader(header) => text("=== ") <> text(header) <> text(" ===")
+
+      case MDVerbatim(content) => text("{{{") <> line <> text(content) <> line <> text("}}}")
+
+      case MDLink(label, url) => text(s"(${label})[${url}]")
 
     }
 
