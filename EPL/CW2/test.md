@@ -1,43 +1,31 @@
-Some text.
-*Bold*, 'italic'
-and _underlined_
+Some text.   *Bold*, 'italic'  and _underlined_ 
 
-
-Shopping list:
-
+Shopping list: 
 
 * Apples
 * Oranges
 
-
-To-do list:
-
+To-do list: 
 
 1. Wash dishes
-1. Brush teeth
-
-
+2. Brush teeth
 
 == Section ==
-
-
-Roses are red.
+Roses are red. 
 
 === Subsection ===
-
-Violets are blue.
-
+Violets are blue. 
 
 {{{
-*Bold*, 'italic'
-and _underlined_
-markup symbols
+*Bold*, 'italic' 
+and _underlined_ 
+markup symbols 
 are ignored.
 
 * So are lists
 
 1. and so on.
-}}}
 
-(Link)[http://google.com]
+}}}
+(Link)[http://google.com] 
 

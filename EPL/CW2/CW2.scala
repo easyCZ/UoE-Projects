@@ -302,7 +302,7 @@ object CW2 {
 
       // Gen[T] also supports the map and flatMap methods, so for-comprehensions
       // can be used with them.
-      def map[B](f: A => B):Gen[B] =
+      def map[B](f: A => B): Gen[B] =
       {
         val self = this
         new Gen[B] { def get() = f(self.get()) }
@@ -319,18 +319,22 @@ object CW2 {
     // Exercise 8
     // **********************************************************************
 
-    def const[T](c: T): Gen[T] =
-      sys.error("TODO")
+    def const[T](c: T): Gen[T] = new Gen[T] {
+      def get() = c
+    }
 
-    def flip: Gen[Boolean] =
-      sys.error("TODO")
+    def flip: Gen[Boolean] = new Gen[Boolean] {
+      def get() = rng.nextBoolean()
+    }
 
-    def range(min: Integer, max: Integer): Gen[Integer] =
-      sys.error("TODO")
+    def range(min: Integer, max: Integer): Gen[Integer] = new Gen[Integer] {
+      def get() = min + rng.nextInt(max - min + 1)
+    }
 
 
-    def fromList[T](items: List[T]): Gen[T] =
-      sys.error("TODO")
+    def fromList[T](items: List[T]): Gen[T] = new Gen[T] {
+      def get() = items(range(0, items.length - 1).get())
+    }
 
     // **********************************************************************
     // Exercise 9
