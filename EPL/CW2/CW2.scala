@@ -312,7 +312,14 @@ object CW2 {
       // Exercise 7
       // **********************************************************************
 
-      def flatMap[B](f: A => Gen[B]) = sys.error("TODO")
+      def flatMap[B](f: A => Gen[B]) = {
+        val self = this
+
+        new Gen[B] {
+          def get() = f(self.get()).get()
+        }
+      }
+
     }
 
     // **********************************************************************
@@ -339,33 +346,35 @@ object CW2 {
     // **********************************************************************
     // Exercise 9
     // **********************************************************************
+    val sections = List("Chapter 1", "Introduction", "Conclusion")
+    val subsections = List("Section 1.1", "Table of Contents", "References")
+    val listitems = List("Apples", "Oranges", "Spaceship")
+    val links = List(("Google", "http://www.google.com"), ("Facebook", "http://www.facebook.com"))
+    val verbatims = List("== This isn’t valid MiniMD ===", "*Neither_ _is’ ’this*")
+    val freetexts = List("It was a dark and stormy night", "It was the best of times")
 
-    def genSectionText: Gen[String] =
-      sys.error("TODO")
+    def genSectionText: Gen[String] = fromList(sections)
 
-    def genSubsectionText: Gen[String] =
-      sys.error("TODO")
+    def genSubsectionText: Gen[String] = fromList(subsections)
 
-    def genListitemText: Gen[String] =
-      sys.error("TODO")
+    def genListitemText: Gen[String] = fromList(listitems)
 
-    def genLink: Gen[(String, String)] =
-      sys.error("TODO")
+    def genLink: Gen[(String, String)] = fromList(links)
 
-    def genFreeText: Gen[String] =
-      sys.error("TODO")
+    def genFreeText: Gen[String] = fromList(freetexts)
 
-    def genVerbatimText: Gen[String] =
-      sys.error("TODO")
+    def genVerbatimText: Gen[String] = fromList(verbatims)
 
 
     // **********************************************************************
     // Exercise 10
     // **********************************************************************
 
-    def genList[T](n: Integer, g: Gen[T]): Gen[List[T]] = sys.error("TODO")
+    def genList[T](n: Integer, g: Gen[T]): Gen[List[T]] = new Gen[List[T]] {
+      def get() = List.fill(n)(g).map((i) => i.get())
+    }
 
-    def genFromList[A](gs: List[Gen[A]]): Gen[A] = sys.error("TODO")
+    def genFromList[A](gs: List[Gen[A]]): Gen[A] = fromList(gs).get()
 
 
     // **********************************************************************
