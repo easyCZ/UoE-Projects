@@ -353,17 +353,37 @@ object CW2 {
     val verbatims = List("== This isn’t valid MiniMD ===", "*Neither_ _is’ ’this*")
     val freetexts = List("It was a dark and stormy night", "It was the best of times")
 
+    // Text generators
     def genSectionText: Gen[String] = fromList(sections)
-
     def genSubsectionText: Gen[String] = fromList(subsections)
-
     def genListitemText: Gen[String] = fromList(listitems)
-
     def genLink: Gen[(String, String)] = fromList(links)
-
     def genFreeText: Gen[String] = fromList(freetexts)
-
     def genVerbatimText: Gen[String] = fromList(verbatims)
+
+    def genMDFreeText: Gen[MDFreeText] = new Gen[MDFreeText] {
+      def get() = MDFreeText(genFreeText.get())
+    }
+    def getMDListItemFreeText: Gen[MDFreeText] = new Gen[MDFreeText] {
+      def get() = MDFreeText(genListitemText.get())
+    }
+
+    // MD Nodes generators
+    def genMDListItem: Gen[MDListItem] = new Gen[MDListItem] {
+      def get() = MDListItem(genList(1, getMDListItemFreeText).get())
+    }
+
+    def genMDBulletedList: Gen[MDBulletedList] = new Gen[MDBulletedList] {
+      def get() = MDBulletedList(
+        genList(
+          range(2, 4).get(),
+          genMDListItem
+        ).get()
+      )
+    }
+
+
+    // def genBulletedList: Gen[MDBulletedList] =
 
 
     // **********************************************************************
@@ -381,8 +401,11 @@ object CW2 {
     // Exercise 11
     // **********************************************************************
 
-    def genMiniMDExpr(n: Integer): Gen[MiniMDExpr] =
-      sys.error("TODO")
+    def genMiniMDExpr(n: Integer): Gen[MiniMDExpr] = new Gen[MiniMDExpr] {
+
+      def get() = MDDoc(List(genMDBulletedList.get()))
+
+    }
 
 
   }
