@@ -361,16 +361,33 @@ object CW2 {
     def genFreeText: Gen[String] = fromList(freetexts)
     def genVerbatimText: Gen[String] = fromList(verbatims)
 
+    // MD Node Terminals
     def genMDFreeText: Gen[MDFreeText] = new Gen[MDFreeText] {
       def get() = MDFreeText(genFreeText.get())
     }
-    def getMDListItemFreeText: Gen[MDFreeText] = new Gen[MDFreeText] {
+    def genMDListItemFreeText: Gen[MDFreeText] = new Gen[MDFreeText] {
       def get() = MDFreeText(genListitemText.get())
     }
 
-    // MD Nodes generators
+    def genMDBold: Gen[MDBold] = new Gen[MDBold] {
+      def get() = MDBold(genFreeText.get())
+    }
+    def genMDItalic: Gen[MDItalic] = new Gen[MDItalic] {
+      def get() = MDItalic(genFreeText.get())
+    }
+    def genMDUnderline: Gen[MDUnderlined] = new Gen[MDUnderlined] {
+      def get() = MDUnderlined(genFreeText.get())
+    }
+    def genMDLink: Gen[MDLink] = new Gen[MDLink] {
+      def get() = {
+        val link = genLink.get()
+        MDLink(link._1, link._2)
+      }
+    }
+
+    // MD Nodes nested generators
     def genMDListItem: Gen[MDListItem] = new Gen[MDListItem] {
-      def get() = MDListItem(genList(1, getMDListItemFreeText).get())
+      def get() = MDListItem(genList(1, genMDListItemFreeText).get())
     }
 
     def genMDBulletedList: Gen[MDBulletedList] = new Gen[MDBulletedList] {
@@ -381,8 +398,24 @@ object CW2 {
       def get() = MDNumberedList(genList(range(2, 4).get(), genMDListItem).get())
     }
 
+    def genMDPar: Gen[MDPar] = new Gen[MDPar] {
 
-    // def genBulletedList: Gen[MDBulletedList] =
+      val paragraphs = List(genMDFreeText, genMDBold, genMDUnderline, genMDItalic, genMDLink)
+
+      def get() = MDPar(genList(range(3, 5).get(), genFromList(paragraphs)).get())
+    }
+
+    def genMDSection: Gen[MDSectionHeader] = new Gen[MDSectionHeader] {
+      def get() = MDSectionHeader(genSectionText.get())
+    }
+
+    def genMDSubsection: Gen[MDSubsectionHeader] = new Gen[MDSubsectionHeader] {
+      def get() = MDSubsectionHeader(genSubsectionText.get())
+    }
+
+    def genMDVerbatim: Gen[MDVerbatim] = new Gen[MDVerbatim] {
+      def get() = MDVerbatim(genVerbatimText.get())
+    }
 
 
     // **********************************************************************
@@ -403,8 +436,22 @@ object CW2 {
     def genMiniMDExpr(n: Integer): Gen[MiniMDExpr] = new Gen[MiniMDExpr] {
 
       def get() = {
-        println("test " + genFromList(List(genMDBulletedList, genMDNumberedList)).get())
-        MDDoc(List(genMDBulletedList.get(), genMDNumberedList.get()))
+
+        // val lists = genList(5, genFromList(List(
+        //   genMDBulletedList,
+        //   genMDNumberedList,
+        //   genMDPar
+        // )))
+        MDDoc(List(
+          genMDBulletedList.get(),
+          genMDNumberedList.get(),
+          genMDPar.get(),
+          genMDLink.get(),
+          genMDSection.get(),
+          genMDSubsection.get(),
+          genMDVerbatim.get()
+        ))
+        // lists.get())
       }
 
     }
