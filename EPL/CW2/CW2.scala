@@ -374,12 +374,11 @@ object CW2 {
     }
 
     def genMDBulletedList: Gen[MDBulletedList] = new Gen[MDBulletedList] {
-      def get() = MDBulletedList(
-        genList(
-          range(2, 4).get(),
-          genMDListItem
-        ).get()
-      )
+      def get() = MDBulletedList(genList(range(2, 4).get(), genMDListItem).get())
+    }
+
+    def genMDNumberedList: Gen[MDNumberedList] = new Gen[MDNumberedList] {
+      def get() = MDNumberedList(genList(range(2, 4).get(), genMDListItem).get())
     }
 
 
@@ -403,7 +402,10 @@ object CW2 {
 
     def genMiniMDExpr(n: Integer): Gen[MiniMDExpr] = new Gen[MiniMDExpr] {
 
-      def get() = MDDoc(List(genMDBulletedList.get()))
+      def get() = {
+        println("test " + genFromList(List(genMDBulletedList, genMDNumberedList)).get())
+        MDDoc(List(genMDBulletedList.get(), genMDNumberedList.get()))
+      }
 
     }
 
