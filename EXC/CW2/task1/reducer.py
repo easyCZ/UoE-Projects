@@ -22,7 +22,7 @@ def write(keyword, total, documents):
 #   altered     d5.txt  1
 #   althorp     d5.txt  2
 for line in sys.stdin:
-    word, doc, count = line.split('\t', 2)
+    word, doc, count = line.split(' ', 2)
 
     if last_word is not None and last_word != word:
         # Cleanup after last block
