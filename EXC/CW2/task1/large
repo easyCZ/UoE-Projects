@@ -7,7 +7,7 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -D mapreduce.partition.keypartitioner.options=-k1,1 \
  -D mapreduce.partition.keycomparator.options="-k1,1 -k2,2" \
  -D mapreduce.map.output.key.field.separator=" " \
- -input /data/assignments/ex2/task1/small/ \
+ -input /data/assignments/ex2/task1/large/ \
  -output /user/s1115104/data/output/exc-cw2/s1115104_task_1.out \
  -mapper mapper.py \
  -file mapper.py \
