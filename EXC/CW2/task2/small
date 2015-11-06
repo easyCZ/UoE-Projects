@@ -1,0 +1,17 @@
+#!/usr/bin/bash
+hdfs dfs -rm -r /user/s1115104/data/output/exc-cw2/s1115104_task_2_small.out
+
+hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+ -D mapred.reduce.tasks=0 \
+ -input /data/assignments/ex2/task1/small/d1.txt \
+ -output /user/s1115104/data/output/exc-cw2/s1115104_task_2_small.out \
+ -mapper mapper.py \
+ -file mapper.py \
+ -jobconf mapred.job.name="TF-IDF S"
+
+# -combiner combiner.py \
+#  -file combiner.py \
+#  -reducer reducer.py \
+#  -file reducer.py \
+
+hdfs dfs -cat /user/s1115104/data/output/exc-cw2/s1115104_task_2_small.out/part-00001 | head -n 100
