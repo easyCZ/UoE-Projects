@@ -4,8 +4,8 @@ import sys
 import string
 from collections import Counter
 
-# filename = os.environ['mapreduce_map_input_file'].split('/')[-1]
-filename = 'd5.txt'
+filename = os.environ['mapreduce_map_input_file'].split('/')[-1]
+# filename = 'd5.txt'
 
 trans = string.maketrans('', '')
 
