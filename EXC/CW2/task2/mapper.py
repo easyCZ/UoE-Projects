@@ -3,7 +3,7 @@
 import os
 import sys
 
-print(os.environ['mapreduce_input_fileinputformat_numinputfiles'])
+print(os.environ)
 # INPUT_FILES = os.environ['mapreduce_input_fileinputformat_inputdir']
 # mapreduce.task.tmp.dir
 # Input pattern:
