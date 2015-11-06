@@ -1,7 +1,6 @@
 #!/usr/bin/python
 import os
 import sys
-from collections import Counter
 
 last_word = None
 last_filename = None

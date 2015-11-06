@@ -1,17 +1,18 @@
 Student: s1115104
 Date: 24-10-2015
 
-Output directory: /user/s1115104/data/output/exc-cw1/
+Output directory: /user/s1115104/data/output/exc-cw2/
 
 ###########################################################
 # Task 1
 ###########################################################
 
-Mapping to lowercase requires no reducers.
+Documents output are sorted alphabeitcally, thefeore
+d11.txt comes before d2.txt.
 
 Task 1 code begin
 Run:
-{ include ./task1/small }
+{ include ./task1/large }
 
 ########################################################
 { include ./task1/mapper.py}
