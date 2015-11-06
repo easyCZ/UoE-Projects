@@ -1,0 +1,30 @@
+Student: s1115104
+Date: 24-10-2015
+
+Output directory: /user/s1115104/data/output/exc-cw1/
+
+###########################################################
+# Task 1
+###########################################################
+
+Mapping to lowercase requires no reducers.
+
+Task 1 code begin
+Run:
+{ include ./task1/small }
+
+########################################################
+{ include ./task1/mapper.py}
+
+########################################################
+{ include ./task1/combiner.py}
+
+########################################################
+{ include ./task1/reducer.py}
+
+Task 1 code end
+
+Task 1 results begin
+123{ include ./task1/results.txt }
+
+Task 1 results end
