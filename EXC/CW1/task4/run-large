@@ -3,7 +3,7 @@
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
  -D mapred.reduce.tasks=32 \
  -input /user/s1115104/data/output/exc-cw1/s1115104_task_2.out \
- -output /user/s1115104/data/output/exc-cw1/s1115104_task_4.out \
+ -output /user/s1115104/data/output/test/test.out \
  -mapper mapper.py \
  -file mapper.py \
  -reducer reducer.py \

@@ -1,0 +1,10 @@
+"'Ah, : 2 : {(d15.txt, 2)}	
+"'Bad : 1 : {(d3.txt, 1)}	
+"'Do : 6 : {(d15.txt, 5), (d2.txt, 1)}	
+"'It : 5 : {(d15.txt, 4), (d5.txt, 1)}	
+"'Listen, : 1 : {(d15.txt, 1)}	
+"'Marriage? : 1 : {(d15.txt, 1)}	
+"'Permit : 1 : {(d15.txt, 1)}	
+"'To : 2 : {(d15.txt, 1), (d2.txt, 1)}	
+"'Would : 1 : {(d15.txt, 1)}	
+"According : 1 : {(d3.txt, 1)}	
