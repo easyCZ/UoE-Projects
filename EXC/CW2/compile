@@ -1,0 +1,2 @@
+#!/bin/bash
+./compile.py -template exc-mr.template.txt -out exc-mr.txt

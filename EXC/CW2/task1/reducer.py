@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# reducer.py
 import sys
 
 word_counter = 0
@@ -39,5 +40,3 @@ for line in sys.stdin:
 
 if last_word is not None:
     write(last_word, word_counter, word_documents)
-
-

@@ -7,8 +7,14 @@ Output directory: /user/s1115104/data/output/exc-cw2/
 # Task 1
 ###########################################################
 
-Documents output are sorted alphabeitcally, thefeore
-d11.txt comes before d2.txt.
+Approach:
+    1. Count words in each line and ouput a triple (word, filename, word_count)
+    2. Partition output by word, sort primarily by word, secondarily by filename (alphabetically)
+    3. Combiner accumulates counts by filename
+    4. Reducer produces total counts for all files given a name and also outputs counts for each file
+
+Document Sorting:
+    Documents output are sorted alphabeitcally, thefeore d11.txt comes before d2.txt.
 
 Task 1 code begin
 Run:
@@ -26,6 +32,5 @@ Run:
 Task 1 code end
 
 Task 1 results begin
-123{ include ./task1/results.txt }
-
+{ include ./task1/results.txt }
 Task 1 results end

@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# mapper.py
 import os
 import sys
 from collections import Counter
