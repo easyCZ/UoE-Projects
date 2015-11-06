@@ -7,7 +7,7 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -output /user/s1115104/data/output/exc-cw2/s1115104_task_2_small.out \
  -mapper mapper.py \
  -file mapper.py \
- -jobconf mapred.job.name="TF-IDF S"
+ -jobconf mapred.job.name="TF-IDF S" \
  -reducer cat \
 # -combiner combiner.py \
 #  -file combiner.py \
