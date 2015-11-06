@@ -11,10 +11,10 @@ accumulator = 0
 for line in sys.stdin:
     line = line.strip()
 
-    word, filename, count = line.split(' ', 2)
+    word, filename, count = line.split('\t', 2)
 
     if last_word is not None and word != last_word:
-        print("{0} {1} {2}".format(last_word, last_filename, accumulator))
+        print("{0}\t{1}\t{2}".format(last_word, last_filename, accumulator))
         accumulator = 0
 
     last_word = word
@@ -23,4 +23,4 @@ for line in sys.stdin:
 
 
 if last_word is not None:
-    print("{0} {1} {2}".format(last_word, last_filename, accumulator))
+    print("{0}\t{1}\t{2}".format(last_word, last_filename, accumulator))
