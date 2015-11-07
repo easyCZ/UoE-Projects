@@ -4,7 +4,6 @@ export EXC2_2_INDEX=/user/s1115104/data/output/exc-cw2/s1115104_task_2.out/index
 export EXC2_2_OUTPUT=/user/s1115104/data/output/exc-cw2/s1115104_task_2.out/score
 
 # Clean up last run
-# hdfs dfs -rm -r /user/s1115104/data/output/exc-cw2/s1115104_task_2.out
 rm ./terms.txt
 
 # Fetch terms to look for
