@@ -1,9 +1,10 @@
 #!/usr/bin/bash
-export EXC2_2_INPUT=/data/assignments/ex2/task1/small/
+export EXC2_2_INPUT=/data/assignments/ex2/task1/small/d1.txt
 export EXC2_2_INDEX=/user/s1115104/data/output/exc-cw2/s1115104_task_2_small.out/index
 export EXC2_2_OUTPUT=/user/s1115104/data/output/exc-cw2/s1115104_task_2_small.out/score
 
 # Clean up last run
+hdfs dfs -rm -r $EXC2_2_INDEX
 hdfs dfs -rm -r $EXC2_2_OUTPUT
 rm ./terms.txt
 
@@ -35,7 +36,7 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -D mapred.reduce.tasks=0 \
  -input $EXC2_2_INDEX \
  -output $EXC2_2_OUTPUT \
- -mapper "mapper.py `hdfs dfs -ls $EXC2_2_INDEX | grep -v "_SUCCESS\|Found" | wc -l` d1.txt"\
+ -mapper "mapper.py `hdfs dfs -ls $EXC2_2_INPUT | grep -v "_SUCCESS\|Found" | wc -l` d1.txt"\
  -file mapper.py \
  -jobconf mapred.job.name="TF-IDF S" \
  -file terms.txt
