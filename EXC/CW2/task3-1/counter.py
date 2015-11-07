@@ -30,5 +30,10 @@ for line in sys.stdin:
     resource_counter += count
 
 
+
 if max_counter:
+    if resource_counter > max_counter.count:
+        # We found a new max
+        max_counter = MaxCount(last_resource, resource_counter)
+
     print("{0}\t{1}".format(max_counter.resource, max_counter.count))
