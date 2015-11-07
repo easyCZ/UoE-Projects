@@ -40,4 +40,4 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -jobconf mapred.job.name="TF-IDF L" \
  -file terms.txt
 
-hdfs dfs -cat $EXC2_2_OUTPUT/part-* | head -n 100
+hdfs dfs -cat $EXC2_2_OUTPUT/part-* | head -n 10 > results.txt
