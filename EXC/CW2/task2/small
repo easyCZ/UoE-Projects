@@ -2,13 +2,13 @@
 hdfs dfs -rm -r /user/s1115104/data/output/exc-cw2/s1115104_task_2_small.out
 
 export EXC_CW2_INPUT=/data/assignments/ex2/task1/small/
-export EXC_CW2_OUTPUT =/user/s1115104/data/output/exc-cw2/s1115104_task_2_small.out
+export EXC_CW2_OUTPUT=/user/s1115104/data/output/exc-cw2/s1115104_task_2_small.out
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
  -D mapred.reduce.tasks=1 \
- -input $EXC_CW2_INPUT \
+ -input /data/assignments/ex2/task1/small/ \
  -output $EXC_CW2_OUTPUT \
- -mapper "mapper.py `hdfs dfs -ls $EXC_CW2_INPUT | grep -v "_SUCCESS\|Found" | wc -l`"\
+ -mapper "mapper.py `hdfs dfs -ls /data/assignments/ex2/task1/small/ | grep -v "_SUCCESS\|Found" | wc -l`"\
  -file mapper.py \
  -jobconf mapred.job.name="TF-IDF S"
  # -reducer cat \
