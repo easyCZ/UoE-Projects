@@ -15,7 +15,6 @@ with open('terms.txt') as f:
         term = term.strip()
         TERMS.add(term)
 
-
 # Input pattern:
 # "And : 151 : {(d1.txt, 34), (d10.txt, 4), (d12.txt, 25), (d13.txt, 5), (d15.txt, 19), (d2.txt, 17)}
 for line in sys.stdin:
