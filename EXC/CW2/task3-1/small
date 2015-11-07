@@ -16,4 +16,4 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -reducer counter.py \
  -jobconf mapred.job.name="Logs Popular S"
 
-hdfs dfs -cat $EXC2_3_1_OUTPUT/part-00001 | head -n 100
+hdfs dfs -cat $EXC2_3_1_OUTPUT/part-* | head -n 100
