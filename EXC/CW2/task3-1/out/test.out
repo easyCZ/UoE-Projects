@@ -1,0 +1,4 @@
+MaxCount(resource='/', count=1)
+MaxCount(resource='/', count=4309)
+MaxCount(resource='/images/KSC-logosmall.gif', count=8699)
+/images/NASA-logosmall.gif	10809

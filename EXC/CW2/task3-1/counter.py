@@ -15,7 +15,7 @@ for line in sys.stdin:
     resource, count = line.strip().split('\t', 1)
     count = int(count)
 
-    if not max_counter:
+    if max_counter is None:
         max_counter = MaxCount(resource, count)
 
 
@@ -23,11 +23,12 @@ for line in sys.stdin:
         # We received a new resource
         if resource_counter > max_counter.count:
             # We found a new max
-            max_counter = MaxCount(resource, resource_counter)
+            max_counter = MaxCount(last_resource, resource_counter)
         resource_counter = 0
 
     last_resource = resource
     resource_counter += count
+
 
 if max_counter:
     print("{0}\t{1}".format(max_counter.resource, max_counter.count))
