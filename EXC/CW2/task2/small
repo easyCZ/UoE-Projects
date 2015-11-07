@@ -1,20 +1,25 @@
 #!/usr/bin/bash
-hdfs dfs -rm -r /user/s1115104/data/output/exc-cw2/s1115104_task_2_small.out
+export EXC2_2_INPUT=/data/assignments/ex2/task1/small/
+export EXC2_2_OUTPUT=/user/s1115104/data/output/exc-cw2/s1115104_task_2_small.out
 
-export EXC_CW2_INPUT=/data/assignments/ex2/task1/small/
-export EXC_CW2_OUTPUT=/user/s1115104/data/output/exc-cw2/s1115104_task_2_small.out
+# Clean up last run
+hdfs dfs -rm -r EXC2_2_OUTPUT
+
+# Fetch terms to look for
+hdfs dfs -get /data/assignments/ex2/terms.txt ./terms.txt
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
  -D mapred.reduce.tasks=1 \
- -input /data/assignments/ex2/task1/small/ \
- -output $EXC_CW2_OUTPUT \
- -mapper "mapper.py `hdfs dfs -ls /data/assignments/ex2/task1/small/ | grep -v "_SUCCESS\|Found" | wc -l`"\
+ -input $EXC2_2_INPUT \
+ -output $EXC2_2_OUTPUT \
+ -mapper "mapper.py `hdfs dfs -ls $EXC2_2_INPUT | grep -v "_SUCCESS\|Found" | wc -l`"\
  -file mapper.py \
- -jobconf mapred.job.name="TF-IDF S"
+ -jobconf mapred.job.name="TF-IDF S" \
+ -file terms.txt
  # -reducer cat \
 # -combiner combiner.py \
 #  -file combiner.py \
 
 #  -file reducer.py \
 
-hdfs dfs -cat /user/s1115104/data/output/exc-cw2/s1115104_task_2_small.out/part-00001 | head -n 100
+hdfs dfs -cat $EXC2_2_OUTPUT/part-* | head -n 100

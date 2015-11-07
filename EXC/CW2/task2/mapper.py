@@ -3,16 +3,23 @@
 import os
 import sys
 
+# Requires the number of files to map to be part of the input
 FILE_COUNT = int(sys.argv[1])
+TERMS = set()
 
-# print(os.environ)
-# INPUT_FILES = os.environ['mapreduce_input_fileinputformat_inputdir']
-# mapreduce.task.tmp.dir
+# Build dictionary
+with open('terms.txt') as f:
+    for term in f:
+        term = term.strip()
+        TERMS.add(term)
+
+
 # Input pattern:
-# "And : 151 : {(d1.txt, 34), (d10.txt, 4), (d12.txt, 25), (d13.txt, 5), (d15.txt, 19), (d2.txt, 17), (d3.txt, 34), (d4.txt, 1), (d5.txt, 4), (d6.txt, 1), (d7.txt, 1), (d9.txt, 6)}
-
+# "And : 151 : {(d1.txt, 34), (d10.txt, 4), (d12.txt, 25), (d13.txt, 5), (d15.txt, 19), (d2.txt, 17)}
 for line in sys.stdin:
-    print(FILE_COUNT)
+    pass
+
+print(TERMS)
     # word, total_count, documents = line.strip().split(' : ', 2)
     # documents = documents[1:-1].split(', ')
     # documents = []
