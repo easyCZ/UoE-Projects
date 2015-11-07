@@ -3,7 +3,7 @@ export EXC2_2_INPUT=/data/assignments/ex2/task1/small/
 export EXC2_2_OUTPUT=/user/s1115104/data/output/exc-cw2/s1115104_task_2_small.out
 
 # Clean up last run
-hdfs dfs -rm -r EXC2_2_OUTPUT
+hdfs dfs -rm -r $EXC2_2_OUTPUT
 
 # Fetch terms to look for
 hdfs dfs -get /data/assignments/ex2/terms.txt ./terms.txt
