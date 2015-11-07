@@ -3,7 +3,10 @@
 import os
 import sys
 
-print(os.environ)
+FILE_COUNT = int(sys.argv[1])
+print FILE_COUNT
+
+# print(os.environ)
 # INPUT_FILES = os.environ['mapreduce_input_fileinputformat_inputdir']
 # mapreduce.task.tmp.dir
 # Input pattern:

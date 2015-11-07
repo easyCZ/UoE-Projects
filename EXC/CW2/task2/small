@@ -5,10 +5,10 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
  -D mapred.reduce.tasks=1 \
  -input /data/assignments/ex2/task1/small/ \
  -output /user/s1115104/data/output/exc-cw2/s1115104_task_2_small.out \
- -mapper mapper.py \
+ -mapper "mapper.py `hdfs dfs -count /data/assignments/ex2/task1/small/ | awk '{print $2}'`"\
  -file mapper.py \
- -jobconf mapred.job.name="TF-IDF S" \
- -reducer cat \
+ -jobconf mapred.job.name="TF-IDF S"
+ # -reducer cat \
 # -combiner combiner.py \
 #  -file combiner.py \
 
