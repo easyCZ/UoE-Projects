@@ -1,25 +1,43 @@
 #!/usr/bin/bash
 export EXC2_2_INPUT=/data/assignments/ex2/task1/small/
-export EXC2_2_OUTPUT=/user/s1115104/data/output/exc-cw2/s1115104_task_2_small.out
+export EXC2_2_INDEX=/user/s1115104/data/output/exc-cw2/s1115104_task_2_small.out/index
+export EXC2_2_OUTPUT=/user/s1115104/data/output/exc-cw2/s1115104_task_2_small.out/score
 
 # Clean up last run
 hdfs dfs -rm -r $EXC2_2_OUTPUT
+rm ./terms.txt
 
 # Fetch terms to look for
 hdfs dfs -get /data/assignments/ex2/terms.txt ./terms.txt
 
+# Build index
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
- -D mapred.reduce.tasks=1 \
+ -D mapred.reduce.tasks=5 \
+ -D mapreduce.job.output.key.comparator.class=org.apache.hadoop.mapreduce.lib.partition.KeyFieldBasedComparator \
+ -D stream.num.map.output.key.fields=1 \
+ -D num.key.fields.for.partition=1 \
+ -D mapreduce.partition.keypartitioner.options=-k1,1 \
+ -D mapreduce.partition.keycomparator.options="-k1,1 -k2,2" \
+ -D mapreduce.map.output.key.field.separator=" " \
  -input $EXC2_2_INPUT \
+ -output $EXC2_2_INDEX \
+ -mapper ../task1/mapper.py \
+ -file ../task1/mapper.py \
+ -combiner ../task1/combiner.py \
+ -file ../task1/combiner.py \
+ -reducer ../task1/reducer.py \
+ -file ../task1/reducer.py \
+ -jobconf mapred.job.name="Inverted Index S" \
+ -partitioner org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner
+
+# Calculate score
+hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+ -D mapred.reduce.tasks=0 \
+ -input $EXC2_2_INDEX \
  -output $EXC2_2_OUTPUT \
- -mapper "mapper.py `hdfs dfs -ls $EXC2_2_INPUT | grep -v "_SUCCESS\|Found" | wc -l`"\
+ -mapper "mapper.py `hdfs dfs -ls $EXC2_2_INDEX | grep -v "_SUCCESS\|Found" | wc -l` d1.txt"\
  -file mapper.py \
  -jobconf mapred.job.name="TF-IDF S" \
  -file terms.txt
- # -reducer cat \
-# -combiner combiner.py \
-#  -file combiner.py \
-
-#  -file reducer.py \
 
 hdfs dfs -cat $EXC2_2_OUTPUT/part-* | head -n 100
