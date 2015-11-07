@@ -1,0 +1,5 @@
+family, d1.txt = -4.81647993062	
+monument, d1.txt = -0.301029995664	
+horse, d1.txt = -3.3113299523	
+agreement, d1.txt = -0.301029995664	
+child, d1.txt = -3.3113299523	
