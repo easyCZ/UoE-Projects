@@ -41,29 +41,31 @@ Task 1 results end
 ###########################################################
 
 Approach:
-    1. Count words in each line and ouput a triple (word, filename, word_count)
-    2. Partition output by word, sort primarily by word, secondarily by filename (alphabetically)
-    3. Combiner accumulates counts by filename
-    4. Reducer produces total counts for all files given a name and also outputs counts for each file
+    Re-use index from part 1
+    1. Compute index for the relevant files
+    2. Use only mapper job
+    2. Load the required terms file (terms.txt)
+    3. For each keyword in terms.txt, compute tf-idf given the index
+    4. Output only relevant keyword and their scores
 
-Document Sorting:
-    Documents output are sorted alphabeitcally, thefeore d11.txt comes before d2.txt.
+Params:
+    Mapper accepts two params, the total number of files and the document we are
+    looking to caluclate tf-idf for.
 
-Task 1 code begin
+Notes:
+    Despite running it against only one file, the solution supports N documents.
+
+Task 2 code begin
 Run:
-{ include ./task1/large }
+Uses code from Task1 to build the index.
+
+{ include ./task2/large }
 
 ########################################################
-{ include ./task1/mapper.py}
+{ include ./task2/mapper.py}
 
-########################################################
-{ include ./task1/combiner.py}
+Task 2 code end
 
-########################################################
-{ include ./task1/reducer.py}
-
-Task 1 code end
-
-Task 1 results begin
-{ include ./task1/results.txt }
-Task 1 results end
+Task 2 results begin
+{ include ./task2/results.txt }
+Task 2 results end
