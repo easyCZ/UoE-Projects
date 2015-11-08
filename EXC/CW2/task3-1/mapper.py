@@ -9,5 +9,4 @@ for line in sys.stdin:
         resource = line.strip().split('"')[1].split()[1]
         print("{0}\t{1}".format(resource, 1))
     except:
-        pass
-        # sys.stderr.write("Failed to parse, skipping. Line: {0}\n".format(line.strip()))
+        sys.stderr.write("Failed to parse, skipping. Line: {0}\n".format(line.strip()))

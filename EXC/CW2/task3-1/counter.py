@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# reducer.py
+# counter.py
 import os
 import sys
 from collections import namedtuple

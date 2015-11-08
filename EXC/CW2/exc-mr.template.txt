@@ -69,3 +69,31 @@ Task 2 code end
 Task 2 results begin
 { include ./task2/results.txt }
 Task 2 results end
+
+
+
+###########################################################
+# Task 3.1
+###########################################################
+
+Approach:
+    1. Mapper outputs resource name and count (1)
+    2. Combiner aggregates results and emits the most frequent
+    2. Reducer receives n results from n combiners, picks the largest
+
+
+Task 3.1 code begin
+Run:
+{ include ./task3-1/large }
+
+########################################################
+{ include ./task3-1/mapper.py}
+
+########################################################
+{ include ./task3-1/counter.py}
+
+Task 3.1 code end
+
+Task 3.1 results begin
+{ include ./task3-1/results.txt }
+Task 3.1 results end

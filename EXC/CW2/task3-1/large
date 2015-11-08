@@ -2,9 +2,6 @@
 export EXC2_3_1_INPUT=/data/assignments/ex2/task2/logsLarge.txt
 export EXC2_3_1_OUTPUT=/user/s1115104/data/output/exc-cw2/s1115104_task_3_1.out
 
-# Cleanup
-hdfs dfs -rm -r $EXC2_3_1_OUTPUT
-
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
  -D mapred.reduce.tasks=1 \
  -input $EXC2_3_1_INPUT \

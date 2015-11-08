@@ -253,3 +253,93 @@ horse, d1.txt = -3.3113299523
 agreement, d1.txt = -0.301029995664	
 child, d1.txt = -3.3113299523	
 Task 2 results end
+
+
+
+###########################################################
+# Task 3.1
+###########################################################
+
+Approach:
+    1. Mapper outputs resource name and count (1)
+    2. Combiner aggregates results and emits the most frequent
+    2. Reducer receives n results from n combiners, picks the largest
+
+
+Task 3.1 code begin
+Run:
+#!/usr/bin/bash
+export EXC2_3_1_INPUT=/data/assignments/ex2/task2/logsLarge.txt
+export EXC2_3_1_OUTPUT=/user/s1115104/data/output/exc-cw2/s1115104_task_3_1.out
+
+hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+ -D mapred.reduce.tasks=1 \
+ -input $EXC2_3_1_INPUT \
+ -output $EXC2_3_1_OUTPUT \
+ -mapper mapper.py \
+ -file mapper.py \
+ -combiner counter.py \
+ -file counter.py \
+ -reducer counter.py \
+ -jobconf mapred.job.name="Logs Popular L"
+
+hdfs dfs -cat $EXC2_3_1_OUTPUT/part-* | head -n 10 > results.txt
+########################################################
+#!/usr/bin/python
+# mapper.py
+import sys
+
+# Input:
+# in24.inetnebr.com - - [01/Aug/1995:00:00:01 -0400] "GET /shuttle/missions/sts-68/news/sts-68-mcc-05.txt HTTP/1.0" 200 1839
+for line in sys.stdin:
+    try:
+        resource = line.strip().split('"')[1].split()[1]
+        print("{0}\t{1}".format(resource, 1))
+    except:
+        sys.stderr.write("Failed to parse, skipping. Line: {0}\n".format(line.strip()))
+
+########################################################
+#!/usr/bin/python
+# counter.py
+import os
+import sys
+from collections import namedtuple
+
+MaxCount = namedtuple('MaxCount', ['resource', 'count'])
+
+max_counter = None
+resource_counter = 0
+last_resource = None
+
+
+for line in sys.stdin:
+    resource, count = line.strip().split('\t', 1)
+    count = int(count)
+
+    if max_counter is None:
+        max_counter = MaxCount(resource, count)
+
+
+    if last_resource is not None and resource != last_resource:
+        # We received a new resource
+        if resource_counter > max_counter.count:
+            # We found a new max
+            max_counter = MaxCount(last_resource, resource_counter)
+        resource_counter = 0
+
+    last_resource = resource
+    resource_counter += count
+
+
+
+if max_counter:
+    if resource_counter > max_counter.count:
+        # We found a new max
+        max_counter = MaxCount(last_resource, resource_counter)
+
+    print("{0}\t{1}".format(max_counter.resource, max_counter.count))
+Task 3.1 code end
+
+Task 3.1 results begin
+/images/NASA-logosmall.gif	97410
+Task 3.1 results end
