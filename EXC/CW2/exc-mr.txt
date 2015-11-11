@@ -364,9 +364,6 @@ Run:
 export EXC2_3_2_INPUT=/data/assignments/ex2/task2/logsLarge.txt
 export EXC2_3_2_OUTPUT=/user/s1115104/data/output/exc-cw2/s1115104_task_3_2.out
 
-# Clean up
-hdfs dfs -rm -r $EXC2_3_2_OUTPUT
-
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
     -D mapred.reduce.tasks=1 \
     -input $EXC2_3_2_INPUT \
@@ -378,7 +375,7 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
     -file counter.py \
     -jobconf mapred.job.name="404: Cat not found."
 
-hdfs dfs -cat $EXC2_3_2_OUTPUT/part-* | head -n 10
+hdfs dfs -cat $EXC2_3_2_OUTPUT/part-* | head -n 10 > results.txt
 
 
 ########################################################
@@ -391,9 +388,9 @@ import sys
 for line in sys.stdin:
     try:
         host, rest = line.strip().split(' - - ')
-	time, http, response = rest.strip().split('"')
-	code, size = response.strip().split()
-	if int(code) == 404:
+        time, http, response = rest.strip().split('"')
+        code, size = response.strip().split()
+        if int(code) == 404:
             print("{0}\t{1}".format(host, 1))
     except:
         sys.stderr.write("Failed to parse, skipping. Line: {0}\n".format(line.strip()))
@@ -437,3 +434,14 @@ for (count, host) in heapq.nlargest(MOST_COMMON_THRESH, most_common):
 Task 3.2 code end
 
 Task 3.2 results begin
+dialip-217.den.mmc.com	62
+155.148.25.4	44
+maz3.maz.net	39
+gate.barr.com	38
+ts8-1.westwood.ts.ucla.edu	37
+nexus.mlckew.edu.au	37
+m38-370-9.mit.edu	37
+piweba3y.prodigy.com	35
+reddragon.ksc.nasa.gov	33
+204.62.245.32	29
+Task 3.2 results end

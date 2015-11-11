@@ -1,0 +1,21 @@
+#!/bin/bash
+
+export EXC2_3_3_INPUT=/data/assignments/ex2/task2/logsSmall.txt
+export EXC2_3_3_OUTPUT=/user/s1115104/data/output/exc-cw2/s1115104_task_3_3_small.out
+
+# Clean up
+hdfs dfs -rm -r $EXC2_3_3_OUTPUT
+
+hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+    -D mapred.reduce.tasks=1 \
+    -input $EXC2_3_3_INPUT \
+    -output $EXC2_3_3_OUTPUT \
+    -mapper mapper.py \
+    -combiner counter.py \
+    -reducer counter.py \
+    -file mapper.py \
+    -file counter.py \
+    -jobconf mapred.job.name="Who stayed longest? EXC2 3.3 S"
+
+hdfs dfs -cat $EXC2_3_3_OUTPUT/part-* | head -n 10
+

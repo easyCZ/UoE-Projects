@@ -7,9 +7,9 @@ import sys
 for line in sys.stdin:
     try:
         host, rest = line.strip().split(' - - ')
-	time, http, response = rest.strip().split('"')
-	code, size = response.strip().split()
-	if int(code) == 404:
+        time, http, response = rest.strip().split('"')
+        code, size = response.strip().split()
+        if int(code) == 404:
             print("{0}\t{1}".format(host, 1))
     except:
         sys.stderr.write("Failed to parse, skipping. Line: {0}\n".format(line.strip()))
