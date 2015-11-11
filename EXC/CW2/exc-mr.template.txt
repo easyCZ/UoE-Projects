@@ -124,3 +124,27 @@ Task 3.2 code end
 Task 3.2 results begin
 { include ./task3-2/results.txt }
 Task 3.2 results end
+
+
+###########################################################
+# Task 3.3
+###########################################################
+
+Task 3.3 code begin
+Run:
+{ include ./task3-3/large }
+
+########################################################
+{ include ./task3-3/mapper.py}
+
+########################################################
+{ include ./task3-3/combiner.py}
+
+########################################################
+{ include ./task3-3/reducer.py}
+
+Task 3.3 code end
+
+Task 3.3 results begin
+{ include ./task3-3/results.txt }
+Task 3.3 results end

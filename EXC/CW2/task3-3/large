@@ -4,14 +4,22 @@ export EXC2_3_3_INPUT=/data/assignments/ex2/task2/logsLarge.txt
 export EXC2_3_3_OUTPUT=/user/s1115104/data/output/exc-cw2/s1115104_task_3_3.out
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
-    -D mapred.reduce.tasks=1 \
+    -D mapred.reduce.tasks=16 \
+    -D mapreduce.job.output.key.comparator.class=org.apache.hadoop.mapreduce.lib.partition.KeyFieldBasedComparator \
+    -D stream.num.map.output.key.fields=1 \
+    -D num.key.fields.for.partition=1 \
+    -D mapreduce.partition.keypartitioner.options=-k1,1 \
+    -D mapreduce.partition.keycomparator.options="-k1,1 -k2,2n" \
+    -D mapreduce.map.output.key.field.separator=" " \
     -input $EXC2_3_3_INPUT \
     -output $EXC2_3_3_OUTPUT \
     -mapper mapper.py \
-    -combiner counter.py \
-    -reducer counter.py \
+    -combiner combiner.py \
+    -reducer reducer.py \
     -file mapper.py \
-    -file counter.py \
-    -jobconf mapred.job.name="Who stayed longest? EXC2 3.3 L"
+    -file combiner.py \
+    -file reducer.py \
+    -jobconf mapred.job.name="How long did you stay around? EXC2 3.3 L"
+    -partitioner org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner
 
 hdfs dfs -cat $EXC2_3_3_OUTPUT/part-* | head -n 10 > results.txt
