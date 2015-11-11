@@ -9,7 +9,7 @@ hdfs dfs -rm -r $EXC2_3_2_OUTPUT
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
     -D mapred.reduce.tasks=1 \
     -input $EXC2_3_2_INPUT \
-    -output $EXC_2_3_OUTPUT \
+    -output $EXC2_3_2_OUTPUT \
     -mapper mapper.py \
     -combiner counter.py \
     -reducer counter.py \
