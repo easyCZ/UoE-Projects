@@ -19,7 +19,7 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
     -file mapper.py \
     -file combiner.py \
     -file reducer.py \
-    -jobconf mapred.job.name="How long did you stay around? EXC2 3.3 L"
+    -jobconf mapred.job.name="How long did you stay around? EXC2 3.3 L" \
     -partitioner org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner
 
 hdfs dfs -cat $EXC2_3_3_OUTPUT/part-* | head -n 10 > results.txt
