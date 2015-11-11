@@ -15,7 +15,7 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
     -reducer counter.py \
     -file mapper.py \
     -file counter.py \
-    -jobconf mapredjob.name="404: Cat not found."
+    -jobconf mapred.job.name="404: Cat not found."
 
 hdfs dfs -cat $EXC2_3_2_OUTPUT/part-* | head -n 10
 
