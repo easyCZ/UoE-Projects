@@ -3,9 +3,6 @@
 export EXC2_3_2_INPUT=/data/assignments/ex2/task2/logsLarge.txt
 export EXC2_3_2_OUTPUT=/user/s1115104/data/output/exc-cw2/s1115104_task_3_2.out
 
-# Clean up
-hdfs dfs -rm -r $EXC2_3_2_OUTPUT
-
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
     -D mapred.reduce.tasks=1 \
     -input $EXC2_3_2_INPUT \
@@ -17,5 +14,5 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
     -file counter.py \
     -jobconf mapred.job.name="404: Cat not found."
 
-hdfs dfs -cat $EXC2_3_2_OUTPUT/part-* | head -n 10
+hdfs dfs -cat $EXC2_3_2_OUTPUT/part-* | head -n 10 > results.txt
 
