@@ -1,11 +1,13 @@
 #!/bin/bash
 
+export EXC2_4_3_BASE=/user/s1115104/data/output/exc-cw2/s1115104_task_4_3_small.out
 export EXC2_4_3_INPUT=/data/assignments/ex2/task3/stackSmall.txt
 export EXC2_4_3_JOIN=/user/s1115104/data/output/exc-cw2/s1115104_task_4_3_small.out/join
 export EXC2_4_3_OUTPUT=/user/s1115104/data/output/exc-cw2/s1115104_task_4_3_small.out/aggregate
 
 # Clean up
-hdfs dfs -rm -r $EXC2_4_3_OUTPUT
+hdfs dfs -rm -r $EXC2_4_3_BASE
+hdfs dfs -mkdir $EXC2_4_3_BASE
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
     -D mapred.job.name="WANTED: Best StackOverflow User - Join. EXC 2 4-4 S"
