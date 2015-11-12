@@ -10,7 +10,7 @@ hdfs dfs -rm -r $EXC2_4_3_BASE
 hdfs dfs -mkdir $EXC2_4_3_BASE
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
-    -D mapred.job.name="WANTED: Best StackOverflow User - Join. EXC 2 4-4 S"
+    -D mapred.job.name="WANTED: Best StackOverflow User - Join. EXC 2 4-4 S" \
     -D mapred.reduce.tasks=16 \
     -D mapreduce.job.output.key.comparator.class=org.apache.hadoop.mapreduce.lib.partition.KeyFieldBasedComparator \
     -D stream.num.map.output.key.fields=1 \
@@ -30,7 +30,7 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
 if hdfs dfs -test -e $EXC2_4_3_JOIN/_SUCCESS ; then
 
     hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
-        -D mapred.job.name="WANTED: Best StackOverflow User - Aggregate. EXC 2 4-4 S"
+        -D mapred.job.name="WANTED: Best StackOverflow User - Aggregate. EXC 2 4-4 S" \
         -D mapred.reduce.tasks=1 \
         -input $EXC2_4_3_JOIN \
         -output $EXC2_4_3_OUTPUT \
