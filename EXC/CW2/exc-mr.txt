@@ -643,3 +643,111 @@ Task 3.3 results begin
 128.120.71.79	2	13/Aug/1995:22:13:44 -0400	13/Aug/1995:22:13:46 -0400
 128.138.243.150	0	03/Aug/1995:13:48:34 -0400	03/Aug/1995:13:48:34 -0400
 Task 3.3 results end
+
+
+###########################################################
+# Task 4.1
+###########################################################
+
+Task 4.1 code begin
+Run:
+#!/bin/bash
+
+export EXC2_4_1_INPUT=/data/assignments/ex2/task3/stackLarge.txt
+export EXC2_4_1_OUTPUT=/user/s1115104/data/output/exc-cw2/s1115104_task_4_1.out
+
+hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+    -D mapred.job.name="Stack Overflow while Stack Overflow!? EXC 2 4-1 L" \
+    -D mapred.reduce.tasks=1 \
+    -input $EXC2_4_1_INPUT \
+    -output $EXC2_4_1_OUTPUT \
+    -mapper mapper.py \
+    -reducer reducer.py \
+    -file mapper.py \
+    -file reducer.py
+
+hdfs dfs -cat $EXC2_4_1_OUTPUT/part-* | head -n 10 > results.txt
+
+
+########################################################
+#!/usr/bin/python
+# mapper.py
+import sys
+import heapq
+import xml.etree.ElementTree as xml
+
+
+POST_TYPE_ID = 'PostTypeId'
+VIEW_COUNT = 'ViewCount'
+POST_ID = 'Id'
+
+QUESTION_TYPE_ID = '1'
+
+MOST_COMMON_THRESHOLD = 10
+most_common = []
+heapq.heapify(most_common)
+
+
+def is_question(post_type): return post_type == QUESTION_TYPE_ID
+
+# Approach:
+#   * Keep track of the 10 most popular posts in memory
+#   * Output 10 entries per each mapper
+for line in sys.stdin:
+    content = xml.fromstring(line.strip())
+    attributes = content.attrib
+    if is_question(attributes[POST_TYPE_ID]):
+        view_count = int(attributes[VIEW_COUNT])
+        count_id = (view_count, attributes[POST_ID])
+
+        if len(most_common) >= MOST_COMMON_THRESHOLD:
+            heapq.heappushpop(most_common, count_id)
+        else:
+            heapq.heappush(most_common, count_id)
+
+# Print the heap
+for count, post_id in heapq.nlargest(MOST_COMMON_THRESHOLD, most_common):
+    print('{0}\t{1}'.format(post_id, count))
+########################################################
+#!/usr/bin/python
+# counter.py
+import sys
+import heapq
+
+
+MOST_COMMON_THRESHOLD = 10
+most_common = []
+heapq.heapify(most_common)
+
+# Approach:
+#   * Will receive 10 entries per each mapper
+#   * Runs only 1 mapper
+#   * Keeps track of the 10 most popular in memory
+#   * Outputs the 10 most popular
+for line in sys.stdin:
+    post_id, count = line.split('\t', 1)
+    count = int(count)
+    count_id = (count, post_id)
+
+    if len(most_common) >= MOST_COMMON_THRESHOLD:
+        heapq.heappushpop(most_common, count_id)
+    else:
+        heapq.heappush(most_common, count_id)
+
+# Print the heap
+for count, post_id in heapq.nlargest(MOST_COMMON_THRESHOLD, most_common):
+    print('{0}, {1}'.format(post_id, count))
+Task 4.1 code end
+
+Task 4.1 results begin
+184618, 1782717	
+503093, 1240007	
+25969, 1075873	
+194812, 1058604	
+426258, 989328	
+363681, 978463	
+114543, 962440	
+134845, 938463	
+306583, 913899	
+63447, 868645	
+Task 4.1 results end

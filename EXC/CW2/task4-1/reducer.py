@@ -8,7 +8,11 @@ MOST_COMMON_THRESHOLD = 10
 most_common = []
 heapq.heapify(most_common)
 
-
+# Approach:
+#   * Will receive 10 entries per each mapper
+#   * Runs only 1 reducer
+#   * Keeps track of the 10 most popular in memory
+#   * Outputs the 10 most popular
 for line in sys.stdin:
     post_id, count = line.split('\t', 1)
     count = int(count)

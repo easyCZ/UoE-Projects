@@ -18,6 +18,9 @@ heapq.heapify(most_common)
 
 def is_question(post_type): return post_type == QUESTION_TYPE_ID
 
+# Approach:
+#   * Keep track of the 10 most popular posts in memory
+#   * Output 10 entries per each mapper
 for line in sys.stdin:
     content = xml.fromstring(line.strip())
     attributes = content.attrib
