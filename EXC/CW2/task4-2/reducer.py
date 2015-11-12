@@ -10,7 +10,7 @@ so_superhero = None
 current_user = None
 
 for line in sys.stdin:
-    user_id, posts = line.split('\t', 1)
+    user_id, posts = line.strip().split('\t', 1)
     posts = posts.split(', ')
 
     if not so_superhero:
