@@ -7,14 +7,14 @@ export EXC2_4_1_OUTPUT=/user/s1115104/data/output/exc-cw2/s1115104_task_4_1_smal
 hdfs dfs -rm -r $EXC2_4_1_OUTPUT
 
 hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+    -D mapred.job.name="Stack Overflow while Stack Overflow!? EXC 2 4-1 S" \
     -D mapred.reduce.tasks=1 \
     -input $EXC2_4_1_INPUT \
     -output $EXC2_4_1_OUTPUT \
     -mapper mapper.py \
     -reducer reducer.py \
     -file mapper.py \
-    -file reducer.py \
-    -jobconf mapredjob.name="Stack Overflow while ranking Stack Overflow!? EXC 2 4-1 S"
+    -file reducer.py
 
 hdfs dfs -cat $EXC2_4_1_OUTPUT/part-* | head -n 10
 
