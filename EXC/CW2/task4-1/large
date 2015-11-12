@@ -1,0 +1,17 @@
+#!/bin/bash
+
+export EXC2_4_1_INPUT=/data/assignments/ex2/task3/stackLarge.txt
+export EXC2_4_1_OUTPUT=/user/s1115104/data/output/exc-cw2/s1115104_task_4_1.out
+
+hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+    -D mapred.reduce.tasks=1 \
+    -input $EXC2_4_1_INPUT \
+    -output $EXC2_4_1_OUTPUT \
+    -mapper mapper.py \
+    -reducer reducer.py \
+    -file mapper.py \
+    -file reducer.py \
+    -jobconf mapredjob.name="Stack Overflow while ranking Stack Overflow!? EXC 2 4-1 L"
+
+hdfs dfs -cat $EXC2_4_1_OUTPUT/part-* | head -n 10
+

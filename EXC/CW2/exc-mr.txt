@@ -445,3 +445,201 @@ piweba3y.prodigy.com	35
 reddragon.ksc.nasa.gov	33
 204.62.245.32	29
 Task 3.2 results end
+
+
+###########################################################
+# Task 3.3
+###########################################################
+
+Task 3.3 code begin
+Run:
+#!/bin/bash
+
+export EXC2_3_3_INPUT=/data/assignments/ex2/task2/logsLarge.txt
+export EXC2_3_3_OUTPUT=/user/s1115104/data/output/exc-cw2/s1115104_task_3_3.out
+
+hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+    -D mapred.reduce.tasks=16 \
+    -D mapreduce.job.output.key.comparator.class=org.apache.hadoop.mapreduce.lib.partition.KeyFieldBasedComparator \
+    -D stream.num.map.output.key.fields=1 \
+    -D num.key.fields.for.partition=1 \
+    -D mapreduce.partition.keypartitioner.options=-k1,1 \
+    -D mapreduce.partition.keycomparator.options="-k1,1 -k2,2n" \
+    -D mapreduce.map.output.key.field.separator=" " \
+    -input $EXC2_3_3_INPUT \
+    -output $EXC2_3_3_OUTPUT \
+    -mapper mapper.py \
+    -combiner combiner.py \
+    -reducer reducer.py \
+    -file mapper.py \
+    -file combiner.py \
+    -file reducer.py \
+    -jobconf mapred.job.name="How long did you stay around? EXC2 3.3 L" \
+    -partitioner org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner
+
+hdfs dfs -cat $EXC2_3_3_OUTPUT/part-* | head -n 10 > results.txt
+
+########################################################
+#!/usr/bin/python
+# mapper.py
+import sys
+from datetime import datetime
+
+
+def parse_datetime(dt):
+    timestamp = dt.split()[0]
+    return datetime.strptime(timestamp, '%d/%b/%Y:%H:%M:%S')
+
+
+def get_timestamp(dt):
+    return (dt - datetime(1970, 1, 1)).total_seconds()
+
+# Input:
+# in24.inetnebr.com - - [01/Aug/1995:00:00:01 -0400] "GET /shuttle/missions/sts-68/news/sts-68-mcc-05.txt HTTP/1.0" 200 1839
+#
+# Output:
+# in24.inetnebr.com     <unix timestamp>
+for line in sys.stdin:
+    try:
+        host, rest = line.strip().split(' - - ')
+        time, _ = rest.strip().split('"', 1)
+        time = time.replace('[', '').replace(']', '').strip()
+        timestamp = get_timestamp(parse_datetime(time))
+
+        # Maintain the actual time information as well for output reasons, timestamps lose timezone info
+        print("{0} {1} {2}".format(host, int(timestamp), time))
+
+    except:
+        sys.stderr.write("Failed to parse, skipping. Line: {0}\n".format(line.strip()))
+
+########################################################
+#!/usr/bin/python
+# range.py
+import sys
+from collections import namedtuple
+
+AccessRange = namedtuple('AccessRange', ['host', 'time_from', 'time_to'])
+
+# Input:
+# 1.ts2.mnet.medstroms.se 807657230 05/Aug/1995:17:13:50 -0400
+# 1.ts2.mnet.medstroms.se 807657240 05/Aug/1995:17:14:00 -0400
+# 1.ts2.mnet.medstroms.se 807657248 05/Aug/1995:17:14:08 -0400
+# 1.ts2.mnet.medstroms.se 807657248 05/Aug/1995:17:14:08 -0400
+# 11.ts1.mnet.medstroms.se 807637425 05/Aug/1995:11:43:45 -0400
+#
+# Output:
+# 1.ts2.mnet.medstroms.se 807657230 05/Aug/1995:17:13:50 -0400
+# 1.ts2.mnet.medstroms.se 807657248 05/Aug/1995:17:14:08 -0400
+# 11.ts1.mnet.medstroms.se 807637425 05/Aug/1995:11:43:45 -0400
+#
+# Approach:
+#   * Input is sorted by host and secondarily sorted by UNIX timestamp
+#   * Keep track of the first visit and find the last row for the same host
+#   * Output the start time and optionally the last time
+
+def write(acs_range):
+    # Write <hostname> <timestamp> <datetime>
+    print('{0} {1} {2}'.format(acs_range.host, acs_range.time_from[0], acs_range.time_from[1]))
+    # Start and end is different
+    if acs_range.time_to and acs_range.time_from[0] != acs_range.time_to[0]:
+        print('{0} {1} {2}'.format(acs_range.host, acs_range.time_to[0], acs_range.time_to[1]))
+
+access_range = None
+
+for line in sys.stdin:
+    host, timestamp, datetime = line.strip().split(' ', 2)
+
+    if not access_range:
+        # Initialize
+        access_range = AccessRange(host, (timestamp, datetime), None)
+
+    if access_range.host != host:
+        write(access_range)
+
+        # New host row
+        access_range = AccessRange(host, (timestamp, datetime), None)
+    else:
+        # The same host again, update end time
+        access_range = AccessRange(access_range.host, access_range.time_from, (timestamp, datetime))
+
+# Write the final
+if access_range:
+    write(access_range)
+########################################################
+#!/usr/bin/python
+# range.py
+import sys
+from collections import namedtuple
+
+AccessRange = namedtuple('AccessRange', ['host', 'time_from', 'time_to'])
+
+# Input:
+# 1.ts2.mnet.medstroms.se 807657230 05/Aug/1995:17:13:50 -0400
+# 1.ts2.mnet.medstroms.se 807657248 05/Aug/1995:17:14:08 -0400
+# 11.ts1.mnet.medstroms.se 807637425 05/Aug/1995:11:43:45 -0400
+#
+# Output:
+# <hostname>    <seconds from first to last visit>  [<first_visit>]   [<last_visit>]
+# Or when only a single visit:
+# <hostname>    0  [<first_visit>]   [<first_visit>]
+#
+# Ie:
+# 1.ts2.mnet.medstroms.se 18 [05/Aug/1995:17:13:50 -0400] [05/Aug/1995:17:14:08 -0400]
+# 11.ts1.mnet.medstroms.se 0 [05/Aug/1995:11:43:45 -0400] [05/Aug/1995:11:43:45 -0400]
+#
+# Approach:
+#   * Input is sorted by host and secondarily sorted by UNIX timestamp
+#   * Keep track of the first visit and find the last row for the same host
+#
+# Notes:
+#   * The amount of data output is slightly more than just the time difference
+#     but knowing the host and the length of the stay as well as the timestamps
+#     is more useful and better parseable
+
+def write(acs_range):
+    delta = 0
+    datetime_from = acs_range.time_from[1]
+    datetime_to = acs_range.time_from[1]
+
+    if acs_range.time_to:
+        delta = int(abs(int(acs_range.time_to[0]) - int(acs_range.time_from[0])))
+        datetime_to = acs_range.time_to[1]
+
+    print('{0}\t{1}\t{2}\t{3}'.format(acs_range.host, delta, datetime_from, datetime_to))
+
+
+access_range = None
+
+for line in sys.stdin:
+    host, timestamp, datetime = line.strip().split(' ', 2)
+
+    if not access_range:
+        # Initialize
+        access_range = AccessRange(host, (timestamp, datetime), None)
+
+    if access_range.host != host:
+        write(access_range)
+
+        # New host row
+        access_range = AccessRange(host, (timestamp, datetime), None)
+    else:
+        # The same host again, update end time
+        access_range = AccessRange(access_range.host, access_range.time_from, (timestamp, datetime))
+
+# Write the final
+if access_range:
+    write(access_range)
+Task 3.3 code end
+
+Task 3.3 results begin
+02-17-05.comsvc.calpoly.edu	182	28/Aug/1995:11:02:36 -0400	28/Aug/1995:11:05:38 -0400
+10md423.uni-duisburg.de	3497	15/Aug/1995:05:11:33 -0400	15/Aug/1995:06:09:50 -0400
+128.100.178.11	2	11/Aug/1995:08:48:25 -0400	11/Aug/1995:08:48:27 -0400
+128.100.80.97	83	16/Aug/1995:12:16:50 -0400	16/Aug/1995:12:18:13 -0400
+128.103.196.21	243	21/Aug/1995:22:40:15 -0400	21/Aug/1995:22:44:18 -0400
+128.104.225.29	135	25/Aug/1995:18:31:19 -0400	25/Aug/1995:18:33:34 -0400
+128.114.23.37	181	12/Aug/1995:17:04:38 -0400	12/Aug/1995:17:07:39 -0400
+128.119.50.139	3509	03/Aug/1995:13:27:57 -0400	03/Aug/1995:14:26:26 -0400
+128.120.71.79	2	13/Aug/1995:22:13:44 -0400	13/Aug/1995:22:13:46 -0400
+128.138.243.150	0	03/Aug/1995:13:48:34 -0400	03/Aug/1995:13:48:34 -0400
+Task 3.3 results end
