@@ -28,7 +28,7 @@ for line in sys.stdin:
 
         # Skip results without proper attributes
         if user_id and answer_id:
-            print('{0}\t{1}\t{2}'.format(answer_id, ANSWER, user_id))
+            print('{0} {1} {2}'.format(answer_id, ANSWER, user_id))
         else:
             sys.stderr.write("Could not retrieve name and answer_id.\n")
     else:
@@ -37,7 +37,7 @@ for line in sys.stdin:
         accepted_answer_id = attributes.get(ACCEPTED_ANSWER, None)
 
         if accepted_answer_id:
-            print('{0}\t{1}'.format(accepted_answer_id, QUESTION))
+            print('{0} {1}'.format(accepted_answer_id, QUESTION))
 
 
 

@@ -9,7 +9,7 @@ ANSWER = 'A'
 current_question_id = None
 
 for line in sys.stdin:
-    tokens = line.strip().split('\t')
+    tokens = line.strip().split()
     _id = tokens[0]
 
     if len(tokens) == 2:
