@@ -1,0 +1,24 @@
+#!/usr/bin/python
+# mapper.py
+import sys
+
+QUESTION = 'Q'
+ANSWER = 'A'
+
+
+current_question_id = None
+
+for line in sys.stdin:
+    tokens = line.strip().split('\t')
+    _id = tokens[0]
+
+    if len(tokens) == 2:
+        # This is a Question row
+        current_question_id = _id
+    if len(tokens) == 3:
+        owner_id = tokens[-1]
+        # Answer row - validate against question id
+        if current_question_id == _id:
+            print('{0}\t{1}'.format(owner_id, _id))
+
+
