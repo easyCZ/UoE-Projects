@@ -1,0 +1,22 @@
+#!/bin/bash
+
+export EXC2_4_2_INPUT=/data/assignments/ex2/task3/stackSmall.txt
+export EXC2_4_2_OUTPUT=/user/s1115104/data/output/exc-cw2/s1115104_task_4_1_small.out
+
+# Clean up
+hdfs dfs -rm -r $EXC2_4_2_OUTPUT
+
+hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.1.jar \
+    -D mapred.job.name="WANTED: StackOverflow superhero! EXC 2 4-2 S" \
+    -D mapred.reduce.tasks=1 \
+    -input $EXC2_4_2_INPUT \
+    -output $EXC2_4_2_OUTPUT \
+    -mapper mapper.py \
+    -combiner combiner.py \
+    -reducer reducer.py \
+    -file mapper.py \
+    -file combiner.py \
+    -file reducer.py
+
+hdfs dfs -cat $EXC2_4_2_OUTPUT/part-* | head -n 10
+
