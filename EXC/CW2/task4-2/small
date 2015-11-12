@@ -13,7 +13,7 @@ hadoop jar /opt/hadoop/hadoop-2.7.1/share/hadoop/tools/lib/hadoop-streaming-2.7.
     -output $EXC2_4_2_OUTPUT \
     -mapper mapper.py \
     -combiner combiner.py \
-    -reducer cat \
+    -reducer reducer.py \
     -file mapper.py \
     -file combiner.py \
     -file reducer.py
