@@ -237,16 +237,16 @@ object CW2 {
 
       case MDBulletedList(items) => wrapBegin("itemize", sep(
         line,
-        items.map((i) => format(i))
+        items.map((i) => nest(1, format(i)))
       ) <> line) <> line
 
       case MDNumberedList(items) => wrapBegin("enumerate", sep(
         line,
-        items.map((i) => format(i))
-      ) <> line) <> line <> line
+        items.map((i) => nest(1, format(i)))
+      ) <> line) <> line
       case MDSectionHeader(header) => wrapEnv("section", text(header))
       case MDSubsectionHeader(header) => wrapEnv("subsection", text(header))
-      case MDVerbatim(content) => wrapBegin("verbatim", text(content)) <> line
+      case MDVerbatim(content) => wrapBegin("verbatim", text(content))
       case MDLink(label, url) => wrapEnv("href", text(url), List(label))
     }
 

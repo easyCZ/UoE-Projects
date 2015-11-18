@@ -20,14 +20,12 @@ The CW2.scala and CW2Solution.jar files can be loaded into Scala as follows:
 scala> :load CW2.scala
 scala> :require CW2Solution.jar
 \end{verbatim}
-
 In addition, both programs can be run by providing them as arguments to Scala: 
 
 \begin{verbatim}
 scala CW2.scala <infile> <mode> <outfile>
 scala CW2Solution.jar <infile> <mode> <outfile>
 \end{verbatim}
-
 Here, infile is an input file name, or RANDOM to indicate that the input should gbe generated randomly.  The mode is one of md, latex or html and is used to choose which format to use for the results. Finally, outfile is an optional output file name; if omitted, the output is just printed to the screen. 
 
 You do not need to worry about dealing with ("escaping") LaTeX or HTML special characters embedded in the AST strings, as in the following MiniMD document: 
@@ -36,7 +34,6 @@ You do not need to worry about dealing with ("escaping") LaTeX or HTML special c
 This will \emph{render} <b>differently</b> in 
 <em>HTML</em> and \textbf{LaTeX}!
 \end{verbatim}
-
 This is a legitimate problem that would need to be solved in a full-scale MiniMD rendering engine, but it is not particularly significant from our point of view and we will not deduct credit for failure to handle such scenarios correctly. 
 
 %%% End of MiniMD content
