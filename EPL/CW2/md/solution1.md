@@ -1,4 +1,4 @@
-Some text.   *Bold*, 'italic'  and _underlined_ 
+Some text.   *Bold*, `italic` and _underlined_ 
 
 Shopping list: 
 
@@ -17,7 +17,7 @@ Roses are red.
 Violets are blue. 
 
 {{{
-*Bold*, 'italic' 
+*Bold*, `italic`
 and _underlined_ 
 markup symbols 
 are ignored.
@@ -25,7 +25,6 @@ are ignored.
 * So are lists
 
 1. and so on.
-
 }}}
 (Link)[http://google.com] 
 

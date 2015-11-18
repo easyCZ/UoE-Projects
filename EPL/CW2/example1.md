@@ -1,5 +1,5 @@
 Some text.  
-*Bold*, 'italic' 
+*Bold*, `italic`
 and _underlined_
 
 
@@ -29,7 +29,7 @@ Violets are blue.
 
 
 {{{
-*Bold*, 'italic' 
+*Bold*, `italic`
 and _underlined_ 
 markup symbols 
 are ignored.

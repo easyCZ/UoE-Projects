@@ -6,7 +6,7 @@
 This is a test. This is also a test. 
 
 \subsection{Hello again!}
-\textbf{This is a really bold test!} \textit{This test was developed in Pisa.} 
+\textbf{This is a really bold test!} 'This test was developed in Pisa.' 
 
 \begin{itemize}
 \item We wanted to \textbf{test} this

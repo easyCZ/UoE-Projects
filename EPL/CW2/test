@@ -3,17 +3,16 @@
 echo "No output means all good."
 echo "#########################"
 
-diff md/example1.md md/solution1.md
-diff md/example2.md md/solution2.md
-diff md/example3.md md/solution3.md
-diff md/example4.md md/solution4.md
+for format in "md" "latex" "html"
+    do
+        for i in {1..4}
+            do
+                EXAMPLE=$format/example$i.$format
+                SOLUTION=$format/solution$i.$format
 
-diff latex/example1.latex latex/solution1.latex
-diff latex/example2.latex latex/solution2.latex
-diff latex/example3.latex latex/solution3.latex
-diff latex/example4.latex latex/solution4.latex
+                echo "diff $EXAMPLE $SOLUTION"
+                diff $EXAMPLE $SOLUTION
+                echo "___________________________"
+        done
 
-diff html/example1.html html/solution1.html
-diff html/example2.html html/solution2.html
-diff html/example3.html html/solution3.html
-diff html/example4.html html/solution4.html
+done

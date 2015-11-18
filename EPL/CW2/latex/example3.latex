@@ -14,7 +14,6 @@
 def foo() {
   print("Hello")
 }
-
 \end{verbatim}
 
 It was the best of times\underline{It was a dark and stormy night}\underline{It was a dark and stormy night}\textit{It was the best of times} 
@@ -43,7 +42,6 @@ It was the best of times\underline{It was a dark and stormy night}\underline{It 
 
 \begin{verbatim}
 *asdf* 'ghkl' _xyz_
-
 \end{verbatim}
 
 \begin{enumerate}
@@ -98,7 +96,6 @@ It was the best of times\underline{It was a dark and stormy night}\underline{It 
 def foo() {
   print("Hello")
 }
-
 \end{verbatim}
 
 \begin{enumerate}
@@ -117,7 +114,6 @@ def foo() {
 def foo() {
   print("Hello")
 }
-
 \end{verbatim}
 
 \subsection{Section 1.1}
@@ -133,14 +129,12 @@ def foo() {
 def foo() {
   print("Hello")
 }
-
 \end{verbatim}
 
 \begin{verbatim}
 def foo() {
   print("Hello")
 }
-
 \end{verbatim}
 
 \begin{enumerate}
@@ -155,7 +149,6 @@ def foo() {
 def foo() {
   print("Hello")
 }
-
 \end{verbatim}
 
 \section{Chapter 1}
@@ -203,7 +196,6 @@ It was a dark and stormy night\textbf{It was a dark and stormy night}\textbf{It 
 def foo() {
   print("Hello")
 }
-
 \end{verbatim}
 
 \textbf{It was the best of times}\underline{It was a dark and stormy night}\textbf{It was a dark and stormy night} 
@@ -278,7 +270,6 @@ def foo() {
 \subsection{Section 1.1}
 \begin{verbatim}
 *asdf* 'ghkl' _xyz_
-
 \end{verbatim}
 
 \textit{It was a dark and stormy night}\textit{It was the best of times}It was a dark and stormy night 
@@ -306,7 +297,6 @@ def foo() {
 
 \begin{verbatim}
 *asdf* 'ghkl' _xyz_
-
 \end{verbatim}
 
 \section{Chapter 1}
@@ -333,7 +323,6 @@ def foo() {
 
 \begin{verbatim}
 *asdf* 'ghkl' _xyz_
-
 \end{verbatim}
 
 \href{http://www.facebook.com}{Facebook}\textit{It was a dark and stormy night}It was the best of times\textit{It was the best of times}\textit{It was the best of times} 
@@ -344,7 +333,6 @@ def foo() {
 \section{Conclusion}
 \begin{verbatim}
 *asdf* 'ghkl' _xyz_
-
 \end{verbatim}
 
 %%% End of MiniMD content

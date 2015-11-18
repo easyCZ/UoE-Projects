@@ -5,7 +5,7 @@ This is also a test.
 === Hello again! ===
 
 *This is a really bold test!*
-`This test was developed in Pisa.`
+'This test was developed in Pisa.'
 
 * We wanted to *test* this
 * and this

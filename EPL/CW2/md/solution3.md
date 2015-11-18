@@ -8,8 +8,6 @@
 def foo() {
   print("Hello")
 }
-
-
 }}}
 It was the best of times_It was a dark and stormy night__It was a dark and stormy night_`It was the best of times` 
 
@@ -31,8 +29,6 @@ _It was the best of times__It was a dark and stormy night_`It was the best of ti
 
 {{{
 *asdf* 'ghkl' _xyz_
-
-
 }}}
 1. Apples
 2. Oranges
@@ -74,8 +70,6 @@ _It was the best of times__It was a dark and stormy night_`It was the best of ti
 def foo() {
   print("Hello")
 }
-
-
 }}}
 1. Apples
 2. Oranges
@@ -90,8 +84,6 @@ def foo() {
 def foo() {
   print("Hello")
 }
-
-
 }}}
 === Section 1.1 ===
 1. Oranges
@@ -103,15 +95,11 @@ def foo() {
 def foo() {
   print("Hello")
 }
-
-
 }}}
 {{{
 def foo() {
   print("Hello")
 }
-
-
 }}}
 1. Spaceship
 2. Oranges
@@ -122,8 +110,6 @@ def foo() {
 def foo() {
   print("Hello")
 }
-
-
 }}}
 == Chapter 1 ==
 *It was a dark and stormy night*`It was the best of times`_It was the best of times_(Google)[http://www.google.com] 
@@ -161,8 +147,6 @@ It was a dark and stormy night*It was a dark and stormy night**It was a dark and
 def foo() {
   print("Hello")
 }
-
-
 }}}
 *It was the best of times*_It was a dark and stormy night_*It was a dark and stormy night* 
 
@@ -219,8 +203,6 @@ _It was the best of times_*It was the best of times*_It was a dark and stormy ni
 === Section 1.1 ===
 {{{
 *asdf* 'ghkl' _xyz_
-
-
 }}}
 `It was a dark and stormy night``It was the best of times`It was a dark and stormy night 
 
@@ -241,8 +223,6 @@ _It was a dark and stormy night__It was the best of times_It was the best of tim
 
 {{{
 *asdf* 'ghkl' _xyz_
-
-
 }}}
 == Chapter 1 ==
 == Chapter 1 ==
@@ -263,8 +243,6 @@ _It was a dark and stormy night__It was a dark and stormy night__It was the best
 
 {{{
 *asdf* 'ghkl' _xyz_
-
-
 }}}
 (Facebook)[http://www.facebook.com]`It was a dark and stormy night`It was the best of times`It was the best of times``It was the best of times` 
 
@@ -274,6 +252,4 @@ _It was a dark and stormy night__It was a dark and stormy night__It was the best
 == Conclusion ==
 {{{
 *asdf* 'ghkl' _xyz_
-
-
 }}}

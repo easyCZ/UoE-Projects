@@ -4,9 +4,9 @@
 %%% Beginning of MiniMD content
 \section{Conclusion}
 \begin{itemize}
-\item Oranges
-\item Apples
-\item Oranges
+  \item Oranges
+  \item Apples
+  \item Oranges
 \end{itemize}
 
 \section{Chapter 1}
@@ -14,72 +14,64 @@
 def foo() {
   print("Hello")
 }
-
 \end{verbatim}
-
 It was the best of times\underline{It was a dark and stormy night}\underline{It was a dark and stormy night}\textit{It was the best of times} 
 
 \begin{itemize}
-\item Oranges
-\item Oranges
-\item Oranges
+  \item Oranges
+  \item Oranges
+  \item Oranges
 \end{itemize}
 
 \begin{itemize}
-\item Spaceship
-\item Spaceship
-\item Spaceship
-\item Apples
-\item Oranges
+  \item Spaceship
+  \item Spaceship
+  \item Spaceship
+  \item Apples
+  \item Oranges
 \end{itemize}
 
 \underline{It was the best of times}\underline{It was a dark and stormy night}\textit{It was the best of times} 
 
 \begin{itemize}
-\item Apples
-\item Apples
-\item Apples
+  \item Apples
+  \item Apples
+  \item Apples
 \end{itemize}
 
 \begin{verbatim}
 *asdf* 'ghkl' _xyz_
-
 \end{verbatim}
-
 \begin{enumerate}
-\item Apples
-\item Oranges
-\item Spaceship
-\item Apples
-\item Apples
+  \item Apples
+  \item Oranges
+  \item Spaceship
+  \item Apples
+  \item Apples
 \end{enumerate}
 
-
 \begin{enumerate}
-\item Spaceship
-\item Oranges
-\item Oranges
+  \item Spaceship
+  \item Oranges
+  \item Oranges
 \end{enumerate}
 
-
 \begin{enumerate}
-\item Apples
-\item Spaceship
-\item Apples
+  \item Apples
+  \item Spaceship
+  \item Apples
 \end{enumerate}
-
 
 \section{Chapter 1}
 \subsection{Table of Contents}
 \section{Introduction}
 \begin{enumerate}
-\item Apples
-\item Apples
-\item Oranges
-\item Spaceship
-\item Apples
+  \item Apples
+  \item Apples
+  \item Oranges
+  \item Spaceship
+  \item Apples
 \end{enumerate}
-
 
 \textit{It was the best of times}\textit{It was the best of times}\textbf{It was a dark and stormy night}\href{http://www.google.com}{Google} 
 
@@ -98,15 +90,12 @@ It was the best of times\underline{It was a dark and stormy night}\underline{It 
 def foo() {
   print("Hello")
 }
-
 \end{verbatim}
-
 \begin{enumerate}
-\item Apples
-\item Oranges
-\item Spaceship
+  \item Apples
+  \item Oranges
+  \item Spaceship
 \end{enumerate}
-
 
 \subsection{Table of Contents}
 \href{http://www.facebook.com}{Facebook}It was a dark and stormy night\href{http://www.google.com}{Google}\href{http://www.facebook.com}{Facebook}It was a dark and stormy night 
@@ -117,74 +106,61 @@ def foo() {
 def foo() {
   print("Hello")
 }
-
 \end{verbatim}
-
 \subsection{Section 1.1}
 \begin{enumerate}
-\item Oranges
-\item Oranges
-\item Spaceship
+  \item Oranges
+  \item Oranges
+  \item Spaceship
 \end{enumerate}
-
 
 \section{Chapter 1}
 \begin{verbatim}
 def foo() {
   print("Hello")
 }
-
 \end{verbatim}
-
 \begin{verbatim}
 def foo() {
   print("Hello")
 }
-
 \end{verbatim}
-
 \begin{enumerate}
-\item Spaceship
-\item Oranges
-\item Apples
-\item Spaceship
+  \item Spaceship
+  \item Oranges
+  \item Apples
+  \item Spaceship
 \end{enumerate}
 
-
 \begin{verbatim}
 def foo() {
   print("Hello")
 }
-
 \end{verbatim}
-
 \section{Chapter 1}
 \textbf{It was a dark and stormy night}\textit{It was the best of times}\underline{It was the best of times}\href{http://www.google.com}{Google} 
 
 \subsection{Table of Contents}
 \begin{enumerate}
-\item Oranges
-\item Oranges
-\item Spaceship
-\item Spaceship
+  \item Oranges
+  \item Oranges
+  \item Spaceship
+  \item Spaceship
 \end{enumerate}
-
 
 It was the best of times\href{http://www.facebook.com}{Facebook}\textit{It was a dark and stormy night}It was a dark and stormy night\textbf{It was the best of times} 
 
 \begin{enumerate}
-\item Spaceship
-\item Spaceship
-\item Oranges
+  \item Spaceship
+  \item Spaceship
+  \item Oranges
 \end{enumerate}
-
 
 \begin{enumerate}
-\item Apples
-\item Spaceship
-\item Apples
+  \item Apples
+  \item Spaceship
+  \item Apples
 \end{enumerate}
-
 
 \href{http://www.google.com}{Google}\underline{It was the best of times}\underline{It was a dark and stormy night}\textit{It was a dark and stormy night}\href{http://www.google.com}{Google} 
 
@@ -203,9 +179,7 @@ It was a dark and stormy night\textbf{It was a dark and stormy night}\textbf{It 
 def foo() {
   print("Hello")
 }
-
 \end{verbatim}
-
 \textbf{It was the best of times}\underline{It was a dark and stormy night}\textbf{It was a dark and stormy night} 
 
 \subsection{References}
@@ -213,92 +187,85 @@ def foo() {
 \textit{It was a dark and stormy night}\underline{It was a dark and stormy night}\textbf{It was a dark and stormy night} 
 
 \begin{enumerate}
-\item Oranges
-\item Apples
-\item Apples
+  \item Oranges
+  \item Apples
+  \item Apples
 \end{enumerate}
-
 
 \subsection{Section 1.1}
 \subsection{References}
 \begin{enumerate}
-\item Spaceship
-\item Spaceship
-\item Oranges
-\item Spaceship
-\item Spaceship
+  \item Spaceship
+  \item Spaceship
+  \item Oranges
+  \item Spaceship
+  \item Spaceship
 \end{enumerate}
-
 
 \section{Conclusion}
 \begin{itemize}
-\item Oranges
-\item Oranges
-\item Oranges
-\item Spaceship
-\item Apples
+  \item Oranges
+  \item Oranges
+  \item Oranges
+  \item Spaceship
+  \item Apples
 \end{itemize}
 
 \subsection{References}
 \begin{itemize}
-\item Spaceship
-\item Apples
-\item Spaceship
-\item Apples
-\item Apples
+  \item Spaceship
+  \item Apples
+  \item Spaceship
+  \item Apples
+  \item Apples
 \end{itemize}
 
 \underline{It was the best of times}\textbf{It was the best of times}\underline{It was a dark and stormy night} 
 
 \begin{enumerate}
-\item Spaceship
-\item Oranges
-\item Spaceship
+  \item Spaceship
+  \item Oranges
+  \item Spaceship
 \end{enumerate}
-
 
 \section{Introduction}
 \section{Conclusion}
 \begin{itemize}
-\item Oranges
-\item Spaceship
-\item Oranges
-\item Apples
-\item Spaceship
+  \item Oranges
+  \item Spaceship
+  \item Oranges
+  \item Apples
+  \item Spaceship
 \end{itemize}
 
 \section{Conclusion}
 \begin{itemize}
-\item Oranges
-\item Oranges
-\item Apples
-\item Apples
+  \item Oranges
+  \item Oranges
+  \item Apples
+  \item Apples
 \end{itemize}
 
 \subsection{Section 1.1}
 \begin{verbatim}
 *asdf* 'ghkl' _xyz_
-
 \end{verbatim}
-
 \textit{It was a dark and stormy night}\textit{It was the best of times}It was a dark and stormy night 
 
 \subsection{Section 1.1}
 \begin{enumerate}
-\item Oranges
-\item Spaceship
-\item Oranges
+  \item Oranges
+  \item Spaceship
+  \item Oranges
 \end{enumerate}
-
 
 \section{Chapter 1}
 \section{Chapter 1}
 \begin{enumerate}
-\item Oranges
-\item Spaceship
-\item Apples
+  \item Oranges
+  \item Spaceship
+  \item Apples
 \end{enumerate}
-
 
 \href{http://www.google.com}{Google}\href{http://www.facebook.com}{Facebook}It was a dark and stormy night 
 
@@ -306,26 +273,23 @@ def foo() {
 
 \begin{verbatim}
 *asdf* 'ghkl' _xyz_
-
 \end{verbatim}
-
 \section{Chapter 1}
 \section{Chapter 1}
 \textit{It was the best of times}\textbf{It was the best of times}\textit{It was the best of times}\href{http://www.google.com}{Google} 
 
 \begin{itemize}
-\item Apples
-\item Apples
-\item Apples
-\item Spaceship
+  \item Apples
+  \item Apples
+  \item Apples
+  \item Spaceship
 \end{itemize}
 
 \begin{enumerate}
-\item Apples
-\item Apples
-\item Spaceship
+  \item Apples
+  \item Apples
+  \item Spaceship
 \end{enumerate}
-
 
 \underline{It was the best of times}It was a dark and stormy night\href{http://www.facebook.com}{Facebook} 
 
@@ -333,9 +297,7 @@ def foo() {
 
 \begin{verbatim}
 *asdf* 'ghkl' _xyz_
-
 \end{verbatim}
-
 \href{http://www.facebook.com}{Facebook}\textit{It was a dark and stormy night}It was the best of times\textit{It was the best of times}\textit{It was the best of times} 
 
 \href{http://www.google.com}{Google}\underline{It was the best of times}\href{http://www.google.com}{Google}It was a dark and stormy night 
@@ -344,8 +306,6 @@ def foo() {
 \section{Conclusion}
 \begin{verbatim}
 *asdf* 'ghkl' _xyz_
-
 \end{verbatim}
-
 %%% End of MiniMD content
 \end{document}

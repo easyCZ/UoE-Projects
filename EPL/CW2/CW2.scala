@@ -211,7 +211,7 @@ object CW2 {
 
       case MDSubsectionHeader(header) => text("=== ") <> text(header) <> text(" ===")
 
-      case MDVerbatim(content) => text("{{{") <> line <> text(content) <> line <> text("}}}")
+      case MDVerbatim(content) => text("{{{") <> line <> text(content) <> text("}}}")
 
       case MDLink(label, url) => text(s"(${label})[${url}]")
 
