@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# mapper.py
+# join-reducer.py
 import sys
 
 QUESTION = 'Q'

@@ -169,3 +169,51 @@ Task 4.1 code end
 Task 4.1 results begin
 { include ./task4-1/results.txt }
 Task 4.1 results end
+
+
+###########################################################
+# Task 4.2
+###########################################################
+
+Task 4.2 code begin
+Run:
+{ include ./task4-2/large }
+
+########################################################
+{ include ./task4-2/mapper.py}
+
+########################################################
+{ include ./task4-2/reducer.py}
+
+Task 4.2 code end
+
+Task 4.2 results begin
+{ include ./task4-2/results.txt }
+Task 4.2 results end
+
+
+###########################################################
+# Task 4.3
+###########################################################
+
+Task 4.3 code begin
+Run:
+{ include ./task4-3/large }
+
+########################################################
+{ include ./task4-3/join-mapper.py}
+
+########################################################
+{ include ./task4-3/join-reducer.py}
+
+########################################################
+{ include ./task4-3/aggregate-combiner.py}
+
+########################################################
+{ include ./task4-3/aggregate-reducer.py}
+
+Task 4.3 code end
+
+Task 4.3 results begin
+{ include ./task4-3/results.txt }
+Task 4.3 results end

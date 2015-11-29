@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# mapper.py
+# join-mapper.py
 import sys
 import xml.etree.ElementTree as xml
 
