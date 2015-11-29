@@ -956,6 +956,8 @@ ANSWER = 'A'
 
 current_question_id = None
 
+# Receives input sorted primarily by id,
+# secondarily by Question first then Answer
 for line in sys.stdin:
     tokens = line.strip().split()
     _id = tokens[0]
