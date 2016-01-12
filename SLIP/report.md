@@ -102,6 +102,17 @@ The API is implemented according to REST [8] design prenciples. As outlined in a
 ![Devices API](./3_api_devices.png)
 ![Devices BPM API](./4_api_devices_bpm.png)
 
+The API application itself is broken down into packages. The top level package of interest is the *devices* package which contains logic for storage and retrieval of devices stored on the system. It can be retrieved through */devices* or */devices/<device_id>* for a particular device. Each device also has BPM readings associated to with it which can be retrieved through */devices/<device_id>/bpm*.
+
+Furthermore, the API also runs a second process responsible for listening to live ecg readings, processing them and analyzing the current value of beats per minute (Filip's work).
+
+Finally, the processed data is being stored in the PosgreSQL database for future retrieval and analysis.
+
+# Evaluation
+
+# Improvements
+
+
 * [1] [FireBase](https://www.firebase.com/)
 * [2] [Redis](http://redis.io/)
 * [3] [RethinkDB](http://rethinkdb.com/)
