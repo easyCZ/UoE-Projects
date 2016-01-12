@@ -94,6 +94,14 @@ When a new commit is made to the repository, Jenkins will be notified through a 
 3. Undeploy existing application
 4. Re-deploy the application
 
+This workflow using a continous integration agent - Jenkins - greatly simplifies the development cycle. 
+
+## API
+The API is implemented according to REST [8] design prenciples. As outlined in a paper on REST design [9], REST improves client's ability to understand the data being requested and improves discoverability of resources in the system. In order to develop our REST API quickly, a Django REST Framework [10] is used as a module for Django. Furthermore, a user friendly documentation and exploration of the API is exposed on the API server allowing a user of the API to discover various endpoints of the API. An example of such browsable API is shown below. The browsable API can be accessed through [here](http://api-ubervest.rhcloud.com/).
+
+![Devices API](./3_api_devices.png)
+![Devices BPM API](./4_api_devices_bpm.png)
+
 * [1] [FireBase](https://www.firebase.com/)
 * [2] [Redis](http://redis.io/)
 * [3] [RethinkDB](http://rethinkdb.com/)
@@ -101,6 +109,9 @@ When a new commit is made to the repository, Jenkins will be notified through a 
 * [5] [Heroku](https://www.heroku.com/)
 * [6] [AWS Free Tier](http://aws.amazon.com/free/)
 * [7] [Jenkins](https://jenkins-ci.org/)
+* [8] [REST](http://www.restapitutorial.com/lessons/whatisrest.html)
+* [9] [REST Architecture Style](https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm)
+* [10] [Django REST Framework](http://www.django-rest-framework.org/)
 
 
 
