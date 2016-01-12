@@ -6,16 +6,26 @@ In order to achieve the goal, the project is composed of various pieces of techn
 In this report, I will focus on the design and implementation of the project architecture as well as the data storage and data exposure services which I have been involved in.
 
 # Requirements
-
 Firstly, on a high level, the requirements for the project consisted of finding a suitable infrastructure design to be able to send, process, store and expose sensory readings from the hardware component. The requirements for the project can be broken down into two categories: functional requirements and non-functional requirements.
 
 ## Functional Requirements
 * The sensory readings from the hardware device should be stored
 * The sensory readings from the hardware device should be uploaded in real time or as close to real time as possible
 * The sensory readings should be available on all devices (mobile application, web) and should reflect realtime readings
+* The readings should be analyzed and analyzed data exposed for retrieval
 
 ## Non-functional Requirements
 * We should be able to access the data from anywhere on the internet, not just inside a private network
 * In the development process, we should aim to keep the cost of running our services free
 
+Secondly, further details of the requirements were discovered in the process of development and implementation and will be discussed in their respective relevant sections.
+
+# Design
+Taking the above requirements into consideration, a simple explanation of the required design would be to store, analyze and retrieve information in real time. Firstly, given the nature of the system, our primary focus was on supporting real time capabilities in our system. Secondly, our focus was on the ability to provision storage and computing capacity to analyze the data.
+
+The design process was done in steps with review of each step against both the functional and non-functional requirements. I will outline the design process below.
+
+## Understand the devices
+Firstly, it is essential to understand what kind of devices will need to be able to connect and access the infrastructure. The figure below outlines the different devices required to interact with the infrastructure.
+![Design Devices](./design_1.png)
 
