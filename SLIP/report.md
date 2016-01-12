@@ -47,11 +47,13 @@ We have also evaluated other options for storage with real time communciation bu
 
 |Database|Pricing|Deployment Model|Ease of realtime updates|Perceived Ease of Use|
 |---|---|---|---|---|
-|FireBase|Free|Hosted|Built-in|Easy|
-|Redis|Free|User managed|Additional library required|Difficult due to deployment management|
-|RethinkDB|Free|User managed|Built-in|Difficult due to deployment management|
+|FireBase [1]|Free|Hosted|Built-in|Easy|
+|Redis [2]|Free|User managed|Additional library required|Difficult due to deployment management|
+|RethinkDB [3]|Free|User managed|Built-in|Difficult due to deployment management|
 
 * [1] [FireBase](https://www.firebase.com/)
+* [2] [Redis](http://redis.io/)
+* [3] [RethinkDB](http://rethinkdb.com/)
 
 
 
