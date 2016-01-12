@@ -26,6 +26,18 @@ Taking the above requirements into consideration, a simple explanation of the re
 The design process was done in steps with review of each step against both the functional and non-functional requirements. I will outline the design process below.
 
 ## Understand the devices
-Firstly, it is essential to understand what kind of devices will need to be able to connect and access the infrastructure. The figure below outlines the different devices required to interact with the infrastructure.
+Firstly, it is essential to understand what kind of devices will need to be able to connect and access the infrastructure. The figure below outlines the different devices required to interact with the infrastructure. There are two devices required to interact with the infrastructure, both with different application programming interface.
+
 ![Design Devices](./design_1.png)
+
+### Device Requirements
+Firstly, the mobile application requires to communicate with the hardware device in order to relay sensory readings to the infrastructure. The communication protocol between the smart phone and the wearable is over Bluetooth. The underlying application implementation is in Java.
+
+Secondly, the web application uses HTML, CSS and Javascript and communicates through the HTTP protocol.
+
+Therefore, a sensible communication protocol between the mobile application and the web application is HTTP, providing a standardized implementation and widespread adoption rate in the industry. Consequently, the infrastructure implementation is required to implement its interface to support HTTP.
+
+
+
+
 
