@@ -51,6 +51,23 @@ We have also evaluated other options for storage with real time communciation bu
 |Redis [2]|Free|User managed|Additional library required|Difficult due to deployment management|
 |RethinkDB [3]|Free|User managed|Built-in|Difficult due to deployment management|
 
+Given that Firebase provided a hosted solution with built in support for realtime updates, it was decided to be the best choice for the project development model where we wanted to spend less time on infrastructure setup and more on development. Furthermore, FireBase API allows us to send data directly into FireBase from the mobile application without requiring to build an intermediate layer, removing complexity of the system.
+
+## API
+Having decided on the underlying storage model for the sensory data, we had a clearer picture of our requirements for the API, the main processing unit of the application. The API is responsible for retrieval of raw data from the FireBase storage layer and transforming the data - applying processing and analytics - in order to be able present the data in a sensible form to the users on the website.
+
+Functionally, we require the API to be easy to use and sufficiently performant so that it would be able to keep up with the potential load from the users. Additionally, the API also needed to be responsible for managing different devices registered with the service as well as management of users and storage of historical data. 
+
+As a direct requirement of the API, we introduce another storage layer, a relational PosgreSQL database in order to help us keep track of users and devices as well as processed data (historical) data. The decision for PosgreSQL came from the analysis that our user and device data had inherent relationships and therefore the usage of a relational database would help us better model the problem. PosgreSQL specifically was chosen for its long standing place in the industry providing a wealth of information online in case of problems.
+
+For the API itself, we picked Python and the Django Framework for its simplicity of ORM integration with PosgreSQL. Additionally, Python is a language the whole team is familiar with as well as it allows us to iterate on a solution faster than a system written in Java or other compiled language would.
+
+
+## The Infrastructure
+Given the outline of the components above, the infrastructure looks as follows:
+
+![Infrastructure](./2_api.png)
+
 * [1] [FireBase](https://www.firebase.com/)
 * [2] [Redis](http://redis.io/)
 * [3] [RethinkDB](http://rethinkdb.com/)
