@@ -88,6 +88,7 @@ Out of the options available, we feel that OpenShift provides the best features 
 The application is configured to run on OpenShift. The platform allows us to run up to three applications. Our setup includes running the Django application, a PosgreSQL application and Jenkins [7] to handle continous deployment from our version control system (git).
 
 When a new commit is made to the repository, Jenkins will be notified through a post commit hook and execute a deployment process. This deployment process involved a few steps:
+
 1. Run application tests
 2. Update database schema according to schema migrations
 3. Undeploy existing application
