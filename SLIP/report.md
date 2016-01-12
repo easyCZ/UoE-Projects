@@ -68,6 +68,19 @@ Given the outline of the components above, the infrastructure looks as follows:
 
 ![Infrastructure](./2_api.png)
 
+There are direct interactions between Django and Firebase in order to process the data which will be outlined in more detail further on. Django then further interacts with PosgreSQL in order to store processed data as well as to serve information about users and devices. Keeping the data stores separate helps maintain separation of concerns and decouples the individual systems from each other.
+
+## Deployment
+As part of our requirements to be able to access the data from anywhere on the internet, it is essential to be able to able to deploy the system effectively into the public domain. Evaluating free server hosting options available to, we have decided to go with hosting provided by OpenShift. We used the following table to evaluate the features of each system its suitability for our purposes.
+
+|Provider|Number of Applications|Host inactive for portion of day|Applications available (Python, PosgreSQL)|
+|---|---|---|---|---|
+|OpenShift [4]|3|No|Both|
+|Heroku [5]|1|Sleeps 6 hours in 24 hours|Both|
+|Amazon Free Tier [6]|Any number of apps|750 hours uptime per month|Both|
+
+Out of the options available, we feel that OpenShift provides the best features as well as constant uptime which is important for our application.
+
 * [1] [FireBase](https://www.firebase.com/)
 * [2] [Redis](http://redis.io/)
 * [3] [RethinkDB](http://rethinkdb.com/)
