@@ -113,6 +113,10 @@ In order to evaluate the performance of the API server, we can emulate a large n
 
 ![Evaluation API](./5_eval_api.png)
 
+From the graph we can observe that the current architecture of the API (with the free version of OpenShift) is not capable of scaling with the number of requests. This is an expected result as the service provided by the free tier of OpenShift delivers service in terms of best effort. Additionally, the API server is running as a singlar instance only and therefore an increased load will have direct impact on all requests being currently processed and increase the latency as visible in the graph above.
+
+
+
 
 
 
