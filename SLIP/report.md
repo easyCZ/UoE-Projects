@@ -109,6 +109,12 @@ Furthermore, the API also runs a second process responsible for listening to liv
 Finally, the processed data is being stored in the PosgreSQL database for future retrieval and analysis.
 
 # Evaluation
+In order to evaluate the performance of the API server, we can emulate a large number of users accessing the data in the API simultaneously. Using a general purpose load tester, we can execute the following `echo "GET http://api-ubervest.rhcloud.com/devices/" | vegeta attack -duration=5s  | tee results.bin | vegeta report -reporter=plot > plot.html` to obtain a graph of the latency over time over sustained load.
+
+![Evaluation API](./5_eval_api.png)
+
+
+
 
 # Improvements
 
