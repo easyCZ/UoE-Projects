@@ -125,12 +125,16 @@ Using the same approach to load test the FireBase storage, we can run `echo "GET
 We can observe that the Firebase latency is for the majority of the test time above one second, this in itself is not a significant problem as a one second delay between seeing real time data is generally not going to be perceived by the user. Furthermore, it is the throughput which is of importance and in the case of Firebase we are able to handle 1k requests per second which given the free tier plan of FireBase is sufficient load before scaling would be required. It should also be noted that the method of load testing the Firebase over HTTP has overheads in terms of establishing a HTTP connection only to drop it once we have received a response and establish a response again. In our application, web sockets are used which avoid the overhead of having to re-establish connection for each data fetch as well as not having request header overheads. Therefore, in reality, FireBase performs sufficiently well for a free tier application in our scenario.
 
 # Improvements
+Firstly, given the performance graphs above, a first step in improving performance of the overall system would be to use a caching system on top of Django & PosgreSQL. A caching system such as memcached [12] would allow us to reduce the computational overheads from viewing already processed data. Additionally, further benchmarking of the system performance would reveal its ability to scale further. The cost to introducing a cache would be incrased complexity of the application as the cache would have to be invalidated given a change to the underlying data. 
 
+Secondly, the REST API could be run in a distributed fashion. Utilizing a load balancer sitting in front of the instances of the API would allow to scale horizontally and handle higher load. Similarly, moving away from a free FireBase plan into a paid solution would provide better performance and scalability.
 
+Thirdly, in order to further increase data resiliency and improve accessibility, a cluster of database nodes could be utilized. A such cluster would be able to shard information across the instances and provide better guarantees about quality of service and resiliency of the application.
 
+A sample setup with the above improvements included could look as follows:
 
+![Evaluation API](./7_clusters.png)
 
-# Improvements
 
 
 * [1] [FireBase](https://www.firebase.com/)
@@ -144,7 +148,7 @@ We can observe that the Firebase latency is for the majority of the test time ab
 * [9] [REST Architecture Style](https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm)
 * [10] [Django REST Framework](http://www.django-rest-framework.org/)
 * [11] [Vegeta](https://github.com/tsenart/vegeta)
-
+* [12] [Memcached](http://memcached.org/)
 
 
 
