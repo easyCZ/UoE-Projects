@@ -109,7 +109,7 @@ Furthermore, the API also runs a second process responsible for listening to liv
 Finally, the processed data is being stored in the PosgreSQL database for future retrieval and analysis.
 
 # Evaluation
-In order to evaluate the performance of the API server, we can emulate a large number of users accessing the data in the API simultaneously. Using a general purpose load tester, we can execute the following `echo "GET http://api-ubervest.rhcloud.com/devices/" | vegeta attack -duration=5s  | tee results.bin | vegeta report -reporter=plot > plot.html` to obtain a graph of the latency over time over sustained load.
+In order to evaluate the performance of the API server, we can emulate a large number of users accessing the data in the API simultaneously. Using a general purpose load tester vegeta [11], we can execute the following `echo "GET http://api-ubervest.rhcloud.com/devices/" | vegeta attack -duration=5s  | tee results.bin | vegeta report -reporter=plot > plot.html` to obtain a graph of the latency over time over sustained load.
 
 ![Evaluation API](./5_eval_api.png)
 
@@ -133,6 +133,7 @@ From the graph we can observe that the current architecture of the API (with the
 * [8] [REST](http://www.restapitutorial.com/lessons/whatisrest.html)
 * [9] [REST Architecture Style](https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm)
 * [10] [Django REST Framework](http://www.django-rest-framework.org/)
+* [11] [Vegeta](https://github.com/tsenart/vegeta)
 
 
 
