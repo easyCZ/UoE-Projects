@@ -14,7 +14,8 @@ Secondly, a CMP design focuses on utilizing multiple cores on a single die with 
 Additionally, the paper raises concerns about the increased delay of interconnect wires due to increased size. As a result, it proposes the use of partitioned sections of the architecture in order to keep interconnects short and simple. Furthermore, the paper emphasises the need for parallelism for future computing environments in order to provide a more sophisticated computing environment. Finally, the paper addresses concerns of design complexity and the space (area) requirements for the chip. In both instances, it is argued that increased complexity and computing performance will lead to disproportionately larger increase in the size of the chip. It is argued that the CMP solution is better suited to tackle both complexity and space challenges.
 
 2.2 | Results
-The results presented to support the arguments of the paper are obtained through a simulation of the hardware architecutre in question based on a DRAM with 1 billion transistors.
+The results presented to support the arguments of the paper are obtained through a simulation of the hardware architecutre in question based on a DRAM with 1 billion transistors. 
+
 
 
 
