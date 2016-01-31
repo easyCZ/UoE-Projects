@@ -16,6 +16,7 @@
 #define SLEEPTIME 1000000
 
 int *tasks_per_process;
+MPI_Status status;
 
 double farmer(int);
 void worker(int);
@@ -67,61 +68,81 @@ int main(int argc, char **argv ) {
 
 double farmer(int numprocs) {
 
-  stack *stack = new_stack();
-  int slaves[numprocs];
+  int workers[numprocs];
+  int i, converged;
+  int freeWorkers;
+  double total_area = 0.0;
 
-  // All slaves are free - not working
-  int i;
+  // All workers are free - not working
   for (i = 1; i < numprocs; i++) {
-    slaves[i] = 0;
+    workers[i] = 0;
   }
+
+  freeWorkers = numprocs - 1;
+
+  stack *stack = new_stack();
 
   // Setup initial problem
-  // double problem[2] = {A, B};
-  // push(problem, stack);
+  double problem[2] = {A, B};
+  push(problem, stack);
 
+  printf("Start Looping.\n");
+  converged = 0;
+  while (converged != 2) {
+    printf("Stack is : %d. Workers: %d\n", is_empty(stack), freeWorkers);
 
-  // int isComplete = 1;
-  // while (is_empty(stack) == 0) {
+    // Assign problems
+    if (is_empty(stack) == 0 && freeWorkers > 0) {
+      int slave_id = getFreeSlave(&workers, numprocs);
+      double *boundaries = pop(stack);
 
-  //   double *boundaries = pop(stack);
-  //   double left = boundaries[0];
-  //   double right = boundaries[1];
-
-  //   int slave = getFreeSlave(&slaves);
-
-  //   MPI_Send(&boundaries, 2, MPI_DOUBLE, slave, SEND_TAG, MPI_COMM_WORLD);
-  // }
-
-
-  // Fill up work stack initially
-  double chunk_size = fabs(B - A) / numprocs;
-  for (i = 1; i < numprocs; i++) {
-    double boundaries[2] = {chunk_size * i, chunk_size * (i + 1)};
-    push(boundaries, stack);
-  }
-
-  printf("Stack size: %i\n", is_empty(stack));
-
-  while (is_empty(stack) == 0) {
-    double *boundaries = (double *) malloc(2*(sizeof(double)));
-    boundaries = pop(stack);
-
-    int slave_target = getFreeSlave(&slaves);
-    if (slave_target != -1) {
-      printf("[Master] Sending %f, %f to worker #%i\n", boundaries[0], boundaries[1], slave_target);
-
-
-      MPI_Send(boundaries, 2, MPI_DOUBLE, slave_target, SEND_TAG, MPI_COMM_WORLD);
-      slaves[slave_target] = 1;
-      usleep(SLEEPTIME);
+      // Issue work
+      MPI_Send(boundaries, 2, MPI_DOUBLE, slave_id, SEND_TAG, MPI_COMM_WORLD);
+      printf("[Farmer] Sent work to #%d\n", slave_id);
+      // Housekeep
+      workers[slave_id] = 1;
+      freeWorkers -= 1;
       free(boundaries);
     }
 
+    // Receive solutions
+    else {
+      int max_size = 3;
+      int data_size;
+      double data[max_size];
+      printf("[Farmer] Waiting to receive data.\n");
+      MPI_Recv(&data, 3, MPI_DOUBLE, MPI_ANY_SOURCE, RECEIVE_TAG, MPI_COMM_WORLD, &status);
+
+      // Get actual receive size
+      MPI_Get_count(&status, MPI_DOUBLE, &data_size);
+      printf("[Farmer] Data Size: %d\n", data_size);
+
+      int worker_id = status.MPI_SOURCE;
+
+      // Area computed
+      if (data_size == 1) {
+        double area = data[0];
+        printf("[Farmer] Received area from worker #%d. Area = %f\n", worker_id, area);
+        total_area += area;
+      }
+      // 2 New problems are submitted
+      else if (data_size == 3) {
+        double first_problem[2] = {data[0], data[1]};
+        double second_problem[2] = {data[1], data[2]};
+
+        printf("[Farmer] Received 2 new problems: %f - %f, %f - %f\n", data[0], data[1], data[1], data[2]);
+      }
+
+
+      tasks_per_process[worker_id] += 1;
+      freeWorkers += 1;
+      workers[worker_id] = 0;
+    }
+
+    converged += 1;
   }
 
-
-  return 1.0;
+  return total_area;
 }
 
 double quad(double left, double right, double fleft, double fright, double lrarea) {
@@ -139,12 +160,15 @@ double quad(double left, double right, double fleft, double fright, double lrare
 }
 
 void worker(int mypid) {
+  double boundaries[2];
 
-  MPI_Status status;
-  double *boundaries = (double *) malloc(2*(sizeof(double)));
+  MPI_Recv(&boundaries, 2, MPI_DOUBLE, 0, SEND_TAG, MPI_COMM_WORLD, &status);
+  printf("[Worker #%i] %f - %f\n", mypid, boundaries[0], boundaries[1]);
 
-  MPI_Recv(boundaries, 2, MPI_DOUBLE, 0, SEND_TAG, MPI_COMM_WORLD, &status);
-  printf("Worker #%i: %f - %f\n", mypid, boundaries[0], boundaries[1]);
+  double area = 1.0;
+  usleep(SLEEPTIME);
+  MPI_Send(&area, 1, MPI_DOUBLE, 0, RECEIVE_TAG, MPI_COMM_WORLD);
+  printf("[Worker #%i] Sent data.\n", mypid);
 }
 
 int getFreeSlave(int *slaves_arr, int slave_count) {
