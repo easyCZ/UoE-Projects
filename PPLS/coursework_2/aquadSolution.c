@@ -3,15 +3,17 @@
 #include <math.h>
 #include <mpi.h>
 #include "stack.h"
+#include <unistd.h>
 
 #define EPSILON 1e-3
 #define F(arg)  cosh(arg)*cosh(arg)*cosh(arg)*cosh(arg)
 #define A 0.0
 #define B 5.0
 
-#define SLEEPTIME 1
+// #define SLEEPTIME 1
 #define SEND_TAG 10
 #define RECEIVE_TAG 11
+#define SLEEPTIME 1000000
 
 int *tasks_per_process;
 
@@ -75,23 +77,21 @@ double farmer(int numprocs) {
   }
 
   // Setup initial problem
-  double problem[2] = {A, B};
-  push(problem, stack);
+  // double problem[2] = {A, B};
+  // push(problem, stack);
 
 
-  int isComplete = 1;
-  while (is_empty(stack) == 0) {
+  // int isComplete = 1;
+  // while (is_empty(stack) == 0) {
 
-    double *boundaries = pop(stack);
-    double left = boundaries[0];
-    double right = boundaries[1];
+  //   double *boundaries = pop(stack);
+  //   double left = boundaries[0];
+  //   double right = boundaries[1];
 
-    int slave = getFreeSlave(&slaves);
+  //   int slave = getFreeSlave(&slaves);
 
-    MPI_Send(&left, 1, MPI_DOUBLE, slave, SEND_TAG, MPI_COMM_WORLD);
-    MPI_Send(&right, 1, MPI_DOUBLE, slave, SEND_TAG, MPI_COMM_WORLD);
-
-  }
+  //   MPI_Send(&boundaries, 2, MPI_DOUBLE, slave, SEND_TAG, MPI_COMM_WORLD);
+  // }
 
 
   // Fill up work stack initially
@@ -104,18 +104,20 @@ double farmer(int numprocs) {
   printf("Stack size: %i\n", is_empty(stack));
 
   while (is_empty(stack) == 0) {
-    double *boundaries = pop(stack);
-    double lower_bound = boundaries[0];
-    double upper_bound = boundaries[1];
+    double *boundaries = (double *) malloc(2*(sizeof(double)));
+    boundaries = pop(stack);
 
     int slave_target = getFreeSlave(&slaves);
-    printf("slave target: %i\n", slave_target);
+    if (slave_target != -1) {
+      printf("[Master] Sending %f, %f to worker #%i\n", boundaries[0], boundaries[1], slave_target);
 
 
-    MPI_Send(&lower_bound, 1, MPI_DOUBLE, slave_target, SEND_TAG, MPI_COMM_WORLD);
-    MPI_Send(&upper_bound, 1, MPI_DOUBLE, slave_target, SEND_TAG, MPI_COMM_WORLD);
-    slaves[slave_target] = 1;
-    printf("Stack is empty: %i", is_empty(stack));
+      MPI_Send(boundaries, 2, MPI_DOUBLE, slave_target, SEND_TAG, MPI_COMM_WORLD);
+      slaves[slave_target] = 1;
+      usleep(SLEEPTIME);
+      free(boundaries);
+    }
+
   }
 
 
@@ -139,19 +141,16 @@ double quad(double left, double right, double fleft, double fright, double lrare
 void worker(int mypid) {
 
   MPI_Status status;
-  double lower_bound;
-  double upper_bound;
+  double *boundaries = (double *) malloc(2*(sizeof(double)));
 
-  MPI_Recv(&lower_bound, 1, MPI_DOUBLE, 0, SEND_TAG, MPI_COMM_WORLD, &status);
-  printf("Worker #%i: lower - %f\n", mypid, lower_bound);
-  MPI_Recv(&upper_bound, 1, MPI_DOUBLE, 0, SEND_TAG, MPI_COMM_WORLD, &status);
-
-  printf("Worker #%i: upper-  %f\n", mypid, upper_bound);
+  MPI_Recv(boundaries, 2, MPI_DOUBLE, 0, SEND_TAG, MPI_COMM_WORLD, &status);
+  printf("Worker #%i: %f - %f\n", mypid, boundaries[0], boundaries[1]);
 }
 
 int getFreeSlave(int *slaves_arr, int slave_count) {
   int i;
   for (i = 1; i < slave_count; i++) {
+    printf("Slave #%i: %d\n", i, slaves_arr[i]);
     if (slaves_arr[i] == 0) return i;
   }
   return -1;
