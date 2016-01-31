@@ -70,7 +70,7 @@ double farmer(int numprocs) {
 
   int workers[numprocs];
   int i, converged;
-  int freeWorkers;
+  int freeWorkers, max_workers;
   double total_area = 0.0;
 
   // All workers are free - not working
@@ -79,6 +79,7 @@ double farmer(int numprocs) {
   }
 
   freeWorkers = numprocs - 1;
+  max_workers = numprocs - 1;
 
   stack *stack = new_stack();
 
@@ -88,7 +89,7 @@ double farmer(int numprocs) {
 
   printf("Start Looping.\n");
   converged = 0;
-  while (converged != 2) {
+  while (converged != 1) {
     printf("Stack is : %d. Workers: %d\n", is_empty(stack), freeWorkers);
 
     // Assign problems
@@ -106,7 +107,7 @@ double farmer(int numprocs) {
     }
 
     // Receive solutions
-    else {
+    else if (freeWorkers < max_workers) {
       int max_size = 3;
       int data_size;
       double data[max_size];
@@ -131,6 +132,9 @@ double farmer(int numprocs) {
         double second_problem[2] = {data[1], data[2]};
 
         printf("[Farmer] Received 2 new problems: %f - %f, %f - %f\n", data[0], data[1], data[1], data[2]);
+
+        push(first_problem, stack);
+        push(second_problem, stack);
       }
 
 
@@ -139,36 +143,78 @@ double farmer(int numprocs) {
       workers[worker_id] = 0;
     }
 
-    converged += 1;
+    // No work? No workers working? We must have converged
+    else {
+      printf("[Farmer] Converged. Terminating.\n");
+      converged = 1;
+    }
+
+  }
+
+  // Send termination signal
+  for (i = 0; i < numprocs; i++) {
+    double terminate = 1.0;
+    MPI_Send(&terminate, 1, MPI_DOUBLE, i, SEND_TAG, MPI_COMM_WORLD);
   }
 
   return total_area;
 }
 
-double quad(double left, double right, double fleft, double fright, double lrarea) {
-  double mid, fmid, larea, rarea;
+void quad(double left, double right) {
+  double mid, fmid, larea, rarea, fleft, fright, lrarea;
+
+  fleft = F(left);
+  fright = F(right);
+  lrarea = (F(left)+F(right)) * (right-left) / 2;
 
   mid = (left + right) / 2;
   fmid = F(mid);
   larea = (fleft + fmid) * (mid - left) / 2;
   rarea = (fmid + fright) * (right - mid) / 2;
+
+  // usleep(SLEEPTIME);
   if( fabs((larea + rarea) - lrarea) > EPSILON ) {
-    larea = quad(left, mid, fleft, fmid, larea);
-    rarea = quad(mid, right, fmid, fright, rarea);
+    double boundaries[3] = {left, mid, right};
+    MPI_Send(&boundaries, 3, MPI_DOUBLE, 0, RECEIVE_TAG, MPI_COMM_WORLD);
   }
-  return (larea + rarea);
+
+  else {
+    double area = larea + rarea;
+    printf("[Worker] Sending area: %f\n", area);
+    MPI_Send(&area, 1, MPI_DOUBLE, 0, RECEIVE_TAG, MPI_COMM_WORLD);
+  }
 }
 
 void worker(int mypid) {
-  double boundaries[2];
 
-  MPI_Recv(&boundaries, 2, MPI_DOUBLE, 0, SEND_TAG, MPI_COMM_WORLD, &status);
-  printf("[Worker #%i] %f - %f\n", mypid, boundaries[0], boundaries[1]);
+  int compute = 1;
 
-  double area = 1.0;
-  usleep(SLEEPTIME);
-  MPI_Send(&area, 1, MPI_DOUBLE, 0, RECEIVE_TAG, MPI_COMM_WORLD);
-  printf("[Worker #%i] Sent data.\n", mypid);
+  while (compute) {
+    double data[2];
+    int data_size;
+
+    MPI_Recv(&data, 2, MPI_DOUBLE, 0, SEND_TAG, MPI_COMM_WORLD, &status);
+    MPI_Get_count(&status, MPI_DOUBLE, &data_size);
+
+    // Terminate
+    if (data_size == 1) {
+      compute = 0;
+    }
+
+    // compute
+    else {
+      double lower = data[0];
+      double upper = data[1];
+      printf("[Worker #%i] %f - %f\n", mypid, data[0], data[1]);
+
+      quad(lower, upper);
+
+      // MPI_Send(&area, 1, MPI_DOUBLE, 0, RECEIVE_TAG, MPI_COMM_WORLD);
+      printf("[Worker #%i] Sent data.\n", mypid);
+    }
+
+  }
+
 }
 
 int getFreeSlave(int *slaves_arr, int slave_count) {
