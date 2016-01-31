@@ -10,10 +10,10 @@
 #define A 0.0
 #define B 5.0
 
-// #define SLEEPTIME 1
+#define SLEEPTIME 1
 #define SEND_TAG 10
 #define RECEIVE_TAG 11
-#define SLEEPTIME 1000000
+// #define SLEEPTIME 1000000
 
 int *tasks_per_process;
 MPI_Status status;
@@ -87,10 +87,10 @@ double farmer(int numprocs) {
   double problem[2] = {A, B};
   push(problem, stack);
 
-  printf("Start Looping.\n");
+  // printf("Start Looping.\n");
   converged = 0;
   while (converged != 1) {
-    printf("Stack is : %d. Workers: %d\n", is_empty(stack), freeWorkers);
+    // printf("Stack is : %d. Workers: %d\n", is_empty(stack), freeWorkers);
 
     // Assign problems
     if (is_empty(stack) == 0 && freeWorkers > 0) {
@@ -99,7 +99,7 @@ double farmer(int numprocs) {
 
       // Issue work
       MPI_Send(boundaries, 2, MPI_DOUBLE, slave_id, SEND_TAG, MPI_COMM_WORLD);
-      printf("[Farmer] Sent work to #%d\n", slave_id);
+      // printf("[Farmer] Sent work to #%d\n", slave_id);
       // Housekeep
       workers[slave_id] = 1;
       freeWorkers -= 1;
@@ -111,19 +111,19 @@ double farmer(int numprocs) {
       int max_size = 3;
       int data_size;
       double data[max_size];
-      printf("[Farmer] Waiting to receive data.\n");
+      // printf("[Farmer] Waiting to receive data.\n");
       MPI_Recv(&data, 3, MPI_DOUBLE, MPI_ANY_SOURCE, RECEIVE_TAG, MPI_COMM_WORLD, &status);
 
       // Get actual receive size
       MPI_Get_count(&status, MPI_DOUBLE, &data_size);
-      printf("[Farmer] Data Size: %d\n", data_size);
+      // printf("[Farmer] Data Size: %d\n", data_size);
 
       int worker_id = status.MPI_SOURCE;
 
       // Area computed
       if (data_size == 1) {
         double area = data[0];
-        printf("[Farmer] Received area from worker #%d. Area = %f\n", worker_id, area);
+        // printf("[Farmer] Received area from worker #%d. Area = %f\n", worker_id, area);
         total_area += area;
       }
       // 2 New problems are submitted
@@ -131,7 +131,7 @@ double farmer(int numprocs) {
         double first_problem[2] = {data[0], data[1]};
         double second_problem[2] = {data[1], data[2]};
 
-        printf("[Farmer] Received 2 new problems: %f - %f, %f - %f\n", data[0], data[1], data[1], data[2]);
+        // printf("[Farmer] Received 2 new problems: %f - %f, %f - %f\n", data[0], data[1], data[1], data[2]);
 
         push(first_problem, stack);
         push(second_problem, stack);
@@ -145,7 +145,7 @@ double farmer(int numprocs) {
 
     // No work? No workers working? We must have converged
     else {
-      printf("[Farmer] Converged. Terminating.\n");
+      // printf("[Farmer] Converged. Terminating.\n");
       converged = 1;
     }
 
@@ -180,7 +180,7 @@ void quad(double left, double right) {
 
   else {
     double area = larea + rarea;
-    printf("[Worker] Sending area: %f\n", area);
+    // printf("[Worker] Sending area: %f\n", area);
     MPI_Send(&area, 1, MPI_DOUBLE, 0, RECEIVE_TAG, MPI_COMM_WORLD);
   }
 }
@@ -205,12 +205,12 @@ void worker(int mypid) {
     else {
       double lower = data[0];
       double upper = data[1];
-      printf("[Worker #%i] %f - %f\n", mypid, data[0], data[1]);
+      // printf("[Worker #%i] %f - %f\n", mypid, data[0], data[1]);
 
       quad(lower, upper);
 
       // MPI_Send(&area, 1, MPI_DOUBLE, 0, RECEIVE_TAG, MPI_COMM_WORLD);
-      printf("[Worker #%i] Sent data.\n", mypid);
+      // printf("[Worker #%i] Sent data.\n", mypid);
     }
 
   }
@@ -220,7 +220,7 @@ void worker(int mypid) {
 int getFreeSlave(int *slaves_arr, int slave_count) {
   int i;
   for (i = 1; i < slave_count; i++) {
-    printf("Slave #%i: %d\n", i, slaves_arr[i]);
+    // printf("Slave #%i: %d\n", i, slaves_arr[i]);
     if (slaves_arr[i] == 0) return i;
   }
   return -1;
