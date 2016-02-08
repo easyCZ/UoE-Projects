@@ -12,18 +12,19 @@ Submit your work with the command
 
 ~~~
     submit sp lab1 checkpoints.md
-~~~	
+~~~
 
 # Exercise 1
 
 ## Part 1: classic stack overflow
 
 * **Checkpoint 1**: How can you tell the program is running as setuid root?
-
+We can check with ls -l
 
 
 * **Checkpoint 2**: Explain the output of `checksec.sh` and `rats`.
-
+`Checksec.sh` scans for common security methods applied to binaries and reports their usage.
+`rats` scans given source code attempting to locate common vulnerable function calls and APIs
 
 
 * **Checkpoint 3**: *Briefly* explain your shell code.
