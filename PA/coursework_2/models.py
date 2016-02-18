@@ -1,4 +1,6 @@
 from collections import namedtuple
+import sys
+import math
 
 
 BinaryAddress = namedtuple('BinaryAddress', 'tag index offset')
@@ -17,6 +19,12 @@ class Instruction(object):
         self.address = int(address)
         self.address_length = address_length
 
+    def is_read(self):
+        return self.action == 'R'
+
+    def is_write(self):
+        return self.action == 'W'
+
     def address_to_bin(self):
         """
         Convert an address to binary, left padded to match ADDRESS_LENGTH.
@@ -24,6 +32,9 @@ class Instruction(object):
         return bin(self.address)[2:].zfill(self.address_length)
 
     def get_address_partions(self, tag, index, block):
+        """
+        Break an instruction address into a tag, index and a block
+        """
         assert self.address_length == tag + index + block
 
         bin_addr = self.address_to_bin()
@@ -61,4 +72,65 @@ class Command(object):
 
     @staticmethod
     def is_valid(input):
+        """
+        Check a plaintext input and decide if it is a valid command
+        """
         return len(input) == 1 and input in Command.VERBOSE.keys()
+
+
+class Cache(object):
+
+    def get_block(self, address, cache_blocks_len):
+        """
+        Map an address to a block.
+        """
+        return address % cache_blocks_len
+
+
+class DirectMappedCache(Cache):
+    """
+    Build a direct mapped cache, units are WORDS.
+    """
+    WORD_SIZE = 4  # 4 bytes = 32 bits
+    CACHE_SIZE = 2048   # words
+    ADDRESS_LENGTH = WORD_SIZE * 8
+
+    def __init__(self, block_size=4, block_count=512):
+        assert block_size * block_count == self.CACHE_SIZE
+
+        self.block_size = block_size
+        self.block_count = block_count
+
+        # Calculate the size of offset, index and tag
+        self.offset_length = int(math.log(block_size, 2))
+        self.index_length = int(math.ceil(math.log(self.block_count, 2)))
+        self.tag_length = self.ADDRESS_LENGTH - self.offset_length - self.index_length
+
+        self.cache = {}
+
+    def process(self, instruction):
+        if instruction.is_read():
+            self.read(instruction)
+        elif instruction.is_write():
+            self.write(instruction)
+        else:
+            print('Invalid instruction {}'.format(instruction), file=sys.stderr)
+            return
+
+    def read(self, instruction):
+        block = self.get_block(instruction.address, self.block_count)
+        try:
+            # TODO: Check tag
+            return self.cache[block]
+        except KeyError:
+            self.cache[block] = instruction
+
+    def write(self, instruction):
+        block = self.get_block(instruction.address, self.block_count)
+        self.cache[block] = instruction
+
+        assert len(self.cache) <= self.block_count
+
+    def __str__(self):
+        return str(self.cache)
+
