@@ -1,39 +1,28 @@
 #!/usr/local/bin/python3.4
 import argparse
 import sys
+from models import Instruction, Command
 
-
-class Instruction(object):
-
-    ACTIONS = ['R', 'W']
-    ACTION_READ = 'read'
-    ACTION_WRITE = 'write'
-    ACTIONS_VERBOSE = {'R': ACTION_READ, 'W': ACTION_WRITE}
-
-    def __init__(self, instruction):
-        self.instruction = instruction
-        processor, action, address = instruction.split()
-        self.processor = processor
-        self.processor_id = int(processor[1])
-        self.action = action
-        self.address = int(address)
-
-    def __str__(self):
-        return self.instruction
-
-    def explain(self):
-        return 'a {0} by processor {1} to word {2}'.format(
-            self.ACTIONS_VERBOSE[self.action],
-            self.processor_id,
-            self.address
-        )
 
 class Simulator(object):
 
     def simulate(self, trace):
-        for line in trace:
-            instruction = Instruction(line)
-            print(instruction.explain())
+        for line_number, line in enumerate(trace):
+            line = line.strip()
+
+            if Instruction.is_instruction(line):
+                instruction = Instruction(line)
+                # TODO: Process instruction
+                print(instruction)
+            elif Command.is_command(line):
+                command = Command(line)
+                # TODO: Process instruction
+                print(command)
+            else:
+                print('Error: Failed to parse "{}" on line {}'.format(line, line_number), file=sys.stderr)
+
+
+
 
 
 def main():
