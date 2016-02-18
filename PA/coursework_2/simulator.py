@@ -10,11 +10,11 @@ class Simulator(object):
         for line_number, line in enumerate(trace):
             line = line.strip()
 
-            if Instruction.is_instruction(line):
+            if Instruction.is_valid(line):
                 instruction = Instruction(line)
                 # TODO: Process instruction
                 print(instruction)
-            elif Command.is_command(line):
+            elif Command.is_valid(line):
                 command = Command(line)
                 # TODO: Process instruction
                 print(command)

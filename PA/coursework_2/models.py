@@ -32,12 +32,11 @@ class Instruction(object):
             bin_addr[tag:tag + index],
             bin_addr[tag + index:tag + index + offset])
 
-
     def __str__(self):
         return self.instruction
 
     @staticmethod
-    def is_instruction(input):
+    def is_valid(input):
         """
         It is an instruction if we can break it down to 3 pieces
         """
@@ -61,5 +60,5 @@ class Command(object):
         return 'Instruction({}) - {}'.format(self.command, self.verbose)
 
     @staticmethod
-    def is_command(input):
+    def is_valid(input):
         return len(input) == 1 and input in Command.VERBOSE.keys()
