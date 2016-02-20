@@ -133,7 +133,7 @@ I believe that the reasoning provided by my friend is insufficient to make an in
 \section*{Web Security}
 \setcounter{section}{1}
 
-\section*{1}
+\section*{1 XSS}
 An Cross Site Scripting (XSS) attack generally takes the form of malicious user input which is exposed to other users. A such input may include scripting elements allowing an attacker to modify the behavior of the victims view.
 
 Generally, for an XSS attack to be useful, it is desirable to perform an XSS attack in areas of the site restricted to users with a certain level of permission - for example after logging in or in administration mode.
@@ -172,7 +172,31 @@ The resulting site will display the following:
 
 Any visitor of the site will now receive an \texttt{index.php} site containing our malicious script. A serious XSS attack could attempt to steal login credentials (and send them to C\&C) and gain access to a user's account or perform any other action while acting as the currently logged in user.
 
-\section*{2}
+\section*{2 CSRF}
+A Cross Site Request Forgery (CSRF) attack aims to exploit a another user (victim) to perform an action which they did not intend to make. In order to perform a CSRF attack, we need to understand the system implementation and what action we may want to utilize perform the exploit. In order to gain this insight, let us perform a few actions:
+
+\begin{itemize}
+  \item Submit an image \texttt{\url{https://imgs.xkcd.com/comics/toasts.png}}
+    \item Click 'Vote for me' on David's image
+    \item Click 'Vote for me' on our own image
+\end{itemize}
+
+From the above actions, we know the following:
+\begin{itemize}
+  \item We are \texttt{user1}
+  \item Voting for David makes an \texttt{HTTP GET http://localhost:8080/vote.php?vote=david}, presumably voting for user1 would only require changing the query parameters
+    \item Voting for ourselves fails with an check on the currently logged in user, we can confirm voting for user1 requires to change the query params.
+\end{itemize}
+
+Therefore, we would like to get other users (victims) to unknowingly vote for our own image. We can notice that voting is a GET method, which is incorrectly implemented on the server as a GET action ought to be idempotent, however, in this case it causes side effects - increments vote counter. When a browser is presented with a request to retrieve an image, it will make an \texttt{HTTP GET [url]} request to retrieve the content. The browser cannot distinguish an action such as voting from retrieving an image and therefore, we can use the url API of the 'Vote' action to be fetched by the victims browser and in fact vote for us. To do this, we craft can simply insert \texttt{http://localhost:8080/vote.php?vote=user1} as the image url. This will, however not render an image and may appear suspicious. Instead, we can hide the request inside a \texttt{background-image} style property. Inserting the following will do the trick:
+
+\texttt{
+\newline //imgs.xkcd.com/comics/toasts.png'
+\newline style="background-image: url('vote.php?vote=user1')" '}
+
+When we (user1) view the site, the count is not incremented as the server prevents us doing so - just as if we clicked the 'Vote for me' button on our own image.
+
+When any other users (victims) view the site, the browser will make a GET request with their credentials and execute the vote. What's more, every reload of the site will increment the vote further.
 
 \newpage
 \bibliographystyle{plain}
