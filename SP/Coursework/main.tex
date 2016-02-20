@@ -96,12 +96,44 @@ A CVSS score is an attempt at standardization of the seriousness of a vulnerabil
 
 \textit{CVE-2016-0777} can be exploited over the network (AV:N), an attacker can expect repeated success of the attack as the complexity is low (AC:L), the exploit only requires user permissions (PR:L), it does not require any user interaction (UI:N), it comprises high confidentiality impact (C:H), there is no integrity impact (I:N) and it does not affect availability (A:N). The CVE is characterized as having severity of \textit{Medium (4.0-6.9)}.
 
-\textit{CVE-2016-0778} can be exploited over the network (AV:N), it is low in exploit complexity (AC:L), does not require any special privilege (PR:N), no user interaction is required (UI:N) and the impact is high for confidentiality (C:H), high for integrity (I:H) and high for availability (A:H). The CVE is characterized with severity \textit{Cricial (9.0 - 10.0)}. 
+\textit{CVE-2016-0778} can be exploited over the network (AV:N), it is low in exploit complexity (AC:L), does not require any special privilege (PR:N), no user interaction is required (UI:N) and the impact is high for confidentiality (C:H), high for integrity (I:H) and high for availability (A:H). The CVE is characterized with severity \textit{Cricial (9.0 - 10.0)}.
 
 CVE-2016-0778 is more severe based on the score.
 
 \setcounter{section}{2}
 \section*{3}
+Firstly, a code review process would have increased the chances of finding the buffer overflow vulnerability in CVE-2016-077. The code review could initially focus on the correctness of the implementation, however, it should also consider real world statistics on common vulnerabilities and focus on mitigation of such scenarios (CR1.1: 18) \cite{BSIMM6-CodeReview}.
+
+Secondly, automated tools to check for the usage of commonly vulnerable APIs could be used to identify potential attack vectors before the code is deployed. This activity involved using real world data on vulnerability analysis and the respective security issues within the implementation to create an early warning system of unsafe API usage (CR1.4:55) \cite{BSIMM6-CodeReview}.
+
+Thirdly, the operation of an official bug bounty program could lead to a higher number of vulnerabilities discovered as it provides an incentive for security researchers to analyze the application (CMVM3.4) \cite{BSIMM6-BugBounty}. The vulnerabilities could have been discovered by independent testing and study of the source code.
+
+\setcounter{section}{3}
+\section*{4}
+In order to consider the relative merits of switching away from OpenSSH to the new system (let us call the system NewSSH), we have evaluate a range of aspects such as the exposure minimization, the operational model of the server (including other software dependency) with NewSSH, the development and maintenance principles of NewSSH as well as the the metrics used to evaluate the relative gain from switching to NewSSH.
+
+Firstly, theoretically switching to NewSSH can mitigate exposure to vulnerabilities. For example, a vulnerability found in OpenSSH may no longer have any impact on our system running NewSSH. This assumption, however, relies entirely on the implementation of NewSSH. A vulnerability exploiting the specification protocol of SSH may render both systems equally vulnerable. By switching to NewSSH, we are only protecting ourselves from vulnerabilities found in OpenSSH, not vulnerabilities that may be discovered in NewSSH.
+
+Secondly, the operational model of the SSH server is important. A server side switch from OpenSSH to NewSSH may not be able to protect against vulnerabilities found in the client side either application. If the majority of users of the SSH server maintain their usage of OpenSSH, then switching to NewSSH has not decreased our exposure to client side vulnerabilities. This is in fact the case of CVE-2016-0777/8. Additionally, a closed source or a proprietary implementation of NewSSH may in fact increase exposure due to undiscovered vulnerabilities as well as making an object analysis of the security model of NewSSH difficult to obtain.
+
+Thirdly, the development and maintenance principles of NewSSH play an integral role. It is generally assumed that a widely adopted open source application will have had a large number of code reviewers and security researches scrutinizing the source code and patching vulnerabilities as quickly as possible. On the other hand, a potentially closed source or less popular implementation may have a significantly lower number of reviewers and experts involved in the development cycle.
+
+Moreover, the number of CVEs or major vulnerabilities found in either application is not a reasonable indicator of the level of security provided by either application. It could be argued that the larger the number of CVEs reported, the more secure an application ought to be. Alternatively, considering the popularity of the package and the development principles (closed/open source) will affect the number of vulnerabilities discovered. This is due to a larger attack surface in terms of cost per client/server exploitable from the point of view of the attacker. More popular applications attract more attention and therefore also have a larger number of CVEs.
+
+Furthermore, the number of CVEs in itself is not an indicator of security. Each CVE has a severity level, and therefore one would have to compare the severity of each CVE (score) rather than the total count.
+
+I believe that the reasoning provided by my friend is insufficient to make an informed decision on whether switching away from OpenSSH would be beneficial. A deep analysis of both systems would be required in order to make a better informed decision.
+
+\newpage
+\section*{Buffer Overflow}
+\setcounter{section}{1}
+
+\newpage
+\section*{Web Security}
+\setcounter{section}{1}
+
+\section*{1}
+
 
 \newpage
 \bibliographystyle{plain}
