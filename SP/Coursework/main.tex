@@ -9,6 +9,7 @@
 \usepackage{url}
 \usepackage[margin=1in]{geometry}
 \usepackage{multicol}
+\usepackage{listings}
 
 \pagestyle{fancy}
 \rhead{March 14, 2016, s1115104}
@@ -133,7 +134,45 @@ I believe that the reasoning provided by my friend is insufficient to make an in
 \setcounter{section}{1}
 
 \section*{1}
+An Cross Site Scripting (XSS) attack generally takes the form of malicious user input which is exposed to other users. A such input may include scripting elements allowing an attacker to modify the behavior of the victims view.
 
+Generally, for an XSS attack to be useful, it is desirable to perform an XSS attack in areas of the site restricted to users with a certain level of permission - for example after logging in or in administration mode.
+
+In order to perform an XSS attack on the Image Voting System, we first analyze the system behavior. By logging in as a regular user, we can observe the behavior of the system, paying particular attention to areas where user input is used as part of the site's output. For initial analysis of the site, Chrome Web Developer tools with network and source code analysis suffice to obtain a better picture of the underlying system.
+
+Firstly, we perform the following actions:
+\begin{enumerate}
+  \item Log in with \texttt{user1:user1}
+    \item Post a url such as \texttt{\url{https://imgs.xkcd.com/comics/toasts.png}}
+    \item Inspect the returned response after submission
+    \item Post non-url text such as \texttt{<div>'"</div>} and observe the exact format of the response
+\end{enumerate}
+
+With the above simple steps, we can already make an educated guess on how the server is implemented, we can derive the following:
+
+\begin{itemize}
+  \item The Server side processor is PHP 5.5.9
+    \item X-XSS-Protection header is set to 0
+    \item The API to post a link is \texttt{HTTP POST http://localhost:8080/index.php} with form data containing the \texttt{link} attribute with the url we submitted.
+    \item The response is rendered inside an \texttt{<img src='\url{https://imgs.xkcd.com/comics/toasts.png}'>} element
+    \item Non-URL text appears to not be sanitized and is rendered as-is inside the \texttt{src} attribute
+\end{itemize}
+
+Armed with this knowledge, we can craft an XSS attack by ensuring we break out of the closing quote as part of our request and inject malicious code. The following does the trick as well as covers up the malformed request by also displaying an image.
+
+\texttt{\linebreak' style="display: none" />
+\linebreak<script>alert("Hello World!")</script>
+\linebreak<img src='//imgs.xkcd.com/comics/toasts.png
+}
+\linebreak
+
+The resulting site will display the following:
+
+\lstinputlisting[language=HTML]{xss.html}
+
+Any visitor of the site will now receive an \texttt{index.php} site containing our malicious script. A serious XSS attack could attempt to steal login credentials (and send them to C\&C) and gain access to a user's account or perform any other action while acting as the currently logged in user.
+
+\section*{2}
 
 \newpage
 \bibliographystyle{plain}
