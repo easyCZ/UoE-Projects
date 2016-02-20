@@ -1,0 +1,110 @@
+\documentclass[a4paper, 12pt]{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{fancyhdr}
+\usepackage{url}
+\usepackage[margin=1in]{geometry}
+\usepackage{multicol}
+
+\pagestyle{fancy}
+\rhead{March 14, 2016, s1115104}
+\lhead{INFR11098: Secure Programming Coursework}
+
+
+\begin{document}
+
+\section*{Bugs in OpenSSH}
+\setcounter{section}{1}
+
+\subsection{CVE-2016-0777 - Information Leak}
+OpenSSH client versions between 5.4 and 7.1 are vulnerable to an information leak. The information leak occurs due to an experimental \textit{roaming} feature enabled by default. The \textit{roaming} feature allows a client to buffer input and re-send the buffer to an OpenSSH server on re-connect. This feature, however, uses an unsafe \texttt{malloc} call to allocate a buffer on the heap. A potential attacker may be able to read data from a previously de-allocated buffer, including private keys of the client \cite{QualisOpenSSH}.
+
+The immediate remedial action is to update \texttt{ssh\_config} (global, or all local) and include \texttt{UseRoaming no} to disable the roaming feature. Alternatively, all \texttt{ssh} sessions can be executed with the \texttt{UseRomaing no} flag. The second immediate remedial action is to re-issue all private keys as the attack may have been exploited in the 'wild' allowing for an attacker to have already stolen the private key.
+
+\subsection{CVE-2016-0778 - Buffer Overflow}
+OpenSSH client versions 5.x, 6.x and 7.1.p2 \cite{NVD_CVE-201600778} are vulnerable to a file descriptor heap buffer overflow causing a denial of service or arbitrary code execution \cite{RedHat_CVE-201600778}. In order for this vulnerability to be exploited, two non-default configurations of the OpenSSH client are required - "ProxyCommand, and either ForwardAgent (-A) or ForwardX11 (-X)" \cite{QualisOpenSSH}.
+
+The immediate remedial action is the same as for \textit{CVE-2016-0777}, \texttt{roaming} should be disabled and private keys should be re-issued.
+
+\setcounter{section}{1}
+\section*{2}
+A CVSS score is an attempt at standardization of the seriousness of a vulnerability given its \textit{exploitability metrics}. The scores range from 0 to 10 with 10 being the most severe. Each metric contributes to the overall seriousness of an exploit, the total being used as the \textit{base score}.
+
+\setcounter{section}{1}
+\subsection*{Exploitability Metrics}
+\begin{multicols}{2}
+  \begin{enumerate}
+      \item Attack Vector (AV)
+          \begin{enumerate}
+              \item Network (AV:N)
+              \item Adjacent Network (AV:A)
+              \item Local (AV:L)
+              \item Physical (AV:P)
+          \end{enumerate}
+
+      \item Access Complexity (AC)
+          \begin{enumerate}
+              \item Low (AC:L)
+              \item High (AC:H)
+          \end{enumerate}
+
+      \item Privileges Required (PR)
+          \begin{enumerate}
+              \item None (PR:N)
+              \item Low (PR:L)
+              \item High (PR:H)
+          \end{enumerate}
+
+      \item User Interaction (UI)
+          \begin{enumerate}
+              \item None (UI:N)
+              \item Required (UI:R)
+          \end{enumerate}
+
+      \item Scope (S)
+          \begin{enumerate}
+              \item Unchanged (S:U)
+              \item Changed (S:C)
+          \end{enumerate}
+
+      \item Confidentiality Impact (C)
+          \begin{enumerate}
+              \item None (C:N)
+              \item Low (C:L)
+              \item High (C:H)
+          \end{enumerate}
+
+      \item Integrity Impact (I)
+          \begin{enumerate}
+              \item None (I:N)
+              \item Low (I:L)
+              \item High (I:H)
+          \end{enumerate}
+
+      \item Availability Impact (A)
+          \begin{enumerate}
+              \item None (A:N)
+              \item Low (A:L)
+              \item High (A:H)
+          \end{enumerate}
+  \end{enumerate}
+\end{multicols}
+
+\textit{CVE-2016-0777} can be exploited over the network (AV:N), an attacker can expect repeated success of the attack as the complexity is low (AC:L), the exploit only requires user permissions (PR:L), it does not require any user interaction (UI:N), it comprises high confidentiality impact (C:H), there is no integrity impact (I:N) and it does not affect availability (A:N). The CVE is characterized as having severity of \textit{Medium (4.0-6.9)}.
+
+\textit{CVE-2016-0778} can be exploited over the network (AV:N), it is low in exploit complexity (AC:L), does not require any special privilege (PR:N), no user interaction is required (UI:N) and the impact is high for confidentiality (C:H), high for integrity (I:H) and high for availability (A:H). The CVE is characterized with severity \textit{Cricial (9.0 - 10.0)}. 
+
+CVE-2016-0778 is more severe based on the score.
+
+\setcounter{section}{2}
+\section*{3}
+
+\newpage
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
