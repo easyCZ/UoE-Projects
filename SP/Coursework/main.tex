@@ -198,6 +198,14 @@ When we (user1) view the site, the count is not incremented as the server preven
 
 When any other users (victims) view the site, the browser will make a GET request with their credentials and execute the vote. What's more, every reload of the site will increment the vote further.
 
+An alternative method to perform a CSRF attack is to spoof the session ID. Looking at the headers the server sets, we can observe that each request contains the following:
+\texttt{Cookie: username=user1; session=24c9e15e52afc47c225b757e7bee1f9d}. The session appears to be a hash of some sort, we can use Rainbow Tables to attempt to find a corresponding plaintext for the hash. Using \url{md5cracker.org}, we can quicky find that the hash \texttt{24c9e15e52afc47c225b757e7bee1f9d} corresponds to \texttt{md5(user1)}, therefore we know the server simply MD5 hashes the username. Armed with this knowledge, we can generate an MD5 hash for user \texttt{joseph} to get \texttt{\newline md5(joseph) => cb07901c53218323c4ceacdea4b23c98}, changing the Cookie headers to these values allows us to login as \textit{joseph} and therefore vote for anyone. This exploit requires the knowledge of other usernames on the system.
+
+\section*{3 Security Audit}
+\subsection*{Use POST for Vote Action}
+
+
+
 \newpage
 \bibliographystyle{plain}
 \bibliography{references}
