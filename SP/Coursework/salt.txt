@@ -1,0 +1,4 @@
+<?php
+$SALT = hexdec('f2492a23247852...');
+$session = hash('sha256', md5($username) . $SALT);
+?>

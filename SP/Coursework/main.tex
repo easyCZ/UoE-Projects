@@ -202,7 +202,29 @@ An alternative method to perform a CSRF attack is to spoof the session ID. Looki
 \texttt{Cookie: username=user1; session=24c9e15e52afc47c225b757e7bee1f9d}. The session appears to be a hash of some sort, we can use Rainbow Tables to attempt to find a corresponding plaintext for the hash. Using \url{md5cracker.org}, we can quicky find that the hash \texttt{24c9e15e52afc47c225b757e7bee1f9d} corresponds to \texttt{md5(user1)}, therefore we know the server simply MD5 hashes the username. Armed with this knowledge, we can generate an MD5 hash for user \texttt{joseph} to get \texttt{\newline md5(joseph) => cb07901c53218323c4ceacdea4b23c98}, changing the Cookie headers to these values allows us to login as \textit{joseph} and therefore vote for anyone. This exploit requires the knowledge of other usernames on the system.
 
 \section*{3 Security Audit}
-\subsection*{Use POST for Vote Action}
+\subsection*{Generate less predictable session keys}
+In order to improve security, we can issue session keys which appear more random, that is, decrease the probability an attacker will be able to discover the pattern/scheme used to generate the session key and therefore decrease chances of session hijack.
+
+We can achieve this by using a server-side only salt hash. This salt can be added to the username in order to generate a new session key. The scheme can look like this:
+\lstinputlisting[language=PHP]{salt.txt}
+
+An attacker may no longer directly look up the common hashes of the username as the salt has been factored into it. However, an even better solution would be to use session cookies which will expire on the server side after a fixed amount of time. This can be achieved by keeping a key-value store of session cookies which will automatically expire after a given duration. A Redis/memcached server could be used to achieve this with relative simplicity. The timed expiration of a session key improves security as old session keys are no longer valid and therefore stolen session keys become obsolete with time.
+
+\subsection*{Lock down debugging and admin configuration}
+When running a web application in production, debugging information as well as any other tools exposing system internals should not be exposed. In the case of the Online Image Voting system, there are multiple configuration issues.
+
+Firstly, the site should not be running in debugging mode. In the source code we can observe that the configuration option to display errors has been enabled. Indeed, we can also discover this by deliberately introducing syntactical errors in the source code which will result in error messages printed into the page. An unintended consequence is portions of the back end implementation leaking to the attacker therefore increasing exposure. In order to remedy this, we should turn off the \texttt{display\_errors} option, it should be set to \texttt{Off}. In fact, the source code should at no point attempt to set configuration options dynamically, the options should be defined and kept fixed from the start of the application. This allows for a much tighter control over the configuration options as well as keeping configs in the same place - reducing the chance of a human mistake to miss an occurrence.
+
+Secondly, we should not expose any system level configuration such as admin panels. In the case of our system, going to \texttt{localhost:8080/include/.admin.php} we can list all of the configuration attributes of the PHP system including session information and database configurations. On top of that, we can also see the list of installed packaged further increasing an attack surface. This file, \texttt{.admin.php} should be located outside of the served directory or it should not be part of the production system at all.
+
+Thirdly, inspecting the headers we notice that the \texttt{X-XSS-Protection} header has been turned off. This option in itself does not guarantee XSS protection, rather it is a hardening setting. Modern browsers implement protections against common Cross Site Scripting patterns and are able to block such attempts. Even in development environments, it is unreasonable to disable the protection. We can enable it by setting the header inside \texttt{include/functions.php} to \texttt{X-XSS-Protection: 1; mode=block}.
+
+\subsection*{Remove database file from served directory}
+The database should only be accessible through the API the server defines. This allows the API designers to enforce access restrictions and limit exposure. In the Image Voting System, the database file is accessible through \texttt{localhost:8080/db/imagevoting.db} and can be easily downloaded by an attacker. The database file should be located outside of the directory served by Apache. We can move the file outside of the \texttt{http} directory and put it into \texttt{/srv/db/imagevoting.db}. With that change, we also need to update the php confifuration file to allow it to access the new db directory. We can modify \texttt{/etc/php/php.ini} adding our path to the \texttt{open\_basedir} option. It would also be sound to remove all other paths such as \texttt{:/home/:/tmp/:/usr/share/pear/:/usr/share/webapps/} as we want to enforce the least level of access. Finally, we update the path to the database file inside \texttt{include/functions.php} to point to this new file. Restarting the service yields the desired results.
+
+\subsection*{Sanitize inputs}
+
+
 
 
 
