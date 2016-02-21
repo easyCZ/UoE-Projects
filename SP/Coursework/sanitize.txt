@@ -1,0 +1,5 @@
+$link = filter_var(
+	$_POST['link'], 
+    FILTER_VALIDATE_URL, 
+    FILTER_FLAG_PATH_REQUIRED
+);

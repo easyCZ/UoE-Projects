@@ -97,7 +97,7 @@ A CVSS score is an attempt at standardization of the seriousness of a vulnerabil
 
 \textit{CVE-2016-0777} can be exploited over the network (AV:N), an attacker can expect repeated success of the attack as the complexity is low (AC:L), the exploit only requires user permissions (PR:L), it does not require any user interaction (UI:N), it comprises high confidentiality impact (C:H), there is no integrity impact (I:N) and it does not affect availability (A:N). The CVE is characterized as having severity of \textit{Medium (4.0-6.9)}.
 
-\textit{CVE-2016-0778} can be exploited over the network (AV:N), it is low in exploit complexity (AC:L), does not require any special privilege (PR:N), no user interaction is required (UI:N) and the impact is high for confidentiality (C:H), high for integrity (I:H) and high for availability (A:H). The CVE is characterized with severity \textit{Cricial (9.0 - 10.0)}.
+\textit{CVE-2016-0778} can be exploited over the network (AV:N), it is low in exploit complexity (AC:L), does not require any special privilege (PR:N), no user interaction is required (UI:N) and the impact is high for confidentiality (C:H), high for integrity (I:H) and high for availability (A:H). The CVE is characterized with severity \textit{Cricial (9.0 - 10.0)}. 
 
 CVE-2016-0778 is more severe based on the score.
 
@@ -107,7 +107,7 @@ Firstly, a code review process would have increased the chances of finding the b
 
 Secondly, automated tools to check for the usage of commonly vulnerable APIs could be used to identify potential attack vectors before the code is deployed. This activity involved using real world data on vulnerability analysis and the respective security issues within the implementation to create an early warning system of unsafe API usage (CR1.4:55) \cite{BSIMM6-CodeReview}.
 
-Thirdly, the operation of an official bug bounty program could lead to a higher number of vulnerabilities discovered as it provides an incentive for security researchers to analyze the application (CMVM3.4) \cite{BSIMM6-BugBounty}. The vulnerabilities could have been discovered by independent testing and study of the source code.
+Thirdly, the operation of an official bug bounty program could lead to a higher number of vulnerabilities discovered as it provides an incentive for security researchers to analyze the application (CMVM3.4) \cite{BSIMM6-BugBounty}. The vulnerabilities could have been discovered by independent testing and study of the source code. 
 
 \setcounter{section}{3}
 \section*{4}
@@ -134,7 +134,7 @@ I believe that the reasoning provided by my friend is insufficient to make an in
 \setcounter{section}{1}
 
 \section*{1 XSS}
-An Cross Site Scripting (XSS) attack generally takes the form of malicious user input which is exposed to other users. A such input may include scripting elements allowing an attacker to modify the behavior of the victims view.
+An Cross Site Scripting (XSS) attack generally takes the form of malicious user input which is exposed to other users. A such input may include scripting elements allowing an attacker to modify the behavior of the victims view. 
 
 Generally, for an XSS attack to be useful, it is desirable to perform an XSS attack in areas of the site restricted to users with a certain level of permission - for example after logging in or in administration mode.
 
@@ -142,7 +142,7 @@ In order to perform an XSS attack on the Image Voting System, we first analyze t
 
 Firstly, we perform the following actions:
 \begin{enumerate}
-  \item Log in with \texttt{user1:user1}
+	\item Log in with \texttt{user1:user1}
     \item Post a url such as \texttt{\url{https://imgs.xkcd.com/comics/toasts.png}}
     \item Inspect the returned response after submission
     \item Post non-url text such as \texttt{<div>'"</div>} and observe the exact format of the response
@@ -151,7 +151,7 @@ Firstly, we perform the following actions:
 With the above simple steps, we can already make an educated guess on how the server is implemented, we can derive the following:
 
 \begin{itemize}
-  \item The Server side processor is PHP 5.5.9
+	\item The Server side processor is PHP 5.5.9
     \item X-XSS-Protection header is set to 0
     \item The API to post a link is \texttt{HTTP POST http://localhost:8080/index.php} with form data containing the \texttt{link} attribute with the url we submitted.
     \item The response is rendered inside an \texttt{<img src='\url{https://imgs.xkcd.com/comics/toasts.png}'>} element
@@ -176,22 +176,22 @@ Any visitor of the site will now receive an \texttt{index.php} site containing o
 A Cross Site Request Forgery (CSRF) attack aims to exploit a another user (victim) to perform an action which they did not intend to make. In order to perform a CSRF attack, we need to understand the system implementation and what action we may want to utilize perform the exploit. In order to gain this insight, let us perform a few actions:
 
 \begin{itemize}
-  \item Submit an image \texttt{\url{https://imgs.xkcd.com/comics/toasts.png}}
+	\item Submit an image \texttt{\url{https://imgs.xkcd.com/comics/toasts.png}}
     \item Click 'Vote for me' on David's image
     \item Click 'Vote for me' on our own image
 \end{itemize}
 
 From the above actions, we know the following:
 \begin{itemize}
-  \item We are \texttt{user1}
-  \item Voting for David makes an \texttt{HTTP GET http://localhost:8080/vote.php?vote=david}, presumably voting for user1 would only require changing the query parameters
+	\item We are \texttt{user1}
+	\item Voting for David makes an \texttt{HTTP GET http://localhost:8080/vote.php?vote=david}, presumably voting for user1 would only require changing the query parameters
     \item Voting for ourselves fails with an check on the currently logged in user, we can confirm voting for user1 requires to change the query params.
 \end{itemize}
 
 Therefore, we would like to get other users (victims) to unknowingly vote for our own image. We can notice that voting is a GET method, which is incorrectly implemented on the server as a GET action ought to be idempotent, however, in this case it causes side effects - increments vote counter. When a browser is presented with a request to retrieve an image, it will make an \texttt{HTTP GET [url]} request to retrieve the content. The browser cannot distinguish an action such as voting from retrieving an image and therefore, we can use the url API of the 'Vote' action to be fetched by the victims browser and in fact vote for us. To do this, we craft can simply insert \texttt{http://localhost:8080/vote.php?vote=user1} as the image url. This will, however not render an image and may appear suspicious. Instead, we can hide the request inside a \texttt{background-image} style property. Inserting the following will do the trick:
 
 \texttt{
-\newline //imgs.xkcd.com/comics/toasts.png'
+\newline //imgs.xkcd.com/comics/toasts.png' 
 \newline style="background-image: url('vote.php?vote=user1')" '}
 
 When we (user1) view the site, the count is not incremented as the server prevents us doing so - just as if we clicked the 'Vote for me' button on our own image.
@@ -213,19 +213,21 @@ An attacker may no longer directly look up the common hashes of the username as 
 \subsection*{Lock down debugging and admin configuration}
 When running a web application in production, debugging information as well as any other tools exposing system internals should not be exposed. In the case of the Online Image Voting system, there are multiple configuration issues.
 
-Firstly, the site should not be running in debugging mode. In the source code we can observe that the configuration option to display errors has been enabled. Indeed, we can also discover this by deliberately introducing syntactical errors in the source code which will result in error messages printed into the page. An unintended consequence is portions of the back end implementation leaking to the attacker therefore increasing exposure. In order to remedy this, we should turn off the \texttt{display\_errors} option, it should be set to \texttt{Off}. In fact, the source code should at no point attempt to set configuration options dynamically, the options should be defined and kept fixed from the start of the application. This allows for a much tighter control over the configuration options as well as keeping configs in the same place - reducing the chance of a human mistake to miss an occurrence.
+Firstly, the site should not be running in debugging mode. In the source code we can observe that the configuration option to display errors has been enabled. Indeed, we can also discover this by deliberately introducing syntactical errors in the source code which will result in error messages printed into the page. An unintended consequence is portions of the back end implementation leaking to the attacker therefore increasing exposure. In order to remedy this, we should turn off the \texttt{display\_errors} option, it should be set to \texttt{Off}. In fact, the source code should at no point attempt to set configuration options dynamically, the options should be defined and kept fixed from the start of the application. This allows for a much tighter control over the configuration options as well as keeping configs in the same place - reducing the chance of a human mistake to miss an occurrence. 
 
 Secondly, we should not expose any system level configuration such as admin panels. In the case of our system, going to \texttt{localhost:8080/include/.admin.php} we can list all of the configuration attributes of the PHP system including session information and database configurations. On top of that, we can also see the list of installed packaged further increasing an attack surface. This file, \texttt{.admin.php} should be located outside of the served directory or it should not be part of the production system at all.
 
-Thirdly, inspecting the headers we notice that the \texttt{X-XSS-Protection} header has been turned off. This option in itself does not guarantee XSS protection, rather it is a hardening setting. Modern browsers implement protections against common Cross Site Scripting patterns and are able to block such attempts. Even in development environments, it is unreasonable to disable the protection. We can enable it by setting the header inside \texttt{include/functions.php} to \texttt{X-XSS-Protection: 1; mode=block}.
+Thirdly, inspecting the headers we notice that the \texttt{X-XSS-Protection} header has been turned off. This option in itself does not guarantee XSS protection, rather it is a hardening setting. Modern browsers implement protections against common Cross Site Scripting patterns and are able to block such attempts. Even in development environments, it is unreasonable to disable the protection. We can enable it by setting the header inside \texttt{include/functions.php} to \texttt{X-XSS-Protection: 1; mode=block}. 
 
 \subsection*{Remove database file from served directory}
 The database should only be accessible through the API the server defines. This allows the API designers to enforce access restrictions and limit exposure. In the Image Voting System, the database file is accessible through \texttt{localhost:8080/db/imagevoting.db} and can be easily downloaded by an attacker. The database file should be located outside of the directory served by Apache. We can move the file outside of the \texttt{http} directory and put it into \texttt{/srv/db/imagevoting.db}. With that change, we also need to update the php confifuration file to allow it to access the new db directory. We can modify \texttt{/etc/php/php.ini} adding our path to the \texttt{open\_basedir} option. It would also be sound to remove all other paths such as \texttt{:/home/:/tmp/:/usr/share/pear/:/usr/share/webapps/} as we want to enforce the least level of access. Finally, we update the path to the database file inside \texttt{include/functions.php} to point to this new file. Restarting the service yields the desired results.
 
 \subsection*{Sanitize inputs}
+Finally, an essential step is to sanitize input url we are expecting to receive from the user. We can utilize some utilization functions built into PHP to simplify this process. Using the \texttt{filter\_var} method, we can specify we are interested in filtering to a URL. Therefore, the resulting change becomes: 
 
+\lstinputlisting[language=PHP]{sanitize.txt}
 
-
+If the input matches a URL, then it's allowed through, otherwise the content becomes empty. In a real system, we would want to indicate action failure, however, for this toy system it is sufficient to secure the input.
 
 
 \newpage
