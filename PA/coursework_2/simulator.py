@@ -9,9 +9,28 @@ class Protocol(object):
 
 class MSI(Protocol):
 
-    def this_cpu(self, state, action):
+    def remote(self, state, action):
         """
-        Given current state, return the next state
+        Given current state, return the next state for a remote CPU
+        """
+        # From Shared
+        if state is State.shared and action is Action.read_miss:
+            return State.shared
+        elif state is State.shared and action is Action.write_miss:
+            return State.invalid
+
+        # From Modified
+        elif all([state is State.modified, action is Action.read_miss]):
+            return State.shared
+
+        elif all([state is State.modified, action is Action.write_miss]):
+            return State.invalid
+
+        return state
+
+    def local(self, state, action):
+        """
+        Given current state, return the next state for the local CPU
         """
         # From Invalid state
         if state is State.invalid and action is Action.read_miss:
