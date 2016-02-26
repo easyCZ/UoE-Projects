@@ -1,5 +1,5 @@
 import unittest
-from simulator import MSI
+from protocols import MSI
 from models import State, Action
 
 class ProtocolTest(unittest.TestCase):
