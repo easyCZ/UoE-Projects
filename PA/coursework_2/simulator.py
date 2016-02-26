@@ -33,27 +33,26 @@ class MSI(Protocol):
         Given current state, return the next state for the local CPU
         """
         # From Invalid state
-        if state is State.invalid and action is Action.read_miss:
+        if all([state is State.invalid, action is Action.read_miss]):
             return State.shared
-        elif state is State.invalid and action is Action.write_miss:
+        elif all([state is State.invalid, action is Action.write_miss]):
             return State.modified
 
         # From Shared state
-        elif state is state.shared and action is Action.read_hit:
+        elif all([state is state.shared, action is Action.read_hit]):
             return State.shared
-        elif state is state.shared and action is Action.write_miss:
+        elif all([state is state.shared, action is Action.write_miss]):
             return State.modified
-        elif state is state.shared and action is Action.write_hit:
+        elif all([state is state.shared, action is Action.write_hit]):
             return State.modified
 
         # From Modified state
-        elif state is state.modified and action is Action.read_hit:
+        elif all([state is state.modified, action is Action.read_hit]):
             return State.modified
-        elif state is state.modified and action is Action.write_hit:
+        elif all([state is state.modified, action is Action.write_hit]):
             return State.modified
 
-        else:
-            return state
+        return state
 
 
 
