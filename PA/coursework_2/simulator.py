@@ -1,7 +1,41 @@
 #!/usr/local/bin/python3.4
 import argparse
 import sys
-from models import Instruction, Command, DirectMappedCache
+from models import Instruction, Command, DirectMappedCache, State, Action
+
+
+class Protocol(object):
+    pass
+
+class MSI(Protocol):
+
+    def this_cpu(self, state, action):
+        """
+        Given current state, return the next state
+        """
+        # From Invalid state
+        if state is State.invalid and action is Action.read_miss:
+            return State.shared
+        elif state is State.invalid and action is Action.write_miss:
+            return State.modified
+
+        # From Shared state
+        elif state is state.shared and action is Action.read_hit:
+            return State.shared
+        elif state is state.shared and action is Action.write_miss:
+            return State.modified
+        elif state is state.shared and action is Action.write_hit:
+            return State.modified
+
+        # From Modified state
+        elif state is state.modified and action is Action.read_hit:
+            return State.modified
+        elif state is state.modified and action is Action.write_hit:
+            return State.modified
+
+        else:
+            return state
+
 
 
 class Simulator(object):

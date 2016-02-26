@@ -1,4 +1,5 @@
 from collections import namedtuple
+from enum import Enum, unique
 import sys
 import math
 
@@ -85,6 +86,21 @@ class Cache(object):
         Map an address to a block.
         """
         return address % cache_blocks_len
+
+
+@unique
+class State(Enum):
+    modified = 'M'
+    shared = 'S'
+    invalid = 'I'
+
+
+@unique
+class Action(Enum):
+    read_hit = 'RH'
+    read_miss = 'RM'
+    write_hit = 'WH'
+    write_miss = 'WM'
 
 
 class DirectMappedCache(Cache):
