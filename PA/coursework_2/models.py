@@ -1,10 +1,5 @@
-from collections import namedtuple
 from enum import Enum, unique
-import sys
 import math
-
-
-BinaryAddress = namedtuple('BinaryAddress', 'tag index offset')
 
 
 class Instruction(object):
@@ -25,24 +20,6 @@ class Instruction(object):
 
     def is_write(self):
         return self.action == 'W'
-
-    def address_to_bin(self):
-        """
-        Convert an address to binary, left padded to match ADDRESS_LENGTH.
-        """
-        return bin(self.address)[2:].zfill(self.address_length)
-
-    def get_address_partions(self, tag, index, block):
-        """
-        Break an instruction address into a tag, index and a block
-        """
-        assert self.address_length == tag + index + block
-
-        bin_addr = self.address_to_bin()
-        return BinaryAddress(
-            bin_addr[:tag],
-            bin_addr[tag:tag + index],
-            bin_addr[tag + index:tag + index + offset])
 
     def __str__(self):
         return self.instruction
@@ -112,6 +89,9 @@ class Action(Enum):
     write_hit = 'WH'
     write_miss = 'WM'
 
+    def __repr__(self):
+        return self.name.replace('_', ' ').capitalize()
+
     @staticmethod
     def translate(read, hit):
         if not read and not hit:
@@ -136,11 +116,13 @@ class Bus(object):
         remotes = [self.caches[cid] for cid in remote_ids]
 
         lines_invalidated = 0
+        old_states = []
 
         for cache in remotes:
             try:
-                entry, state = cache.get(instruction)
+                entry, state, block = cache.get(instruction)
                 new_state = self.protocol.remote(state, action)
+                old_states.append((cache.cpu, state))
 
                 if state is not new_state:
                     cache.set(instruction, new_state)
@@ -151,20 +133,12 @@ class Bus(object):
                 # Cache doesn't contain the key, nothing to do
                 pass
 
-        return lines_invalidated
+        if lines_invalidated > 0:
+            return (1, lines_invalidated, old_states)
+        return (0, lines_invalidated, old_states)
 
 
-
-class Cache(object):
-
-    def get_block(self, address, cache_blocks_len):
-        """
-        Map an address to a block.
-        """
-        return address % cache_blocks_len
-
-
-class DirectMappedCache(Cache):
+class DirectMappedCache(object):
     """
     Build a direct mapped cache, units are WORDS.
     """
@@ -172,8 +146,8 @@ class DirectMappedCache(Cache):
     CACHE_SIZE = 2048   # words
     ADDRESS_LENGTH = WORD_SIZE * 8
 
-    def __init__(self, cpu, block_size=4, block_count=512):
-        assert block_size * block_count == self.CACHE_SIZE
+    def __init__(self, cpu, block_size=4):
+        block_count = self.CACHE_SIZE / block_size
 
         self.block_size = block_size
         self.block_count = block_count
@@ -189,15 +163,33 @@ class DirectMappedCache(Cache):
     def __repr__(self):
         return 'CPU {} Cache {}'.format(self.cpu, self.cache)
 
+    def __str__(self):
+        header = 'P{}'.format(self.cpu)
+        contents = [header]
+        for key, value in sorted(self.cache.items()):
+            tag, state = value
+            contents.append('{}: {} ({})'.format(key, tag, repr(state)))
+        return '\n'.join(contents)
+
+    def get_block(self, instruction):
+        """
+        Map an address to a block.
+        """
+        mem_block = int(math.floor(instruction.address / self.block_size))
+        block = int(mem_block % self.block_count)
+        tag = int(math.floor(mem_block / self.block_count))
+
+        return (block, tag)
+
     def get(self, instruction):
-        block = self.get_block(instruction.address, self.block_count)
-        cached, state = self.cache[block]
-        if cached.address != instruction.address or state is State.invalid:
+        block, tag = self.get_block(instruction)
+        cached_tag, state = self.cache[block]
+        if tag != cached_tag or state is State.invalid:
             raise KeyError('Miss on {}'.format(instruction))
-        return (cached, state)
+        return (tag, state, block)
 
     def set(self, instruction, state):
-        block = self.get_block(instruction.address, self.block_count)
-        self.cache[block] = (instruction, state)
+        block, tag = self.get_block(instruction)
+        self.cache[block] = (tag, state)
 
         assert len(self.cache) <= self.block_count

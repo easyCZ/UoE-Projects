@@ -57,6 +57,9 @@ class MSI(Protocol):
 
         return state
 
+    def __repr__(self):
+        return 'MSI'
+
 
 class MESI(Protocol):
     """
@@ -77,3 +80,10 @@ class MESI(Protocol):
     def remote(self, state, action):
         is_modified = state is State.modified
         return state
+
+    def __repr__(self):
+        return 'MESI'
+
+
+class MES(Protocol):
+    pass
