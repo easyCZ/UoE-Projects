@@ -12,13 +12,7 @@ class Simulator(object):
         self.processor_ids = set(range(processor_count))
         self.protocol = protocol
         self.bus = Bus(self.caches, self.protocol)
-
-    def _partition(self, local_cpu):
-        return (local_cpu, set(self.processor_ids) - set([local_cpu]))
-
-    def _partion_caches(self, local_cpu):
-        remotes = map(lambda cpu: self.caches[cpu], self._partition(local_cpu))
-        return (self.caches[local_cpu], remotes)
+        self.verbose = False
 
     def simulate(self, trace):
         for line_number, line in enumerate(trace):
@@ -38,7 +32,6 @@ class Simulator(object):
                     state = State.invalid
                     action = Action.translate(instruction.is_read(), False)
 
-                # action = cache.action(instruction)
                 new_state = self.protocol.local(state, action)
                 print('CPU {}: {} -> {} -> {}'.format(pid, state, action, new_state))
 
@@ -47,36 +40,25 @@ class Simulator(object):
                 # update other caches
                 self.bus.message(instruction, action)
 
+                if self.verbose:
+                    pass
+                    # TODO: Print human readable actions
 
-                # local, remotes = self._partition(pid)
-                # print(local, list(remotes))
-
-                # states = list(map(lambda c: c.state(instruction), self.caches))
-                # action = cache.action(instruction)
-
-                # new_local_state = self.protocol.local(states[local], action)
-                # new_remote_states = []
-                # for remote in remotes:
-                #     new_remote_states.append(self.protocol.remote(states[remote], action))
-
-                # print(new_local_state, new_remote_states)
-
-
-
-                # if instruction.is_read():
-
-                # elif instruction.is_write():
-
-                # else:
-                #     print('Invalid instruction {}'.format(instruction), file=sys.stderr)
-
-                # processor_cache.process(instruction)
-
-                # TODO: Process instruction
             elif Command.is_valid(line):
                 command = Command(line)
-                # TODO: Process instruction
-                print(command)
+
+                if command.is_explanation():
+                    self.verbose = not self.verbose
+
+                elif command.is_hit():
+                    pass
+
+                elif command.is_invalidations():
+                    pass
+
+                elif command.is_print():
+                    pass
+
             else:
                 print('Error: Failed to parse "{}" on line {}'.format(line, line_number), file=sys.stderr)
 

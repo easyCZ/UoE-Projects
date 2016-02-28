@@ -58,7 +58,7 @@ class Instruction(object):
         return len(input.split()) == 3
 
 
-class Command(object):
+class Command(Enum):
 
     VERBOSE = {
         'v': 'Toggle full line by line explanation (verbose)',
@@ -73,6 +73,18 @@ class Command(object):
 
     def __str__(self):
         return 'Instruction({}) - {}'.format(self.command, self.verbose)
+
+    def is_explanation(self):
+        return self.command== 'v'
+
+    def is_print(self):
+        return self.command == 'p'
+
+    def is_hit(self):
+        return self.command == 'h'
+
+    def is_invalidations(self):
+        return self.command == 'i'
 
     @staticmethod
     def is_valid(input):
@@ -174,7 +186,7 @@ class DirectMappedCache(Cache):
     def get(self, instruction):
         block = self.get_block(instruction.address, self.block_count)
         cached, state = self.cache[block]
-        if cached.instruction == instruction.instruction:
+        if cached.address == instruction.address:
             return (cached, state)
         raise KeyError('Miss on {}'.format(instruction))
 
