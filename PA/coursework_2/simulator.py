@@ -1,6 +1,8 @@
 #!/usr/local/bin/python3.4
 import argparse
 import sys
+from collections import defaultdict
+
 from models import Instruction, Command, DirectMappedCache, State, Action, Bus
 from protocols import MSI
 
@@ -15,6 +17,12 @@ class Simulator(object):
         self.verbose = False
 
     def simulate(self, trace):
+        stats = {
+            'hit': 0,
+            'miss': 0,
+            'invalidations': [],
+            'updates': 0
+        }
         for line_number, line in enumerate(trace):
             line = line.strip()
 
@@ -27,18 +35,25 @@ class Simulator(object):
                     # hit
                     inst, state = cache.get(instruction)
                     action = Action.translate(instruction.is_read(), True)
+                    stats['hit'] += 1
                 except KeyError:
                     # miss
                     state = State.invalid
                     action = Action.translate(instruction.is_read(), False)
+                    stats['miss'] += 1
 
+                # Find State transition
                 new_state = self.protocol.local(state, action)
-                print('CPU {}: {} -> {} -> {}'.format(pid, state, action, new_state))
-
                 cache.set(instruction, new_state)
 
                 # update other caches
-                self.bus.message(instruction, action)
+                lines_invalidated = self.bus.message(instruction, action)
+                invalidations = 0
+                if action is Action.write_miss:
+                    invalidations = 1
+
+                if invalidations > 0:
+                    stats['invalidations'].append(lines_invalidated)
 
                 if self.verbose:
                     pass
@@ -64,6 +79,9 @@ class Simulator(object):
 
         for cache_id, cache in enumerate(self.caches):
             print(cache_id, cache.cache)
+
+        print('Hit rate', float(stats['hit']) / float(stats['hit'] + stats['miss']))
+        print('Invalidations:', sum(stats['invalidations']))
 
 
 

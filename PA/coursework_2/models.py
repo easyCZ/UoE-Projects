@@ -58,7 +58,7 @@ class Instruction(object):
         return len(input.split()) == 3
 
 
-class Command(Enum):
+class Command(object):
 
     VERBOSE = {
         'v': 'Toggle full line by line explanation (verbose)',
@@ -135,14 +135,23 @@ class Bus(object):
         remote_ids = set(self.ids) - set([cpu])
         remotes = [self.caches[cid] for cid in remote_ids]
 
+        lines_invalidated = 0
+
         for cache in remotes:
-            print(cache.cache, action)
             try:
                 entry, state = cache.get(instruction)
                 new_state = self.protocol.remote(state, action)
-                cache.set(instruction, new_state)
+
+                if state is not new_state:
+                    cache.set(instruction, new_state)
+
+                    if new_state is State.invalid:
+                        lines_invalidated += 1
             except KeyError as e:
-                print(e)
+                # Cache doesn't contain the key, nothing to do
+                pass
+
+        return lines_invalidated
 
 
 
@@ -177,60 +186,18 @@ class DirectMappedCache(Cache):
 
         self.cache = {}
 
-    def __hash__(self):
-        return hash(self.cpu)
-
     def __repr__(self):
-        return 'CPU {} Cache {}'.format(self.cpu, super(DirectMappedCache, self).__repr__())
+        return 'CPU {} Cache {}'.format(self.cpu, self.cache)
 
     def get(self, instruction):
         block = self.get_block(instruction.address, self.block_count)
         cached, state = self.cache[block]
-        if cached.address == instruction.address:
-            return (cached, state)
-        raise KeyError('Miss on {}'.format(instruction))
+        if cached.address != instruction.address or state is State.invalid:
+            raise KeyError('Miss on {}'.format(instruction))
+        return (cached, state)
 
     def set(self, instruction, state):
         block = self.get_block(instruction.address, self.block_count)
         self.cache[block] = (instruction, state)
 
         assert len(self.cache) <= self.block_count
-
-
-
-
-
-    # def state(self, instruction):
-    #     block = self.get_block(instruction.address, self.block_count)
-    #     if block in self.cache:
-    #         return self.get(block)[1]
-    #     return State.invalid
-
-    # def action(self, instruction):
-    #     block = self.get_block(instruction.address, self.block_count)
-    #     if block in self:
-    #         return Action.read_hit if instruction.is_read() else Action.write_hit
-    #     return Action.read_miss if instruction.is_read() else Action.write_miss
-
-    # def process(self, instruction):
-    #     if instruction.is_read():
-    #         self.read(instruction)
-    #     elif instruction.is_write():
-    #         self.write(instruction)
-    #     else:
-    #         print('Invalid instruction {}'.format(instruction), file=sys.stderr)
-    #         return
-
-    # def read(self, instruction):
-    #     block = self.get_block(instruction.address, self.block_count)
-    #     try:
-    #         # TODO: Check tag
-    #         return (Action.read_hit, self.get(block))
-    #     except KeyError:
-    #         self[block] = (instruction,
-
-    # def write(self, instruction):
-    #     block = self.get_block(instruction.address, self.block_count)
-    #     self[block] = instruction
-
-    #     assert len(self) <= self.block_count
