@@ -9,6 +9,9 @@ class MSI(Protocol):
     Implements the MSI cache coherency protocol.
     """
 
+    def map(self, local, remotes, action):
+        return (self.local(local, action), map(lambda r: self.remote(r, action), remotes))
+
     def remote(self, state, action):
         """
         Given current state, return the next state for a remote CPU
@@ -52,4 +55,25 @@ class MSI(Protocol):
         elif all([state is state.modified, action is Action.write_hit]):
             return State.modified
 
+        return state
+
+
+class MESI(Protocol):
+    """
+    Implements the MESI cache coherence protocol
+    """
+
+    def local(self, state, action, shared):
+        """
+        Transition to the new state in the local CPU.
+
+        Params:
+            state   current state
+            action  action
+            shared  flag to indicate if other cache has a copy
+        """
+        pass
+
+    def remote(self, state, action):
+        is_modified = state is State.modified
         return state
