@@ -77,6 +77,7 @@ class Simulator(object):
 
                 if command.is_explanation():
                     self.verbose = not self.verbose
+                    print('Verbose switched to: {}'.format(self.verbose))
 
                 elif command.is_hit():
                     # print current hit rate
