@@ -1,0 +1,19 @@
+v
+P0 R 1  # Read Miss: I -> S
+P0 R 1  # Read Hit: S -> S
+P1 R 1  # Read Miss: I -> S
+P0 W 1  # Write Hit (upgrade): S -> M, Triggers invalidate on P1 (considered miss)
+P0 W 1  # Write Hit: M -> M
+P0 R 1  # Read Hit: M -> M
+P1 W 1  # Write Miss: I -> M, Triggers invalidate on P0,
+P1 W 20  # Write Miss: I -> S
+
+# 5 misses, 3 hits => 3 / 8 hit rate = 37.5%
+h
+
+# P0: {1: I}
+# P1: {1: M, 20: S}
+p
+
+# 2 invalidate broadcasts, 2 lines invalidated
+i

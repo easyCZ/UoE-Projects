@@ -16,7 +16,8 @@ class Stats(object):
 
     def __repr__(self):
         return str({
-            'hit_rate': self.hit_rate(),
+            'hits': self.hits,
+            'misses': self.misses,
             'invalidates': self.invalidated,
             'lines_invalidated': self.lines_invalidated,
             'write_backs': self.write_backs
@@ -27,14 +28,19 @@ class Instruction(object):
 
     ACTIONS = ['R', 'W']
 
-    def __init__(self, instruction, address_length=32):
+    def __init__(self, input, address_length=32):
+        instruction, processor, action, address = self._parse(input)
         self.instruction = instruction
-        processor, action, address = instruction.split()
         self.processor = processor
         self.processor_id = int(processor[1])
         self.action = action
         self.address = int(address)
         self.address_length = address_length
+
+    def _parse(self, input):
+        instr, sep, comment = input.partition('#')
+        processor, action, address = instr.strip().split()
+        return (instr, processor, action, address)
 
     def is_read(self):
         return self.action == 'R'
@@ -53,7 +59,8 @@ class Instruction(object):
         """
         It is an instruction if we can break it down to 3 pieces
         """
-        return len(input.split()) == 3
+        instr, sep, comment = input.partition('#')
+        return len(instr.split()) == 3
 
 
 class Command(object):

@@ -101,13 +101,15 @@ class Simulator(object):
         for line_number, line in enumerate(trace):
             line = line.strip()
 
-            if Instruction.is_valid(line):
-                instruction_number += 1
-                self.instruction(line, stats)
-            elif Command.is_valid(line):
-                self.command(line, stats, instruction_number)
-            else:
-                print('Error: Failed to parse "{}" on line {}'.format(line, line_number), file=sys.stderr)
+            # skip full line comments and blank lines
+            if not line.startswith('#') and line:
+                if Instruction.is_valid(line):
+                    instruction_number += 1
+                    self.instruction(line, stats)
+                elif Command.is_valid(line):
+                    self.command(line, stats, instruction_number)
+                else:
+                    print('Error: Failed to parse "{}" on line {}'.format(line, line_number), file=sys.stderr)
 
         print(stats)
 
