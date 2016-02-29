@@ -51,7 +51,10 @@ class Simulator(object):
         cache.set(instruction, new_state)
 
         # Update all the other caches by passing a message on the bus
-        _, _, remote_states = self.bus.message(instruction, action)
+        remote_states, invalidates = self.bus.message(instruction, action)
+        if invalidates > 0:
+            stats.invalidated += 1
+        stats.lines_invalidated += invalidates
 
         # Print
         if self.verbose:
@@ -67,6 +70,27 @@ class Simulator(object):
             print(message)
 
 
+    def command(self, input, stats, instruction_number):
+        command = Command(input)
+
+        if command.is_explanation():
+            self.verbose = not self.verbose
+            print('Verbose switched to: {}'.format(self.verbose))
+
+        elif command.is_hit():
+            # print current hit rate
+            print('Hit Rate: {0:.2f}%'.format(stats.hit_rate()))
+
+        elif command.is_invalidations():
+            print('Invalidation broadcasts: {}. Lines invalidated: {}'.format(
+                stats.invalidated,
+                stats.lines_invalidated
+            ))
+
+        elif command.is_print():
+            output = '\n'.join(map(str, self.caches))
+            print(output)
+
     def simulate(self, trace):
         print(self.info())
 
@@ -79,32 +103,8 @@ class Simulator(object):
             if Instruction.is_valid(line):
                 instruction_number += 1
                 self.instruction(line, stats)
-
             elif Command.is_valid(line):
-                command = Command(line)
-
-                if command.is_explanation():
-                    self.verbose = not self.verbose
-                    print('Verbose switched to: {}'.format(self.verbose))
-
-                elif command.is_hit():
-                    # print current hit rate
-                    hits = float(stats.hits)
-                    totals = float(stats.hits + stats.misses)
-                    print('Hit Rate: {}. IC: {}'.format(
-                        hits / totals, instruction_number
-                    ))
-
-                elif command.is_invalidations():
-                    print('Invalidation broadcasts: {}. Lines invalidated: {}'.format(
-                        stats.invalidated,
-                        stats.lines_invalidated
-                    ))
-
-                elif command.is_print():
-                    output = '\n'.join(map(str, self.caches))
-                    print(output)
-
+                self.command(line, stats, instruction_number)
             else:
                 print('Error: Failed to parse "{}" on line {}'.format(line, line_number), file=sys.stderr)
 

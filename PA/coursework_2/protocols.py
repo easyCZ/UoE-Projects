@@ -130,6 +130,10 @@ class MESI(Protocol):
 
         return state
 
+    def should_invalidate_others(self, state, action, **kwargs):
+        is_write = action is Action.write_hit or action is Action.write_miss
+        return state is State.shared and is_write
+
     def __repr__(self):
         return 'MESI'
 

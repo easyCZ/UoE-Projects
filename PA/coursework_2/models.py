@@ -11,6 +11,9 @@ class Stats(object):
         self.invalidated = 0
         self.lines_invalidated = 0
 
+    def hit_rate(self):
+        return float(self.hits) / float(self.hits + self.misses) * 100
+
 
 class Instruction(object):
 
@@ -151,28 +154,25 @@ class Bus(object):
 
     def message(self, instruction, action):
         remotes = self.get_remotes(instruction)
-
-        lines_invalidated = 0
         old_states = []
 
+        invalidates = 0
         for cache in remotes:
             try:
                 entry, state, block = cache.get(instruction)
                 new_state = self.protocol.remote(state, action)
                 old_states.append((cache.cpu, state))
 
-                if state is not new_state:
-                    cache.set(instruction, new_state)
+                cache.set(instruction, new_state)
 
-                    if new_state is State.invalid:
-                        lines_invalidated += 1
+                if new_state is State.invalid:
+                    invalidates += 1
+
             except KeyError as e:
                 # Cache doesn't contain the key, nothing to do
                 pass
 
-        if lines_invalidated > 0:
-            return (1, lines_invalidated, old_states)
-        return (0, lines_invalidated, old_states)
+        return old_states, invalidates
 
 
 class DirectMappedCache(object):
@@ -184,16 +184,12 @@ class DirectMappedCache(object):
     ADDRESS_LENGTH = WORD_SIZE * 8
 
     def __init__(self, cpu, block_size=4):
+        assert block_size > 1
         block_count = self.CACHE_SIZE / block_size
 
         self.block_size = block_size
         self.block_count = block_count
         self.cpu = cpu
-
-        # Calculate the size of offset, index and tag
-        self.offset_length = int(math.log(block_size, 2))
-        self.index_length = int(math.ceil(math.log(self.block_count, 2)))
-        self.tag_length = self.ADDRESS_LENGTH - self.offset_length - self.index_length
 
         self.cache = {}
 
