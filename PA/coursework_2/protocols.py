@@ -46,17 +46,17 @@ class MSI(Protocol):
             return State.modified
 
         # From Shared state
-        elif all([state is state.shared, action is Action.read_hit]):
+        elif all([state is State.shared, action is Action.read_hit]):
             return State.shared
-        elif all([state is state.shared, action is Action.write_miss]):
+        elif all([state is State.shared, action is Action.write_miss]):
             return State.modified
-        elif all([state is state.shared, action is Action.write_hit]):
+        elif all([state is State.shared, action is Action.write_hit]):
             return State.modified
 
         # From Modified state
-        elif all([state is state.modified, action is Action.read_hit]):
+        elif all([state is State.modified, action is Action.read_hit]):
             return State.modified
-        elif all([state is state.modified, action is Action.write_hit]):
+        elif all([state is State.modified, action is Action.write_hit]):
             return State.modified
 
         return state
