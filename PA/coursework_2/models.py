@@ -12,6 +12,8 @@ class Stats(object):
         self.invalidated = 0
         self.lines_invalidated = 0
         self.write_backs = 0
+        self.write_updates = 0
+        self.write_update_lines = 0
 
     def hit_rate(self):
         return float(self.hits) / float(self.hits + self.misses) * 100
@@ -30,7 +32,9 @@ class Stats(object):
             'misses': self.misses,
             'invalidates': self.invalidated,
             'lines_invalidated': self.lines_invalidated,
-            'write_backs': self.write_backs
+            'write_backs': self.write_backs,
+            'write_updates': self.write_updates,
+            'write_update_lines': self.write_update_lines
         })
 
 
@@ -143,6 +147,17 @@ class Action(Enum):
 
 class Bus(object):
 
+    def any_contains(self, instruction, caches):
+        for cache in caches:
+            try:
+                cache.get(instruction)
+                return True
+            except KeyError:
+                pass
+        return False
+
+class UpdateBus(Bus):
+
     def __init__(self, caches, protocol):
         self.caches = caches
         self.protocol = protocol
@@ -155,13 +170,47 @@ class Bus(object):
 
     def is_shared(self, instruction):
         remotes = self.get_remotes(instruction)
+        return self.any_contains(instruction, remotes)
+
+    def message(self, instruction, action, send_write_update):
+        remotes = self.get_remotes(instruction)
+        write_updates = 0
+        write_backs = 0
+        old_states = []
+        is_miss = action is Action.read_miss or action is Action.write_miss
         for cache in remotes:
             try:
-                cache.get(instruction)
-                return True
+                _, state, _ = cache.get(instruction)
+                old_states.append((cache.cpu, state))
+                new_state = self.protocol.remote(state, action, send_write_update)
+
+                if state is not new_state:
+                    write_updates += 1
+
+                cache.set(instruction, new_state)
+                if is_miss and state is State.modified:
+                    write_backs += 1
             except KeyError:
                 pass
-        return False
+
+        return write_backs, write_updates, old_states
+
+
+class InvalidateBus(Bus):
+
+    def __init__(self, caches, protocol):
+        self.caches = caches
+        self.protocol = protocol
+        self.ids = range(len(caches))
+
+    def get_remotes(self, instruction):
+        cpu = instruction.processor_id
+        remote_ids = set(self.ids) - set([cpu])
+        return [self.caches[cid] for cid in remote_ids]
+
+    def is_shared(self, instruction):
+        remotes = self.get_remotes(instruction)
+        return self.any_contains(instruction, remotes)
 
     def invalidate(self, instruction):
         remotes = self.get_remotes(instruction)

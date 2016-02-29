@@ -1,0 +1,21 @@
+v
+P0 R 1      # Read miss & no sharing: I -> E
+P0 R 1      # Read hit: E -> E
+P1 R 1      # Read miss & sharing: I -> S, triggers Remote read miss on P0 (E -> S)
+P0 R 50     # Read miss & no sharing: I -> E
+P0 W 50     # Write Hit (silent): E -> M
+P2 R 50     # Read miss & sharing: I -> S, triggers remote read miss on P0 (M -> I)
+P0 R 50     # Read miss & sharing: I -> S
+P2 W 50     # Write hit: S -> M, invalidate broadcast to P0
+
+# 3 hits, 5 misses => 3/8 hit rate => 37.5%
+# 2 private hits, 1 shared
+h
+
+# 1 invalidate sent, 1 line invalidated
+i
+
+# P0 {1: S, 50: I}
+# P1 {1: S}
+# P2 {50: M}
+p

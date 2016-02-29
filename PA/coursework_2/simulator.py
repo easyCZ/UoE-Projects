@@ -2,26 +2,74 @@
 import argparse
 import sys
 
-from models import Instruction, Command, DirectMappedCache, State, Action, Bus, Stats
+from models import Instruction, Command, DirectMappedCache, State, Action, InvalidateBus, Stats, UpdateBus
 from protocols import MSI, MESI, MES
 
 
 class Simulator(object):
 
-    def __init__(self, protocol, block_size=4, processor_count=4):
+    def __init__(self, protocol, bus, block_size=4, processor_count=4):
         self.block_size = block_size
         self.caches = [DirectMappedCache(i, block_size) for i in range(processor_count)]
         self.processor_ids = set(range(processor_count))
         self.protocol = protocol
-        self.bus = Bus(self.caches, self.protocol)
+        self.bus = bus(self.caches, self.protocol)
         self.verbose = False
 
     def info(self):
         return 'Running {} cache coherence simulator on Direct Mapped cache with block size of {} words on {} CPUs'.format(self.protocol, self.block_size, len(self.caches))
 
 
+    def mes_instruction(self, instruction, stats):
+        cache = self.caches[instruction.processor_id]
+
+        is_hit = False
+        try:
+            tag, state, block = cache.get(instruction)
+            is_hit = True
+            stats.hits += 1
+            if state is State.modified or state is State.exclusive:
+                stats.private_hits += 1
+            elif state is State.shared:
+                stats.shared_hits += 1
+        except KeyError:
+            stats.misses += 1
+            state = None
+            block, tag = cache.get_block(instruction)
+
+        is_shared = self.bus.is_shared(instruction)
+        action = Action.translate(instruction.is_read(), is_hit)
+        new_state, send_write_update = self.protocol.local(state, action, **{'shared': is_shared})
+
+        if  send_write_update:
+            stats.write_updates += 1
+
+        cache.set(instruction, new_state)
+        write_backs, line_updates, old_states = self.bus.message(instruction, action, send_write_update)
+
+        stats.write_backs += write_backs
+        stats.write_update_lines += line_updates
+
+        if self.verbose:
+            message = 'A {} by {} to word {} looked for tag {} in block {}, found in state {}.'.format(
+                repr(action), 'P{}'.format(instruction.processor_id), instruction.address, tag, block, repr(state)
+            )
+            if len(old_states) > 0:
+                message += ' Other CPUs are in states {}'.format(
+                    str(list(map(lambda x: 'P{} - {}'.format(x[0], repr(x[1])), old_states)))
+                )
+            else:
+                message += ' No other copies.'
+            print(message)
+
+
     def instruction(self, input, stats):
         instruction = Instruction(input)
+
+        # MES
+        if isinstance(self.bus, UpdateBus):
+            return self.mes_instruction(instruction, stats)
+
         cache = self.caches[instruction.processor_id]
 
         try:
@@ -133,12 +181,12 @@ def main():
 
     # Run simulator
     protocols = {
-        'msi': MSI(),
-        'mesi': MESI(),
-        'mes': MES()
+        'msi': (MSI(), InvalidateBus),
+        'mesi': (MESI(), InvalidateBus),
+        'mes': (MES(), UpdateBus)
     }
-    protocol = protocols[args.protocol]
-    simulator = Simulator(protocol, args.block_size)
+    protocol, bus = protocols[args.protocol]
+    simulator = Simulator(protocol, bus, args.block_size)
     simulator.simulate(source)
 
     # Clean up source

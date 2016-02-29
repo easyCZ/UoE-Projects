@@ -139,4 +139,54 @@ class MESI(Protocol):
 
 
 class MES(Protocol):
-    pass
+
+    def remote(self, state, action, write_update):
+
+        is_exclusive = state is State.exclusive
+
+        if all([is_exclusive, action is Action.read_miss or action is Action.write_miss]):
+            return State.shared
+
+        is_shared = state is State.shared
+        if all([is_shared, action is Action.read_miss or action is Action.write_miss or write_update]):
+            return State.shared
+        if all([state is State.modified, action is Action.read_miss or action is Action.write_miss]):
+            return State.shared
+
+        return state
+
+    def local(self, state, action, **kwargs):
+        shared = kwargs['shared']
+        send_write_update = False
+
+        is_exclusive = state is State.exclusive
+        if all([is_exclusive, action is Action.read_hit]):
+            return (State.exclusive, send_write_update)
+        if all([not shared, action is Action.read_miss]):
+            return (State.exclusive, send_write_update)
+        if all([is_exclusive, action is Action.write_hit]):
+            return (State.modified, send_write_update)
+
+        is_modified = state is State.modified
+        if all([is_modified, action is Action.write_hit or action is Action.read_hit]):
+            return (State.modified, send_write_update)
+        if all([not shared, action is Action.write_miss]):
+            return (State.modified, send_write_update)
+
+        is_shared = state is State.shared
+        if all([shared, action is Action.read_miss]):
+            return (State.shared, send_write_update)
+        if all([action is Action.write_miss, shared]):
+            send_write_update = True
+            return (State.shared, send_write_update)
+        if all([is_shared, action is Action.read_hit]):
+            return (State.shared, send_write_update)
+        if all([is_shared, action is Action.write_miss or action is Action.write_hit]):
+            send_write_update = True
+            return (State.shared, send_write_update)
+
+        return (state, send_write_update)
+
+    def __repr__(self):
+        return 'MES'
+

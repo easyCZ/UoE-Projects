@@ -1,0 +1,56 @@
+Arguments used: {'protocol': 'mes', 'file': 'trace1.txt', 'block_size': 2}
+Running MES cache coherence simulator on Direct Mapped cache with block size of 2 words on 4 CPUs
+Hit Rate: 91.01%. Private hits: 99.46%. Shared hits: 0.54%
+Invalidation broadcasts: 0. Lines invalidated: 0
+{'invalidates': 0, 'write_updates': 195, 'misses': 17680, 'shared_hits': 972, 'hits': 178928, 'write_backs': 99, 'private_hits': 177956, 'write_update_lines': 198, 'lines_invalidated': 0}
+
+
+Arguments used: {'block_size': 2, 'file': 'trace2.txt', 'protocol': 'mes'}
+Running MES cache coherence simulator on Direct Mapped cache with block size of 2 words on 4 CPUs
+Hit Rate: 99.64%. Private hits: 0.92%. Shared hits: 99.08%
+Invalidation broadcasts: 0. Lines invalidated: 0
+{'invalidates': 0, 'write_updates': 73539, 'lines_invalidated': 0, 'private_hits': 5350, 'write_backs': 445, 'shared_hits': 576107, 'misses': 2098, 'write_update_lines': 838, 'hits': 581457}
+
+
+Arguments used: {'file': 'trace1.txt', 'block_size': 4, 'protocol': 'mes'}
+Running MES cache coherence simulator on Direct Mapped cache with block size of 4 words on 4 CPUs
+Hit Rate: 95.50%. Private hits: 99.43%. Shared hits: 0.57%
+Invalidation broadcasts: 0. Lines invalidated: 0
+{'shared_hits': 1068, 'private_hits': 186700, 'hits': 187768, 'write_update_lines': 99, 'invalidates': 0, 'lines_invalidated': 0, 'write_backs': 51, 'misses': 8840, 'write_updates': 195}
+
+
+Arguments used: {'file': 'trace2.txt', 'block_size': 4, 'protocol': 'mes'}
+Running MES cache coherence simulator on Direct Mapped cache with block size of 4 words on 4 CPUs
+Hit Rate: 99.73%. Private hits: 0.13%. Shared hits: 99.87%
+Invalidation broadcasts: 0. Lines invalidated: 0
+{'lines_invalidated': 0, 'private_hits': 738, 'misses': 1552, 'shared_hits': 581265, 'hits': 582003, 'write_updates': 75855, 'write_backs': 266, 'write_update_lines': 506, 'invalidates': 0}
+
+
+Arguments used: {'file': 'trace1.txt', 'block_size': 8, 'protocol': 'mes'}
+Running MES cache coherence simulator on Direct Mapped cache with block size of 8 words on 4 CPUs
+Hit Rate: 97.75%. Private hits: 99.40%. Shared hits: 0.60%
+Invalidation broadcasts: 0. Lines invalidated: 0
+{'lines_invalidated': 0, 'hits': 192184, 'write_updates': 201, 'misses': 4424, 'invalidates': 0, 'private_hits': 191029, 'shared_hits': 1155, 'write_backs': 27, 'write_update_lines': 51}
+
+
+Arguments used: {'file': 'trace2.txt', 'protocol': 'mes', 'block_size': 8}
+Running MES cache coherence simulator on Direct Mapped cache with block size of 8 words on 4 CPUs
+Hit Rate: 99.84%. Private hits: 0.06%. Shared hits: 99.94%
+Invalidation broadcasts: 0. Lines invalidated: 0
+{'write_updates': 76135, 'lines_invalidated': 0, 'private_hits': 363, 'write_update_lines': 256, 'write_backs': 135, 'misses': 958, 'shared_hits': 582234, 'hits': 582597, 'invalidates': 0}
+
+
+Arguments used: {'block_size': 16, 'protocol': 'mes', 'file': 'trace1.txt'}
+Running MES cache coherence simulator on Direct Mapped cache with block size of 16 words on 4 CPUs
+Hit Rate: 98.87%. Private hits: 99.32%. Shared hits: 0.68%
+Invalidation broadcasts: 0. Lines invalidated: 0
+{'write_update_lines': 27, 'write_backs': 15, 'misses': 2216, 'lines_invalidated': 0, 'invalidates': 0, 'write_updates': 225, 'private_hits': 193069, 'hits': 194392, 'shared_hits': 1323}
+
+
+Arguments used: {'file': 'trace2.txt', 'protocol': 'mes', 'block_size': 16}
+Running MES cache coherence simulator on Direct Mapped cache with block size of 16 words on 4 CPUs
+Hit Rate: 99.91%. Private hits: 0.02%. Shared hits: 99.98%
+Invalidation broadcasts: 0. Lines invalidated: 0
+{'invalidates': 0, 'write_update_lines': 128, 'write_backs': 72, 'misses': 510, 'lines_invalidated': 0, 'private_hits': 93, 'shared_hits': 582952, 'write_updates': 76338, 'hits': 583045}
+
+

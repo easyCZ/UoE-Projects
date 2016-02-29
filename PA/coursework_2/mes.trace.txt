@@ -1,0 +1,20 @@
+v
+P0 R 10     # Read miss: E
+P0 R 10     # Read hit: E -> E
+P0 W 10     # Write hit: E -> M
+P1 R 10     # Read miss & shared: S. Causes remote miss on P0 (M -> S)
+P1 W 10     # Write hit & send update: S -> S. P0 receives write update (S -> S)
+P2 W 10     # Write miss & shared & send update: S. P0, P1 receive write update (S -> S)
+P3 W 20     # Write miss & not shared: M
+P0 R 10     # Read hit: S -> S
+
+# 4 misses, 4 hits => 0.5% hit rate
+# 2 private hits, 2 shared hits
+# 2 write updates
+h
+
+# P0 {10: S}
+# P1 {10: S}
+# P2 {10: S}
+# P3 {20: M}
+p
