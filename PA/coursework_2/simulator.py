@@ -36,6 +36,13 @@ class Simulator(object):
                 stats.misses += 1
             else:
                 stats.hits += 1
+
+                # count private/shared hits
+                if state is State.modified or state is State.exclusive:
+                    stats.private_hits += 1
+                elif state is State.shared:
+                    stats.shared_hits += 1
+
         except KeyError:
             # miss
             state = State.invalid
@@ -80,7 +87,11 @@ class Simulator(object):
 
         elif command.is_hit():
             # print current hit rate
-            print('Hit Rate: {0:.2f}%'.format(stats.hit_rate()))
+            print('Hit Rate: {0:.2f}%. Private hits: {1:.2f}%. Shared hits: {2:.2f}%'.format(
+                stats.hit_rate(),
+                stats.private_hit_rate(),
+                stats.shared_hit_rate()
+            ))
 
         elif command.is_invalidations():
             print('Invalidation broadcasts: {}. Lines invalidated: {}'.format(

@@ -6,6 +6,8 @@ class Stats(object):
 
     def __init__(self):
         self.hits = 0
+        self.private_hits = 0
+        self.shared_hits = 0
         self.misses = 0
         self.invalidated = 0
         self.lines_invalidated = 0
@@ -14,9 +16,17 @@ class Stats(object):
     def hit_rate(self):
         return float(self.hits) / float(self.hits + self.misses) * 100
 
+    def private_hit_rate(self):
+        return float(self.private_hits) / float(self.hits) * 100
+
+    def shared_hit_rate(self):
+        return float(self.shared_hits) / float(self.hits) * 100
+
     def __repr__(self):
         return str({
             'hits': self.hits,
+            'private_hits': self.private_hits,
+            'shared_hits': self.shared_hits,
             'misses': self.misses,
             'invalidates': self.invalidated,
             'lines_invalidated': self.lines_invalidated,
