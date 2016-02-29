@@ -5,3 +5,60 @@ Invalidation broadcasts: 99. Lines invalidated: 99
 {'private_hits': 178538, 'lines_invalidated': 99, 'shared_hits': 291, 'hits': 178829, 'write_backs': 99, 'misses': 17779, 'invalidates': 99}
 
 
+Arguments used: {'protocol': 'mesi', 'file': 'trace2.txt', 'block_size': 2}
+Running MESI cache coherence simulator on Direct Mapped cache with block size of 2 words on 4 CPUs
+Hit Rate: 85.08%. Private hits: 8.45%. Shared hits: 91.55%
+Invalidation broadcasts: 39795. Lines invalidated: 47124
+{'write_backs': 39824, 'shared_hits': 454528, 'misses': 87094, 'hits': 496461, 'private_hits': 41933, 'invalidates': 39795, 'lines_invalidated': 47124}
+
+
+
+
+Arguments used: {'block_size': 4, 'file': 'trace1.txt', 'protocol': 'mesi'}
+Running MESI cache coherence simulator on Direct Mapped cache with block size of 4 words on 4 CPUs
+Hit Rate: 95.48%. Private hits: 99.87%. Shared hits: 0.13%
+Invalidation broadcasts: 51. Lines invalidated: 51
+{'write_backs': 51, 'hits': 187717, 'invalidates': 51, 'shared_hits': 240, 'misses': 8891, 'private_hits': 187477, 'lines_invalidated': 51}
+
+
+Arguments used: {'file': 'trace2.txt', 'protocol': 'mesi', 'block_size': 4}
+Running MESI cache coherence simulator on Direct Mapped cache with block size of 4 words on 4 CPUs
+Hit Rate: 84.23%. Private hits: 8.27%. Shared hits: 91.73%
+Invalidation broadcasts: 41253. Lines invalidated: 52559
+{'invalidates': 41253, 'lines_invalidated': 52559, 'private_hits': 40671, 'hits': 491548, 'write_backs': 41293, 'shared_hits': 450877, 'misses': 92007}
+
+
+
+
+Arguments used: {'protocol': 'mesi', 'file': 'trace1.txt', 'block_size': 8}
+Running MESI cache coherence simulator on Direct Mapped cache with block size of 8 words on 4 CPUs
+Hit Rate: 97.74%. Private hits: 99.88%. Shared hits: 0.12%
+Invalidation broadcasts: 27. Lines invalidated: 24
+{'private_hits': 191929, 'write_backs': 27, 'shared_hits': 228, 'lines_invalidated': 24, 'misses': 4451, 'invalidates': 27, 'hits': 192157}
+
+
+Arguments used: {'block_size': 8, 'file': 'trace2.txt', 'protocol': 'mesi'}
+Running MESI cache coherence simulator on Direct Mapped cache with block size of 8 words on 4 CPUs
+Hit Rate: 83.22%. Private hits: 7.79%. Shared hits: 92.21%
+Invalidation broadcasts: 44688. Lines invalidated: 61300
+{'misses': 97913, 'lines_invalidated': 61300, 'private_hits': 37837, 'invalidates': 44688, 'shared_hits': 447805, 'write_backs': 44709, 'hits': 485642}
+
+
+
+
+Arguments used: {'file': 'trace1.txt', 'block_size': 16, 'protocol': 'mesi'}
+Running MESI cache coherence simulator on Direct Mapped cache with block size of 16 words on 4 CPUs
+Hit Rate: 98.87%. Private hits: 99.88%. Shared hits: 0.12%
+Invalidation broadcasts: 15. Lines invalidated: 12
+{'misses': 2231, 'hits': 194377, 'shared_hits': 240, 'invalidates': 15, 'write_backs': 15, 'private_hits': 194137, 'lines_invalidated': 12}
+
+
+Arguments used: {'protocol': 'mesi', 'file': 'trace2.txt', 'block_size': 16}
+Running MESI cache coherence simulator on Direct Mapped cache with block size of 16 words on 4 CPUs
+Hit Rate: 81.33%. Private hits: 6.82%. Shared hits: 93.18%
+Invalidation broadcasts: 53306. Lines invalidated: 78733
+{'shared_hits': 442234, 'invalidates': 53306, 'hits': 474581, 'write_backs': 53316, 'misses': 108974, 'private_hits': 32347, 'lines_invalidated': 78733}
+
+
+
+
