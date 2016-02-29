@@ -74,7 +74,7 @@ class Simulator(object):
                     str(list(map(lambda x: 'P{} - {}'.format(x[0], repr(x[1])), remote_states)))
                 )
             else:
-                message += ' Other CPUs do not contain copies of this address'
+                message += ' No other copies.'
             print(message)
 
 

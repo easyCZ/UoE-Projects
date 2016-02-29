@@ -1,0 +1,7 @@
+Arguments used: {'protocol': 'mesi', 'block_size': 2, 'file': 'trace1.txt'}
+Running MESI cache coherence simulator on Direct Mapped cache with block size of 2 words on 4 CPUs
+Hit Rate: 90.96%. Private hits: 99.84%. Shared hits: 0.16%
+Invalidation broadcasts: 99. Lines invalidated: 99
+{'private_hits': 178538, 'lines_invalidated': 99, 'shared_hits': 291, 'hits': 178829, 'write_backs': 99, 'misses': 17779, 'invalidates': 99}
+
+

@@ -232,7 +232,7 @@ class DirectMappedCache(object):
         contents = [header]
         for key, value in sorted(self.cache.items()):
             tag, state = value
-            contents.append('{}: {} ({})'.format(key, tag, repr(state)))
+            contents.append('  {}: {} ({})'.format(key, tag, repr(state)))
         return '\n'.join(contents)
 
     def get_block(self, instruction):

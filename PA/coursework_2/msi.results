@@ -1,0 +1,48 @@
+Arguments used: {'file': 'trace1.txt', 'block_size': 2, 'protocol': 'msi'}
+Running MSI cache coherence simulator on Direct Mapped cache with block size of 2 words on 4 CPUs
+Hit Rate: 82.54%. Private hits: 59.47%. Shared hits: 40.53%
+Invalidation broadcasts: 16640. Lines invalidated: 99
+{'misses': 34320, 'shared_hits': 65776, 'invalidates': 16640, 'hits': 162288, 'lines_invalidated': 99, 'private_hits': 96512, 'write_backs': 99}
+Arguments used: {'block_size': 2, 'protocol': 'msi', 'file': 'trace2.txt'}
+Running MSI cache coherence simulator on Direct Mapped cache with block size of 2 words on 4 CPUs
+Hit Rate: 85.04%. Private hits: 8.34%. Shared hits: 91.66%
+Invalidation broadcasts: 39993. Lines invalidated: 47124
+{'lines_invalidated': 47124, 'private_hits': 41406, 'write_backs': 39824, 'misses': 87292, 'invalidates': 39993, 'hits': 496263, 'shared_hits': 454857}
+
+
+Arguments used: {'block_size': 4, 'protocol': 'msi', 'file': 'trace1.txt'}
+Running MSI cache coherence simulator on Direct Mapped cache with block size of 4 words on 4 CPUs
+Hit Rate: 91.27%. Private hits: 72.18%. Shared hits: 27.82%
+Invalidation broadcasts: 8328. Lines invalidated: 51
+{'write_backs': 51, 'misses': 17168, 'hits': 179440, 'shared_hits': 49920, 'invalidates': 8328, 'private_hits': 129520, 'lines_invalidated': 51}
+Arguments used: {'protocol': 'msi', 'block_size': 4, 'file': 'trace2.txt'}
+Running MSI cache coherence simulator on Direct Mapped cache with block size of 4 words on 4 CPUs
+Hit Rate: 84.23%. Private hits: 8.24%. Shared hits: 91.76%
+Invalidation broadcasts: 41290. Lines invalidated: 52559
+{'invalidates': 41290, 'lines_invalidated': 52559, 'hits': 491511, 'shared_hits': 451008, 'misses': 92044, 'write_backs': 41293, 'private_hits': 40503}
+
+
+Arguments used: {'protocol': 'msi', 'file': 'trace1.txt', 'block_size': 8}
+Running MSI cache coherence simulator on Direct Mapped cache with block size of 8 words on 4 CPUs
+Hit Rate: 95.63%. Private hits: 77.73%. Shared hits: 22.27%
+Invalidation broadcasts: 4168. Lines invalidated: 24
+{'hits': 188016, 'write_backs': 27, 'lines_invalidated': 24, 'invalidates': 4168, 'private_hits': 146152, 'misses': 8592, 'shared_hits': 41864}
+Arguments used: {'block_size': 8, 'file': 'trace2.txt', 'protocol': 'msi'}
+Running MSI cache coherence simulator on Direct Mapped cache with block size of 8 words on 4 CPUs
+Hit Rate: 83.22%. Private hits: 7.77%. Shared hits: 92.23%
+Invalidation broadcasts: 44697. Lines invalidated: 61300
+{'private_hits': 37744, 'shared_hits': 447889, 'misses': 97922, 'invalidates': 44697, 'write_backs': 44709, 'lines_invalidated': 61300, 'hits': 485633}
+
+
+Arguments used: {'protocol': 'msi', 'block_size': 16, 'file': 'trace1.txt'}
+Running MSI cache coherence simulator on Direct Mapped cache with block size of 16 words on 4 CPUs
+Hit Rate: 97.81%. Private hits: 80.33%. Shared hits: 19.67%
+Invalidation broadcasts: 2088. Lines invalidated: 12
+{'private_hits': 154472, 'invalidates': 2088, 'lines_invalidated': 12, 'write_backs': 15, 'shared_hits': 37832, 'misses': 4304, 'hits': 192304}
+Arguments used: {'protocol': 'msi', 'block_size': 16, 'file': 'trace2.txt'}
+Running MSI cache coherence simulator on Direct Mapped cache with block size of 16 words on 4 CPUs
+Hit Rate: 81.32%. Private hits: 6.81%. Shared hits: 93.19%
+Invalidation broadcasts: 53311. Lines invalidated: 78733
+{'invalidates': 53311, 'hits': 474576, 'misses': 108979, 'write_backs': 53316, 'shared_hits': 442264, 'lines_invalidated': 78733, 'private_hits': 32312}
+
+

@@ -9,6 +9,7 @@ P1 W 1  # Write Miss: I -> M, Triggers invalidate on P0,
 P1 W 20  # Write Miss: I -> S
 
 # 5 misses, 3 hits => 3 / 8 hit rate = 37.5%
+# 2 private hits, 1 shared hit
 h
 
 # P0: {1: I}
