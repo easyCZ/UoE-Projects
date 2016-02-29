@@ -51,7 +51,8 @@ class Simulator(object):
         cache.set(instruction, new_state)
 
         # Update all the other caches by passing a message on the bus
-        remote_states, invalidates = self.bus.message(instruction, action)
+        remote_states, invalidates, write_backs = self.bus.message(instruction, action)
+        stats.write_backs += write_backs
         if invalidates > 0:
             stats.invalidated += 1
         stats.lines_invalidated += invalidates
@@ -107,6 +108,8 @@ class Simulator(object):
                 self.command(line, stats, instruction_number)
             else:
                 print('Error: Failed to parse "{}" on line {}'.format(line, line_number), file=sys.stderr)
+
+        print(stats)
 
 
 def main():

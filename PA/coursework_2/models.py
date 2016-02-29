@@ -9,9 +9,18 @@ class Stats(object):
         self.misses = 0
         self.invalidated = 0
         self.lines_invalidated = 0
+        self.write_backs = 0
 
     def hit_rate(self):
         return float(self.hits) / float(self.hits + self.misses) * 100
+
+    def __repr__(self):
+        return str({
+            'hit_rate': self.hit_rate(),
+            'invalidates': self.invalidated,
+            'lines_invalidated': self.lines_invalidated,
+            'write_backs': self.write_backs
+        })
 
 
 class Instruction(object):
@@ -156,9 +165,15 @@ class Bus(object):
         old_states = []
 
         invalidates = 0
+        write_backs = 0
         for cache in remotes:
             try:
                 entry, state, block = cache.get(instruction)
+
+                is_miss = action is Action.read_miss or action is Action.write_miss
+                if is_miss and state is State.modified:
+                    write_backs += 1
+
                 new_state = self.protocol.remote(state, action)
                 old_states.append((cache.cpu, state))
 
@@ -171,7 +186,7 @@ class Bus(object):
                 # Cache doesn't contain the key, nothing to do
                 pass
 
-        return old_states, invalidates
+        return old_states, invalidates, write_backs
 
 
 class DirectMappedCache(object):
