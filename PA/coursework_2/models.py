@@ -1,5 +1,15 @@
+from collections import namedtuple
 from enum import Enum, unique
 import math
+
+
+class Stats(object):
+
+    def __init__(self):
+        self.hits = 0
+        self.misses = 0
+        self.invalidated = 0
+        self.lines_invalidated = 0
 
 
 class Instruction(object):
@@ -110,10 +120,37 @@ class Bus(object):
         self.protocol = protocol
         self.ids = range(len(caches))
 
-    def message(self, instruction, action):
+    def get_remotes(self, instruction):
         cpu = instruction.processor_id
         remote_ids = set(self.ids) - set([cpu])
-        remotes = [self.caches[cid] for cid in remote_ids]
+        return [self.caches[cid] for cid in remote_ids]
+
+    def is_shared(self, instruction):
+        remotes = self.get_remotes(instruction)
+        for cache in remotes:
+            try:
+                cache.get(instruction)
+                return True
+            except KeyError:
+                pass
+        return False
+
+    def invalidate(self, instruction):
+        remotes = self.get_remotes(instruction)
+
+        line_invalidates = 0
+        for cache in remotes:
+            try:
+                cache.get(instruction)
+                cache.set(instruction, State.invalid)
+                line_invalidates += 1
+            except KeyError:
+                pass
+
+        return line_invalidates
+
+    def message(self, instruction, action):
+        remotes = self.get_remotes(instruction)
 
         lines_invalidated = 0
         old_states = []

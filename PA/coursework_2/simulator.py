@@ -2,7 +2,7 @@
 import argparse
 import sys
 
-from models import Instruction, Command, DirectMappedCache, State, Action, Bus
+from models import Instruction, Command, DirectMappedCache, State, Action, Bus, Stats
 from protocols import MSI, MESI, MES
 
 
@@ -19,58 +19,66 @@ class Simulator(object):
     def info(self):
         return 'Running {} cache coherence simulator on Direct Mapped cache with block size of {} words on {} CPUs'.format(self.protocol, self.block_size, len(self.caches))
 
+
+    def instruction(self, input, stats):
+        instruction = Instruction(input)
+        cache = self.caches[instruction.processor_id]
+
+        try:
+            # Attempt to hit the cache
+            tag, state, block = cache.get(instruction)
+            action = Action.translate(instruction.is_read(), True)
+
+            # Check if we need to invalidate all other entries
+            if self.protocol.should_invalidate_others(state, action):
+                stats.lines_invalidated += self.bus.invalidate(instruction)
+                stats.invalidated += 1
+                stats.misses += 1
+            else:
+                stats.hits += 1
+        except KeyError:
+            # miss
+            state = State.invalid
+            action = Action.translate(instruction.is_read(), False)
+            block, tag = cache.get_block(instruction)
+            stats.misses += 1
+
+        # Determine how to transition next
+        is_shared = self.bus.is_shared(instruction)
+        new_state = self.protocol.local(state, action, **{'shared': is_shared})
+
+        # Update the state
+        cache.set(instruction, new_state)
+
+        # Update all the other caches by passing a message on the bus
+        _, _, remote_states = self.bus.message(instruction, action)
+
+        # Print
+        if self.verbose:
+            message = 'A {} by {} to word {} looked for tag {} in block {}, found in state {}.'.format(
+                repr(action), 'P{}'.format(instruction.processor_id), instruction.address, tag, block, repr(state)
+            )
+            if len(remote_states) > 0:
+                message += ' Other CPUs are in states {}'.format(
+                    str(list(map(lambda x: 'P{} - {}'.format(x[0], repr(x[1])), remote_states)))
+                )
+            else:
+                message += ' Other CPUs do not contain copies of this address'
+            print(message)
+
+
     def simulate(self, trace):
         print(self.info())
 
-        stats = {
-            'hit': 0,
-            'miss': 0,
-            'invalidations': [],
-            'updates': 0
-        }
+        stats = Stats()
+
         instruction_number = 0
         for line_number, line in enumerate(trace):
             line = line.strip()
 
             if Instruction.is_valid(line):
                 instruction_number += 1
-                instruction = Instruction(line)
-                pid = instruction.processor_id
-                cache = self.caches[pid]
-
-                try:
-                    # hit
-                    tag, state, block = cache.get(instruction)
-                    action = Action.translate(instruction.is_read(), True)
-                    stats['hit'] += 1
-                except KeyError:
-                    # miss
-                    state = State.invalid
-                    action = Action.translate(instruction.is_read(), False)
-                    block, tag = cache.get_block(instruction)
-                    stats['miss'] += 1
-
-                # Find State transition
-                new_state = self.protocol.local(state, action)
-                cache.set(instruction, new_state)
-
-                # update other caches
-                invalidations, lines_invalidated, old_states = self.bus.message(instruction, action)
-
-                if invalidations > 0:
-                    stats['invalidations'].append(lines_invalidated)
-
-                if self.verbose:
-                    message = 'A {} by {} to word {} looked for tag {} in block {}, found in state {}.'.format(
-                        repr(action), 'P{}'.format(instruction.processor_id), instruction.address, tag, block, repr(state)
-                    )
-                    if len(old_states) > 0:
-                        message += ' Other CPUs are in states {}'.format(
-                            str(list(map(lambda x: 'P{} - {}'.format(x[0], repr(x[1])), old_states)))
-                        )
-                    else:
-                        message += ' Other CPUs do not contain copies of this address'
-                    print(message)
+                self.instruction(line, stats)
 
             elif Command.is_valid(line):
                 command = Command(line)
@@ -81,17 +89,16 @@ class Simulator(object):
 
                 elif command.is_hit():
                     # print current hit rate
-                    hits = float(stats['hit'])
-                    totals = float(stats['hit'] + stats['miss'])
+                    hits = float(stats.hits)
+                    totals = float(stats.hits + stats.misses)
                     print('Hit Rate: {}. IC: {}'.format(
                         hits / totals, instruction_number
                     ))
 
                 elif command.is_invalidations():
-                    # print the current number of invalidations
-                    invalidations = sum(stats['invalidations'])
-                    print('# of invalidations: {}. IC: {}'.format(
-                        invalidations, instruction_number
+                    print('Invalidation broadcasts: {}. Lines invalidated: {}'.format(
+                        stats.invalidated,
+                        stats.lines_invalidated
                     ))
 
                 elif command.is_print():
