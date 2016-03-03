@@ -20,6 +20,7 @@ MPI_Status status;
 
 double farmer(int);
 void worker(int);
+int get_free_worker(int *, int);
 
 int main(int argc, char **argv ) {
   int i, myid, numprocs;
@@ -87,14 +88,12 @@ double farmer(int numprocs) {
   double problem[2] = {A, B};
   push(problem, stack);
 
-  // printf("Start Looping.\n");
   converged = 0;
   while (converged != 1) {
-    // printf("Stack is : %d. Workers: %d\n", is_empty(stack), freeWorkers);
 
     // Assign problems
     if (is_empty(stack) == 0 && freeWorkers > 0) {
-      int slave_id = getFreeSlave(&workers, numprocs);
+      int slave_id = get_free_worker(workers, numprocs);
       double *boundaries = pop(stack);
 
       // Issue work
@@ -160,6 +159,7 @@ double farmer(int numprocs) {
   return total_area;
 }
 
+
 void quad(double left, double right) {
   double mid, fmid, larea, rarea, fleft, fright, lrarea;
 
@@ -172,7 +172,7 @@ void quad(double left, double right) {
   larea = (fleft + fmid) * (mid - left) / 2;
   rarea = (fmid + fright) * (right - mid) / 2;
 
-  // usleep(SLEEPTIME);
+   usleep(SLEEPTIME);
   if( fabs((larea + rarea) - lrarea) > EPSILON ) {
     double boundaries[3] = {left, mid, right};
     MPI_Send(&boundaries, 3, MPI_DOUBLE, 0, RECEIVE_TAG, MPI_COMM_WORLD);
@@ -217,7 +217,7 @@ void worker(int mypid) {
 
 }
 
-int getFreeSlave(int *slaves_arr, int slave_count) {
+int get_free_worker(int *slaves_arr, int slave_count) {
   int i;
   for (i = 1; i < slave_count; i++) {
     // printf("Slave #%i: %d\n", i, slaves_arr[i]);
