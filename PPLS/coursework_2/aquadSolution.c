@@ -22,6 +22,56 @@ double farmer(int);
 void worker(int);
 int get_free_worker(int *, int);
 
+
+
+/* Student: s1115104
+ *
+ * The worker program is designed as follows:
+ *   1. Receive message
+ *   2. Decide if we need to compute a problem or terminate
+ *     a). Compute the problem
+ *       i)  if the area is below the required precision, send back to the farmer a triple of
+ *           lower_from, lower_to and upper_to. We can send only 3 values rather than two upper
+ *           and two lower bounds as the lower_to and upper_from bounds are the same.
+ *       ii) if we are withing the required precision, send back a single double with the area computed
+ *     b) Terminate - in this case we simply exit the loop and thus terminate the process/thread
+ *
+ * The farmer program attempts to perform the following actions, each depending on the state of the program:
+ *   1) Assign work
+ *   2) Receive solutions
+ *   3) Notify workers about convergence
+ *
+ * Assigning work consists of ensuring that there is some work to assign (stored on a stack)
+ * and that there are indeed some workers who are free to receive new work. If such condition
+ * is satisfied, the program will pop a problem (work) from the stack and send the problem
+ * definition to the free worker marking any such worker as not free.
+ *
+ * Reception of solutions is designed to execute, if all workers are working or there are no problems
+ * to assign. In this situation, the number free workers must be lower than the number of total workers
+ * available to us. In this scenario, we allocate a buffer of size 3 and block until we receive a
+ * solution to the problem. In this situation, we could have received two types of answers - the
+ * area solution or two new problems. Checking the actual size of the message with MPI_Get_count
+ * we can determine if it is an answer (size 1) or a new problem (size 3). There is a point to be
+ * made about the wasteful allocation of a larger buffer than we need in case we receive the full
+ * answer. We could instead send a tag indicating the type of answer, however, the overhead of allocating
+ * a larger buffer is rather insignificant as well as the logic required to handle such scenario would be
+ * slightly more complicated due to the inability to specify sets of tags we can receive.
+ *
+ * Finally, if there is no work to be done (stack is empty) and there are no workers working currently,
+ * we must have converged with the computation. In this case, we send a termination signal to the workers.
+ *
+ *
+ * The program implemented below uses MPI_Recv and MPI_Send APIs as well as MPI_Get_count as their provide
+ * sufficient functionality to implement the required Farmer-Worker concept with a fixed number of workers
+ * and a non-all work/not-work at the same time.
+ *
+ * The program does not use MPI_Reduce or similar APIs as it would require the slowest of workers to finish
+ * before assigning new work to others.
+ *
+ * MPI_Scatter does not provide the desired behavior and therefore isn't used. Similarly, MPI_Gather, which is
+ * the inverse of MPI_Scatter does not provide the required behavior.
+ */
+
 int main(int argc, char **argv ) {
   int i, myid, numprocs;
   double area, a, b;
