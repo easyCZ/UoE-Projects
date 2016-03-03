@@ -13,7 +13,7 @@
 #define SLEEPTIME 1
 #define SEND_TAG 10
 #define RECEIVE_TAG 11
-// #define SLEEPTIME 1000000
+
 
 int *tasks_per_process;
 MPI_Status status;
@@ -93,14 +93,14 @@ double farmer(int numprocs) {
 
     // Assign problems
     if (is_empty(stack) == 0 && free_workers > 0) {
-      int slave_id = get_free_worker(workers, numprocs);
+      int worker_id = get_free_worker(workers, numprocs);
       double *boundaries = pop(stack);
 
       // Issue work
-      MPI_Send(boundaries, 2, MPI_DOUBLE, slave_id, SEND_TAG, MPI_COMM_WORLD);
+      MPI_Send(boundaries, 2, MPI_DOUBLE, worker_id, SEND_TAG, MPI_COMM_WORLD);
 
       // Housekeep
-      workers[slave_id] = 1;
+      workers[worker_id] = 1;
       free_workers -= 1;
       free(boundaries);
     }
@@ -218,13 +218,9 @@ void worker(int mypid) {
 }
 
 int get_free_worker(int *workers_arr, int worker_count) {
-  int r = rand() % worker_count;
-
   int i;
-  for (i = r; i < r + worker_count; i++) {
-    int index = (i + 1) % worker_count;   // we need to be skipping index 0
-    fprintf(stdout, "index: %d\n", index);
-    if (workers_arr[index] == 0) return index;
+  for (i = 1; i < worker_count; i++) {
+    if (workers_arr[i] == 0) return i;
   }
   return -1;
 }
