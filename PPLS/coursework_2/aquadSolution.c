@@ -217,10 +217,13 @@ void worker(int mypid) {
 
 }
 
-int get_free_worker(int *slaves_arr, int slave_count) {
+int get_free_worker(int *workers_arr, int worker_count) {
+  int r = rand() % worker_count;
+
   int i;
-  for (i = 1; i < slave_count; i++) {
-    if (slaves_arr[i] == 0) return i;
+  for (i = r; i < r + worker_count; i++) {
+    int index = (i + 1) % worker_count;   // we need to be skipping index 0
+    if (workers_arr[index] == 0) return index;
   }
   return -1;
 }
