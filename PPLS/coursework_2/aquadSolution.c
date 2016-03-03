@@ -220,6 +220,8 @@ void worker(int mypid) {
 int get_free_worker(int *workers_arr, int worker_count) {
   int r = rand() % worker_count;
 
+  fprintf(stdout, "rand: %d\n", r);
+
   int i;
   for (i = r; i < r + worker_count; i++) {
     int index = (i + 1) % worker_count;   // we need to be skipping index 0
