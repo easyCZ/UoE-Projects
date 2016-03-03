@@ -65,6 +65,13 @@ int get_free_worker(int *, int);
  * sufficient functionality to implement the required Farmer-Worker concept with a fixed number of workers
  * and a non-all work/not-work at the same time.
  *
+ * Additionally, the blocking MPI_Recv is used only when all workers are busy working and therefore there is
+ * no need to probe for incoming messages as the only incoming action can indeed be a reception of either
+ * two new problems or a solution.
+ *
+ * Furthermore, MPI_Broadcast is not used as it is not a suitable API for the problem. Ideally, we want the
+ * workers as isolated from each other as possible.
+ *
  * The program does not use MPI_Reduce or similar APIs as it would require the slowest of workers to finish
  * before assigning new work to others.
  *
