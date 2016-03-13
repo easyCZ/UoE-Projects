@@ -1,0 +1,33 @@
+\begin{thebibliography}{1}
+
+\bibitem{BSIMM6-CodeReview}
+BSIMM.
+\newblock Code review.
+\newblock
+  \url{https://www.bsimm.com/framework/software-security-development-lifecycle/code-review/}.
+
+\bibitem{BSIMM6-BugBounty}
+BSIMM.
+\newblock Configuration and vulnerability management.
+\newblock
+  \url{https://www.bsimm.com/framework/deployment/configuration-and-vulnerability-management/}.
+
+\bibitem{NVD_CVE-201600778}
+National~Vulnerability Database.
+\newblock Vulnerability summary for cve-2016-0778.
+\newblock \url{https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2016-0778},
+  2016.
+
+\bibitem{QualisOpenSSH}
+Qualis.com.
+\newblock Roaming through the openssh client: Cve-2016-0777 and cve-2016-0778.
+\newblock
+  \url{https://www.qualys.com/2016/01/14/cve-2016-0777-cve-2016-0778/openssh-cve-2016-0777-cve-2016-0778.txt},
+  2016.
+
+\bibitem{RedHat_CVE-201600778}
+RedHat.
+\newblock Cve-2016-0778.
+\newblock \url{https://access.redhat.com/security/cve/cve-2016-0778}, 2016.
+
+\end{thebibliography}
