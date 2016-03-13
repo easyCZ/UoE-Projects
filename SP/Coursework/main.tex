@@ -129,6 +129,39 @@ I believe that the reasoning provided by my friend is insufficient to make an in
 \section*{Buffer Overflow}
 \setcounter{section}{1}
 
+\section*{1 Exploitation Steps}
+\begin{enumerate}
+	\item Firstly, it is essential to gain an understanding of the program behavior. We begin by analyzing the program as a function of inputs and outputs. Inputting sample sequences of input such as \texttt{aaaa}, \texttt{abcd} or \texttt{0x00} and larger sequences such as \texttt{'a' * 128} yields the undesired \textit{Wrong Password, sorry!} message. From the test cases above, we know that the program is effectively making a comparison to some values rather than just being a dummy password challenge.
+    \item Secondly, in order to analyze how the program performs the password validity check, we use \textit{gdb} to investigate and disassemble the binary. Running \texttt{disas /m main} inside \textit{gdb} yields the following: 
+    \lstinputlisting{disass.txt}
+    
+    We can see there is a sequence of \texttt{movb} instructions setting bytes on an array (identifiable from increasing memory addresses). We can see that  Therefore, we know the passcode is stored in the binary itself. We can also observe that the input is being read with \texttt{scanf}. Furthermore, we can observe that there is an \texttt{MD5} call suggesting the password is being hashed.
+    
+    Settings breakpoints around the \texttt{scanf} call at \texttt{0x080486b1} and the \texttt{MD5} call at \texttt{0x8048520} we can inspect the memory structure before the user input, after the user input and after the hash. We use \texttt{'a' * 32} as input.
+        \lstinputlisting{memdump.txt}
+        
+	We can observe that we can override the memory locations with input except for the final 3 bytes. The third last byte is the null character suggesting \texttt{scanf} is being used with an upper bound on the input it reads, in this case it reads 29 bytes and appends the null character.
+	Additionally, after the MD5 is applied, only the first 16 bytes have been modified. Taking the MD5 hash of \texttt{'a' * 29} = \texttt{f7ce3d7d44f3342107d884bfa90c966a}, we can see that it matches the first 16 bytes of the after MD5 address values.
+    
+    \item Therefore, in order to pass the password check, we need to find a key, such that it's hash will end in the last 3 bytes we cannot overwrite. That is, we need a key which when MD5 hashed will contain \texttt{0x00 0x91 0xeb} as the last 3 bytes.
+    
+    \item In order to generate a key whose hash ends in \texttt{0x00 0x91 0xeb}, we generate a random key, calculate the hash and verify the results matches. This can be computationally expensive, however, knowing only the last 3 bytes of the hash match, we reduce the search space significantly. The following python code does finds the required key and corresponding hash.
+    \lstinputlisting[language=Python]{find_hash.py}
+    
+    One possible key-hash pair is \texttt{FQ3hQntC}-\texttt{fe91pf7b6a7u9e11Qa3eacf0091eb}. Considering our key is 8 bytes long, we need to add padding to increase it's size to 16 bytes. We can use the null character to do so. The resulting input  which exploits the binary is then (split onto lines for legibility):
+        \lstinputlisting{exploit_hash.txt}
+        
+    Testing this input with the vulnerable program we receive \textit{Correct Password!}.
+    
+\end{enumerate}
+
+\section*{2 Exploit}
+In order to produce a script which automatically exploits the program, we can either dynamically generate a key-hash pair which will exploit the program or such a hash can be pre-computed. The submitted \texttt{exploit} script contains both versions with the pre-computed approach select by default. The \texttt{./exploit} is written in Python and requires to have executable permissions set. To exploit the \texttt{vulnerable} program, run \texttt{./exploit ./vulnerable}.
+
+\section*{3 Patch}
+Patch is attached to the submission. It consists of fixing the buffer overflow in the number of characters scanned in \texttt{scanf}. Additionally, it increases the size of the password buffer by 1 byte in order to allow for the null terminated character \texttt{scanf} appends.
+
+
 \newpage
 \section*{Web Security}
 \setcounter{section}{1}
