@@ -1,0 +1,31 @@
+*** vulnerable.c	2016-03-13 06:06:55.037565189 +0000
+--- patched.c	2016-03-13 06:07:19.587560308 +0000
+***************
+*** 28,40 ****
+          0xd0, 0xf9, 0x19, 0x94, 0x4a, 0xf3, 0x10, 0x92,
+          0x32, 0x98, 0x11, 0x8c, 0x33, 0x27, 0x91, 0xeb
+      };
+!     char password[16];
+  
+      // Show the relative position of the buffers, should be 16
+      // printf("%li \n",correct_hash-password);
+  
+      printf("Insert your password: ");
+!     scanf("%29s", password);
+  
+      MD5(password, strlen(password), password);
+  
+--- 28,40 ----
+          0xd0, 0xf9, 0x19, 0x94, 0x4a, 0xf3, 0x10, 0x92,
+          0x32, 0x98, 0x11, 0x8c, 0x33, 0x27, 0x91, 0xeb
+      };
+!     char password[17];
+  
+      // Show the relative position of the buffers, should be 16
+      // printf("%li \n",correct_hash-password);
+  
+      printf("Insert your password: ");
+!     scanf("%16s", password);
+  
+      MD5(password, strlen(password), password);
+  
