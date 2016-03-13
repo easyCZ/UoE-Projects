@@ -1,0 +1,154 @@
+Binary files http/db/imagevoting.db and patched/db/imagevoting.db differ
+diff -cr http/include/functions.php patched/include/functions.php
+*** http/include/functions.php	2016-01-22 18:51:34.000000000 +0000
+--- patched/include/functions.php	2016-03-13 17:52:46.133416571 +0000
+***************
+*** 1,5 ****
+  <?php
+! header("X-XSS-Protection: 0"); // ;-)
+  
+  // Reload the page
+  function reload_page()
+--- 1,5 ----
+  <?php
+! header("X-XSS-Protection: 1; mode=block"); // ;-)
+  
+  // Reload the page
+  function reload_page()
+***************
+*** 10,16 ****
+  // Get the databaase
+  function get_db()
+  {
+!     $db = new PDO('sqlite:db/imagevoting.db');
+      $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      return $db;
+  }
+--- 10,16 ----
+  // Get the databaase
+  function get_db()
+  {
+!     $db = new PDO('sqlite:./db/imagevoting.db');
+      $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      return $db;
+  }
+***************
+*** 37,50 ****
+  // Create a session token
+  function create_token($username)
+  {
+      setcookie("username", $username);
+!     setcookie("session", md5($username));
+  }
+  
+  // Check a session token
+  function check_token($username, $session)
+  {
+!     return (md5($username) == $session);
+  }
+  
+  // Destroy the session token
+--- 37,52 ----
+  // Create a session token
+  function create_token($username)
+  {
++     $SALT = hexdec('f2492a23247852a4988548dc4db88921f1a535036179276c2d372be697346142');
+      setcookie("username", $username);
+!     setcookie("session", hash('sha256', md5($username) . $SALT));
+  }
+  
+  // Check a session token
+  function check_token($username, $session)
+  {
+!     $SALT = hexdec('f2492a23247852a4988548dc4db88921f1a535036179276c2d372be697346142');
+!     return (hash('sha256', md5($username) . $SALT) == $session);
+  }
+  
+  // Destroy the session token
+***************
+*** 123,129 ****
+              print "<b>Vote count: ".$row['vote']."</b>";
+              print "</cite>";
+              print "</footer>";
+! 	    print "<form action='vote.php' method='GET'>";
+              print "<input type='hidden' name='vote' value='".$row['user']."' />";
+              print "<input type='submit' value='Vote for me' />";
+              print "</form>";
+--- 125,131 ----
+              print "<b>Vote count: ".$row['vote']."</b>";
+              print "</cite>";
+              print "</footer>";
+! 	    print "<form action='vote.php' method='POST'>";
+              print "<input type='hidden' name='vote' value='".$row['user']."' />";
+              print "<input type='submit' value='Vote for me' />";
+              print "</form>";
+diff -cr http/index.php patched/index.php
+*** http/index.php	2016-01-22 18:49:07.000000000 +0000
+--- patched/index.php	2016-03-13 17:52:46.133416571 +0000
+***************
+*** 17,23 ****
+    </head>
+    <body>
+      <?php
+-       ini_set('display_errors', 'On');
+        include 'include/functions.php';
+      ?>
+      <div class="jumbotron">
+--- 17,22 ----
+***************
+*** 35,41 ****
+              if (isset($_POST['post']))
+              {
+               	$whose = $_COOKIE['username'];
+!                 $link = $_POST['link'];
+  
+                  submit_image_link($whose, $link);
+              }
+--- 34,40 ----
+              if (isset($_POST['post']))
+              {
+               	$whose = $_COOKIE['username'];
+!                 $link = filter_var($_POST['link'], FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED);
+  
+                  submit_image_link($whose, $link);
+              }
+diff -cr http/vote.php patched/vote.php
+*** http/vote.php	2016-01-22 18:40:18.000000000 +0000
+--- patched/vote.php	2016-03-13 17:52:46.153416112 +0000
+***************
+*** 32,48 ****
+        <?php
+  	if (check_signed_in())
+          {
+!             if (!isset($_GET['vote']) || check_uniqueness(get_db(),$_GET['vote']))
+              {
+               	print ("<p>Invalid vote!!</p>");
+              }
+!             elseif ($_COOKIE['username'] == $_GET['vote'])
+              {
+                  print ("<p>You cannot vote for yourself!!</p>");
+              }
+              else
+              {
+!                 if(vote($_COOKIE['username'],$_GET['vote'])) 
+                  {
+                      header("Location:/");
+                  }
+--- 32,48 ----
+        <?php
+  	if (check_signed_in())
+          {
+!             if (!isset($_POST['vote']) || check_uniqueness(get_db(),$_POST['vote']))
+              {
+               	print ("<p>Invalid vote!!</p>");
+              }
+!             elseif ($_COOKIE['username'] == $_POST['vote'])
+              {
+                  print ("<p>You cannot vote for yourself!!</p>");
+              }
+              else
+              {
+!                 if(vote($_COOKIE['username'],$_POST['vote'])) 
+                  {
+                      header("Location:/");
+                  }
